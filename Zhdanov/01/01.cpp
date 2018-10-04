@@ -26,18 +26,14 @@ private:
 int matrixsize=10000;
 int main()
 {
-	int** data = new int* [matrixsize];
-	for (int i=0;i<matrixsize;++i)
-	{
-		data[i]=new int[matrixsize];
-	};
-	using matrix=int(*)[matrixsize][matrixsize];
+	using matrix=int(*)[matrixsize];
+	auto data = (matrix) malloc(matrixsize * matrixsize * sizeof(int));
 	matrix k = (matrix) data;	
 	for(int i=0;i<matrixsize;++i)
 	{
 		for(int j;j<matrixsize;++j)
 		{
-			data[i][j]=rand();
+			k[i][j]=rand();
 		}
 	}
 	Timer t;
@@ -46,15 +42,10 @@ int main()
 	{
 		for (int j=1;j<matrixsize;++j)
 		{
-			a += data[j][i];
+			a += k[i][j];
 		};
 	};
-
-	for (int i=0;i<matrixsize;++i)
-	{
-		delete[]data[i];
-	};
-	delete[] data;
+	free(data);
 	return 0;
 }
 
