@@ -24,24 +24,17 @@ private:
     const clock_t::time_point start_;
 };
 
-int main()
-{
-	Timer t;
-	
-	const size_t arraySize = 10000;
-	
-	int** a = new int*[arraySize];
-	for(int i = 0; i < arraySize; ++i) a[i] = new int[arraySize];
-	
-	long long sum = 0;
-	
-	for (int i=0; i<arraySize; ++i)
-		for (int j=0; j<arraySize; ++j)
-			sum += a[i][j];
-			
-	std::cout<<sum<<std::endl;
-	
-	delete [] a;
-	
-	return 0;
-}		
+int main() {
+    Timer t;
+    int SIZE = 1400;
+    int matr[SIZE][SIZE];
+    long int sum = 0;
+    for (int i = 0; i < SIZE; i++)
+        for (int j = 0; j < SIZE; j++) {
+            matr[i][j] = rand() % 100 - 50;
+        }
+    for (int i = 0; i < SIZE; i++)
+        for (int j = 0; j < SIZE; j++)
+            sum += matr[i][j];
+    std::cout << "Sum equals "<< sum <<", time - ";
+}

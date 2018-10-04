@@ -37,7 +37,7 @@ int main()
 	
 	for (int i=0; i<arraySize; ++i)
 		for (int j=0; j<arraySize; ++j)
-			sum += a[i][j];
+			sum += a[j][i];
 			
 	std::cout<<sum<<std::endl;
 	

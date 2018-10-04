@@ -24,24 +24,15 @@ private:
     const clock_t::time_point start_;
 };
 
-int main()
-{
-	Timer t;
-	
-	const size_t arraySize = 10000;
-	
-	int** a = new int*[arraySize];
-	for(int i = 0; i < arraySize; ++i) a[i] = new int[arraySize];
-	
-	long long sum = 0;
-	
-	for (int i=0; i<arraySize; ++i)
-		for (int j=0; j<arraySize; ++j)
-			sum += a[i][j];
-			
-	std::cout<<sum<<std::endl;
-	
-	delete [] a;
-	
-	return 0;
-}		
+int main() {
+  int data[100][100];
+  for (int i = 0; i < 100; i++)
+    for (int j = 0; j < 100; j++)
+      data[i][j] = i + j;
+  volatile int sum = 0;
+
+  Timer t;
+  for (int i = 0; i < 100; i++)
+    for (int j = 0; j < 100; j++)
+      sum += data[i][j];
+}

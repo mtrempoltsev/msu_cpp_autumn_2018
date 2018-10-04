@@ -23,25 +23,3 @@ public:
 private:
     const clock_t::time_point start_;
 };
-
-int main()
-{
-	Timer t;
-	
-	const size_t arraySize = 10000;
-	
-	int** a = new int*[arraySize];
-	for(int i = 0; i < arraySize; ++i) a[i] = new int[arraySize];
-	
-	long long sum = 0;
-	
-	for (int i=0; i<arraySize; ++i)
-		for (int j=0; j<arraySize; ++j)
-			sum += a[i][j];
-			
-	std::cout<<sum<<std::endl;
-	
-	delete [] a;
-	
-	return 0;
-}		
