@@ -40,5 +40,8 @@ int main()
 			sum += a[j][i];
 			
 	std::cout<<sum<<std::endl;
+	
+	delete [] a;
+	
 	return 0;
 }		
