@@ -31,12 +31,13 @@ private:
 
 int main(){
 
-  int** vec = new int* [10000];
-  for(size_t i=0; i<10000; ++i){
-      vec[i] = new int [10000];
+  const size_t arrSize = 10000;
+  int** vec = new int* [arrSize];
+  for(size_t i=0; i<arrSize; ++i){
+      vec[i] = new int [arrSize];
   }
-  for(size_t i=0; i<10000; ++i){
-      for(size_t j=0; j<10000; ++j){
+  for(size_t i=0; i<arrSize; ++i){
+      for(size_t j=0; j<arrSize; ++j){
           vec[i][j] = i + j;
       }
   }
@@ -44,14 +45,14 @@ int main(){
   int64_t sum = 0;
   {
     Timer t;
-    for(size_t i=0; i<10000; ++i){
-        for(size_t j=0; j<10000; ++j){
+    for(size_t i=0; i<arrSize; ++i){
+        for(size_t j=0; j<arrSize; ++j){
             sum += vec[j][i];
           }
     }
   }
 
-  for(size_t i=0; i<10000; ++i){
+  for(size_t i=0; i<arrSize; ++i){
       delete[] vec[i];
   }
   delete[] vec;
