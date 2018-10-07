@@ -39,7 +39,7 @@ int main()
     {
         for (int j = 0; j < SIZE; ++j)
         {
-            matrix[i][j] = rand()%11 - 5 ;
+            matrix[i][j] = rand()%11 - 5;
         }
     }
     //Sum
@@ -49,7 +49,7 @@ int main()
     {
         for (int j = 0; j < SIZE; ++j)
         {
-            result += matrix[j][i];
+            result += matrix[i][j];
         }
     }
     for(int i = 0; i < SIZE; i++)
