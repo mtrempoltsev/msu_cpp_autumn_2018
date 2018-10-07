@@ -27,7 +27,7 @@ private:
 
 int main()
 {
-    int SIZE = 20000;
+    const size_t SIZE = 20000;
     
     int **matrix = new int *[SIZE];
     
