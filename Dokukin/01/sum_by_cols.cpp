@@ -27,9 +27,8 @@ int main()
 	cout << us << " us" << endl;
 	
 	for(size_t i = 0; i < arraySize; ++i)
-	{
-        delete [] a[i];   
-    }
+		delete [] a[i];   
+
 	delete [] a;
 	
 	return 0;
