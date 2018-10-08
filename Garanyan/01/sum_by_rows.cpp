@@ -53,5 +53,11 @@ int main()
 
     std::cout << matrixSumByRows(matrix, matrixSize) << std::endl;
 
+    for (size_t i = 0; i < matrixSize; ++i)
+    {
+        delete[] matrix[i];
+    }
+    delete[] matrix;
+
     return 0;
 }		
