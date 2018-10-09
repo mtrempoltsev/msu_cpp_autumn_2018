@@ -1,30 +1,35 @@
 #include <chrono>
 #include <iostream>
 
+using namespace std;
+
 int main()
 {
 	const size_t arraySize = 10000;
 	
 	int** a = new int*[arraySize];
-	for(int i = 0; i < arraySize; ++i) a[i] = new int[arraySize];
+	for(size_t i = 0; i < arraySize; ++i)
+		a[i] = new int[arraySize];
 	
-	long long sum = 0;
+	volatile long long sum = 0;
 	
-	using clock_t = std::chrono::high_resolution_clock;
-	using microseconds = std::chrono::microseconds;
+	using clock_t = chrono::high_resolution_clock;
+	using microseconds = chrono::microseconds;
 	
 	const auto start = clock_t::now();
 		
-	for (int i=0; i<arraySize; ++i)
-		for (int j=0; j<arraySize; ++j)
+	for (size_t i=0; i<arraySize; ++i)
+		for (size_t j=0; j<arraySize; ++j)
 			sum += a[i][j];
 		
 	const auto finish = clock_t::now();
-	const auto us = std::chrono::duration_cast<microseconds>(finish - start).count();
-	std::cout << us << " us" << std::endl;
-	std::cout<<sum<<std::endl;
+	const auto us = chrono::duration_cast<microseconds>(finish - start).count();
+	cout << us << " us" << endl;
 	
+	for(size_t i = 0; i < arraySize; ++i)
+		delete [] a[i];   
+
 	delete [] a;
 	
 	return 0;
-}		
+}	
