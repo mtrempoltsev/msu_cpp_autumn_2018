@@ -3,22 +3,23 @@
 
 int main()
 {
-
-    const int n = 1e4;
-    int **matrix = new int*[n];
-    for(size_t i = 0; i < n; ++i) {
-        matrix[i] = new int[n];
+    const size_t arraySize = 1e5;
+    int **matrix = new int*[arraySize];
+    for(size_t i = 0; i < arraySize; ++i) {
+        matrix[i] = new int[arraySize];
     }
-
-    Timer timer;
-    int sum = 0;
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            sum += matrix[i][j];
+    {
+        size_t sum = 0;
+        Timer timer;
+        for (size_t i = 0; i < arraySize; ++i) {
+            for (size_t j = 0; j < arraySize; ++j) {
+                sum += matrix[i][j];
+            }
         }
     }
 
-    for(size_t i = 0; i < n; ++i) {
+
+    for(size_t i = 0; i < arraySize; ++i) {
         delete[] matrix[i];
     }
     delete[] matrix;
