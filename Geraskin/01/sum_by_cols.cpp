@@ -1,7 +1,7 @@
 #include "common.h"
 #include "timer.h"
 
-using namespace NParams;
+using namespace NParams::NMatrix;
 
 int main() {
     auto matrix = GetMatrix();
