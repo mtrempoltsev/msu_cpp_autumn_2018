@@ -18,7 +18,7 @@ int** GetMatrix() {
 
     for (size_t i = 0; i < NRows; ++i) {
         matrix[i] = data + i * NCols;
-        for (size_t j = 0; j < NRows; ++j) {
+        for (size_t j = 0; j < NСols; ++j) {
             matrix[i][j] = rand();
         }
     }
