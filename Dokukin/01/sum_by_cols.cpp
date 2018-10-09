@@ -11,15 +11,15 @@ int main()
 	for(size_t i = 0; i < arraySize; ++i)
 		a[i] = new int[arraySize];
 	
-	volatile long long sum = 0;
-	
 	using clock_t = chrono::high_resolution_clock;
 	using microseconds = chrono::microseconds;
 	
 	const auto start = clock_t::now();
+	
+	volatile long long sum = 0;
 		
-	for (size_t i=0; i<arraySize; ++i)
-		for (size_t j=0; j<arraySize; ++j)
+	for (size_t i = 0; i < arraySize; ++i)
+		for (size_t j = 0; j < arraySize; ++j)
 			sum += a[j][i];
 		
 	const auto finish = clock_t::now();
