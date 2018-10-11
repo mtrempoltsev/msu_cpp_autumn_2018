@@ -20,7 +20,7 @@ bool is_prime(int a) {
     }
     return true;
 }
-enum { MAX_ELEM = 100001 };
+enum { MAX_ELEM = 100000 };
 int main(int argc, char* argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
                 }
                 ++position;
             }
-            if ((position == Size && position > 0 && Data[position - 1] != end) || position == 0) {
+            if (position == Size && position > 0 && Data[position - 1] != end) {
                 cout << 0 << endl;
             } else {
                 cout << count << endl;
