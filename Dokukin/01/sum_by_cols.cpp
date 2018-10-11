@@ -20,7 +20,7 @@ int main()
 		
 	for (size_t i = 0; i < arraySize; ++i)
 		for (size_t j = 0; j < arraySize; ++j)
-			sum += a[i][j];
+			sum += a[j][i];
 		
 	const auto finish = clock_t::now();
 	const auto us = chrono::duration_cast<microseconds>(finish - start).count();
@@ -32,4 +32,4 @@ int main()
 	delete [] a;
 	
 	return 0;
-}	
+}		
