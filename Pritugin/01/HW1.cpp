@@ -19,12 +19,12 @@ int main(int argc, char* argv[])
 
 				
 	
-    for (int i = 1; i < argc; ++i)
+	for (int i = 1; i < argc; ++i)
     {
-        auto v1 = std::atoi(argv[i]);
-        auto v2 = std::atoi(argv[++i]);
-        if(v1 > v2) { std::cout << 0 << std::endl; continue; }
-        // O(logN)
+		auto v1 = std::atoi(argv[i]);
+		auto v2 = std::atoi(argv[++i]);
+		if(v1 > v2) { std::cout << 0 << std::endl; continue; }
+		// O(logN)
 		auto left = std::lower_bound(Data, Data + Size, v1);
 		auto right = std::upper_bound(Data, Data + Size, v2);
 		right--;
