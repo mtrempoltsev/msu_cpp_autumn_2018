@@ -7,13 +7,13 @@ int bin_search_right(const int obj)
 {
 	int left = 0, right = Size, middle;
 	while (right-left>1)
-		{	
-			middle = (right + left) / 2;
-			if (Data[middle] <= obj)
-				left = middle;
-			else
-				right = middle;
-		}
+	{	
+		middle = (right + left) / 2;
+		if (Data[middle] <= obj)
+			left = middle;
+		else
+			right = middle;
+	}
 	if (obj == Data[left])
 		return left;
 	if (obj == Data[right])
@@ -48,10 +48,10 @@ void prime_numbers(bool* array,const int max)
 	{
 		for (int j = 2; j<=int(sqrt(i)); j++)
 			if (i%j==0)
-				{
+			{
 				array[i] = false;
 				break;
-				}
+			}
 	}
 }
 int main(int argc, char *argv[])
