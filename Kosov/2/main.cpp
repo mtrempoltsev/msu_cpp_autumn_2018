@@ -20,7 +20,7 @@ int main(int argc, char*argv[]){
     
     if((argc < 2) || !(argc%2)) return -1;
 
-    for(size_t i = 1; i<argc; i+=2){
+    for(int i = 1; i<argc; i+=2){
         
         int first = std::atoi(argv[i]),
             second = std::atoi(argv[i+1]),
