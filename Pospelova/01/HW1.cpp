@@ -2,31 +2,31 @@
 #include <cmath>
 #include "numbers.dat"
 
-int Search_index(int v, int flag) {
+int Search_index(int input_range, int flag) {
 	for (int i = 0; i < Size; ++i)
-		if (Data[i] == v) {
+		if (Data[i] == input_range) {
 			if (!flag)
 				return i;
 			else {
-				int j = i;
-				while ((j + 1 < Size) && (Data[j] == Data[j + 1]))
-					j++;
-				return j;
+				int close_range = i;
+				while ((close_range + 1 < Size) && (Data[close_range] == Data[close_range + 1]))
+					close_range++;
+				return close_range;
 			}
 		}
 	return -1;
 }
 
-int Arg(int i, char *argv[], int flag) {
-	int v = std::atoi(argv[i]);
-	return Search_index(v, flag);
+int Arg(int index_arg, char *argv[], int flag) {
+	int input_range = std::atoi(argv[index_arg]);
+	return Search_index(input_range, flag);
 }
 
-bool Prime(int n) {
-	if (n == 1)
+bool Prime(int number) {
+	if (number == 1)
 		return false;
-	for (int i = 2; i <= sqrt(n); ++i)
-		if (n % i == 0)
+	for (int divisor = 2; divisor <= sqrt(number); ++divisor)
+		if (number % divisor == 0)
 			return false;
 	return true;
 }
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 		if ((argc == 1) || (!(argc % 2)))
 			throw -1;
 		int range_flag1, range_flag2;
-		for (int i = 1; i < argc; i = i + 2) {
+		for (int i = 1; i < argc; i += 2) {
 			range_flag1 = Arg(i, argv, 0);
 			range_flag2 = Arg(i + 1, argv, 1);
 			if ((range_flag1 == -1) || (range_flag2 == -1) || (range_flag1 > range_flag2)) {
