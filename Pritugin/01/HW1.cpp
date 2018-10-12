@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 
-// O(NloglogN) + C*O(logN) = O(NloglogN)
+// O(NloglogN) + C*O(logN) + C*O(N) = O(NloglogN)
 int main(int argc, char* argv[])
 {
 	// O(NloglogN)
