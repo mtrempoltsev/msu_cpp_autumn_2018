@@ -7,18 +7,17 @@
 int main(int argc, char* argv[])
 {
 	// O(NloglogN)
-	if(argc==1 or !(argc%2)) return -1;
+	if((argc == 1) or !(argc % 2)) return -1;
+	
 	const int n = 1000000;
 	std::vector<char> prime (n+1, true);
 	prime[0] = prime[1] = false;
-	for (int i=2; i*i<=n; ++i)
-		if (prime[i])
-			if (i * i <= n)
-				for (int j=i*i; j<=n; j+=i)
-					prime[j] = false;
+	for (int i = 2; i*i <= n; ++i)
+		if (prime[i] && i*i <= n)
+			for (int j = i*i; j <= n; j+=i) 
+				prime[j] = false;
 
 				
-	
 	for (int i = 1; i < argc; ++i)
 	{
 		auto v1 = std::atoi(argv[i]);
