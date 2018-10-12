@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 				
 	
 	for (int i = 1; i < argc; ++i)
-    {
+	{
 		auto v1 = std::atoi(argv[i]);
 		auto v2 = std::atoi(argv[++i]);
 		if(v1 > v2) { std::cout << 0 << std::endl; continue; }
