@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "numbers.dat"
 using namespace std;
+
 int bin_search_right(const int obj)
 {
 	int left = 0, right = Size, middle;
@@ -47,19 +48,23 @@ void prime_numbers(bool* array,const int max)
 	for (int i = 4; i <= max; i++)
 	{
 		for (int j = 2; j<=int(sqrt(i)); j++)
+		{
 			if (i%j==0)
 			{
 				array[i] = false;
 				break;
 			}
+		}
 	}
 }
+
 int main(int argc, char *argv[])
 {	
 	const int max = 100000;
 	bool* prime = (bool*)malloc(max+1);
 	prime_numbers(prime, max);
 	int counter = 0, a, b;
+	
 	if ((argc-1)%2!=0 || argc == 1)
 		return -1;
 	else
@@ -69,9 +74,13 @@ int main(int argc, char *argv[])
 			b = atoi(argv[i + 1]);
 			int right = bin_search_right(b);
 			int left = bin_search_left(a);
+			
 			if (left != -1 && right != -1)
+			{
 				for (int i = left; i <= right; i++)
 					counter += prime[Data[i]];
+			}
+			
 			cout << counter << endl;
 			counter = 0;
 		}
