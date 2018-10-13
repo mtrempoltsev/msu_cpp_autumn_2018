@@ -1,5 +1,7 @@
 #include "numbers.dat"
 #include <iostream>
+#include <algorithm>
+
 
 int is_prime(int n) {
     if (n < 2) {
@@ -23,12 +25,18 @@ int main(int argc, char* argv[])
         int l = std::atoi(argv[i]);
         int r = std::atoi(argv[i + 1]);
 
-        int cur = 0, sum = 0;
-        while (cur < Size && Data[cur] < l) ++cur;
+        if (l > r) {
+            std::cout << 0 << std::endl;
+            continue;
+        }
 
-        while (cur < Size && Data[cur] <= r) {
+        l = (std::lower_bound(Data, Data + Size, l)) - Data;
+        r = (std::upper_bound(Data, Data + Size, r)) - Data;
+
+        int cur = l, sum = 0;
+        while (cur < r) {
             int cnt = 1;
-            while (cur + 1 < Size && Data[cur] == Data[cur + 1]) {
+            while (cur + 1 < r && Data[cur] == Data[cur + 1]) {
                 ++cnt; ++cur;
             }
         	sum += cnt * is_prime(Data[cur]);
