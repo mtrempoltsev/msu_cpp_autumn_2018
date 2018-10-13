@@ -6,9 +6,8 @@
 // O(NloglogN) + C*O(logN) + C*O(N) = O(NloglogN)
 int main(int argc, char* argv[])
 {
+	if((argc == 1) or (argc % 2 == 0)) return -1;
 	// O(NloglogN)
-	if((argc == 1) or !(argc % 2)) return -1;
-	
 	const int n = 1000000;
 	std::vector<char> prime (n+1, true);
 	prime[0] = prime[1] = false;
