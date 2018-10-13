@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
     std::vector<int> dp(Size + 1);
 
-    for (size_t i = 0; i < Size; ++i) {
+    for (int i = 0; i < Size; ++i) {
         dp[i + 1] = dp[i] + prime(Data[i]);
     }
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    for (size_t i = 1; i < argc; i += 2) {
+    for (int i = 1; i < argc; i += 2) {
         int left = std::atoi(argv[i]);
         int right = std::atoi(argv[i + 1]);
 
