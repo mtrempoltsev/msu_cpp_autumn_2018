@@ -18,10 +18,10 @@ unique_ptr<bool []> IsPrime(size_t maxNum) {
         result[i] = true;
     }
     result[0] = result[1] = false;
-    for (size_t i=2; i <= maxNum; ++i)
+    for (size_t i = 2; i <= maxNum; i++)
         if (result[i])
-            if (i * 1ll * i <= maxNum)
-                for (size_t j=i*i; j <= maxNum; j+=i)
+            if (i * i <= maxNum)
+                for (size_t j = i * i; j <= maxNum; j += i)
                     result[j] = false;
     return result;
 }
