@@ -1,8 +1,8 @@
 #include "numbers.dat"
 
 #include <iostream>
-#include <vector>
 #include <algorithm>
+#include <memory>
 
 bool prime(const int n) {
     if (n < 2) {
@@ -17,13 +17,13 @@ bool prime(const int n) {
     return true;
 }
 
-void precalc(std::vector<int>& dp) {
+void precalc(std::unique_ptr<int[]>& dp) {
     for (int i = 0; i < Size; ++i) {
         dp[i + 1] = dp[i] + prime(Data[i]);
     }
 }
 
-int calc_ans(const std::vector<int>& dp, int left, int right) {
+int calc_ans(const std::unique_ptr<int[]>& dp, int left, int right) {
     if (left > right) {
         return 0;
     } else {
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    std::vector<int> dp(Size + 1);
+    auto dp = std::make_unique<int[]>(Size + 1);
     precalc(dp);
 
     for (int i = 1; i < argc; i += 2) {
