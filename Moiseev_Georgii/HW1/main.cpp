@@ -5,8 +5,6 @@
 #include <assert.h>
 #include "numbers.dat" 
 
-static const int maxRightBound = 1e5;
-
 //table of primes on [0, n]
 class PrimeTable
 {
@@ -38,7 +36,7 @@ private:
 };
 
 
-int primeCountArray(int lowerBound, int upperBound)
+int primeCountArray(int lowerBound, int upperBound, int maxRightBound)
 {
     static PrimeTable primeTable(maxRightBound);
 
@@ -67,6 +65,8 @@ int primeCountArray(int lowerBound, int upperBound)
 
 int main(int argc, char* argv[])
 {
+    const int maxRightBound = 1e5;
+    
     //incorrect input
     if (argc == 1 || argc % 2 == 0)
         return -1;
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
         if (sscanf(argv[i], "%d", &upperBound) != 1)
             return -1;
 
-        std::cout << primeCountArray(lowerBound, upperBound) << std::endl;
+        std::cout << primeCountArray(lowerBound, upperBound, maxRightBound) << std::endl;
     }
 
     return 0;
