@@ -27,8 +27,7 @@ int main(int argc, char* argv[])
 		auto right = std::upper_bound(Data, Data + Size, v2);
 		right--;
 		
-		if(*right != v2) { std::cout << 0 << std::endl; continue; }
-		if(*left != v1) { std::cout << 0 << std::endl; continue; }
+		if((*right != v2) or (*left != v1)) { std::cout << 0 << std::endl; continue; }
 
 		int count = 0;
 		// O(N)
