@@ -1,6 +1,5 @@
 #include <iostream>
 #include "numbers.dat"
-#include <chrono>
 // Data - массив
 // Size - размер массива
 
