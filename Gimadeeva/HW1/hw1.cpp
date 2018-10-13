@@ -18,15 +18,13 @@ int main(int argc, char* argv[])
     if (argc == 1) return -1;
     if (argc % 2 == 0) return -1;
 
-    int *res=new int [(argc-1)/2];
     for (int i = 1; i <= (argc-1)/2; ++i)
     {
-        res[i-1]=0;
         int left= std::atoi(argv[2*i-1]);
         int right= std::atoi(argv[2*i]);
         
         if (right < left) {
-            //return -1;
+            std::cout << 0 << "\n";
             continue;
         }
 
@@ -39,6 +37,7 @@ int main(int argc, char* argv[])
             }
         }
         if (left_idx == -1) {
+            std::cout << 0 << "\n";
             continue;
         }
         for (int j=left_idx; j<Size; ++j) {
@@ -48,18 +47,15 @@ int main(int argc, char* argv[])
             if (Data[j] > right) break;
         }
         if (right_idx == -1) {
+            std::cout << 0 << "\n";
             continue;
         }
+        int sum=0;
         for (int j=left_idx; j<=right_idx; ++j) {
-            res[i-1]+=is_prime(Data[j]);
+            sum+=is_prime(Data[j]);
         }
-    }
-    
-    for (int i=0; i<(argc-1)/2; ++i) {
-        std::cout<<res[i]<<"\n";
+        std::cout << sum << "\n";
     }
 
-    delete[] res;
-        
     return 0;
 }
