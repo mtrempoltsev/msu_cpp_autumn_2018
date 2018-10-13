@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void reshetoAtkina(const int& MaxPrime, set<int>& prime_numbers)
+void sieveOfAtkin(const int& MaxPrime, set<int>& prime_numbers)
 {
 	auto is_prime = make_unique<bool[]>(Size);
 
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	{ 
 		const int MaxPrime = 100000;
 		set<int> prime_numbers;
-		reshetoAtkina(MaxPrime, prime_numbers);
+		sieveOfAtkin(MaxPrime, prime_numbers);
 	
 		for (int i = 1; i < argc; i +=2)
 		{
