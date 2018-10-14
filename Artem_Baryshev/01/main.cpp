@@ -4,7 +4,6 @@
 #include <cmath>
 
 const int MAX_N = 1e5 + 1;
-int ans[MAX_N] = {0, };
 
 int find_first(int value) {
     int left = 0, right = Size;
@@ -35,8 +34,8 @@ int find_second(int value) {
     return left;
 }
 
-bool IsPrime(int number) {
-    if (!ans[number]) {
+bool IsPrime(const int number, const int * prime_numbers) {
+    if (!prime_numbers[number]) {
         return true;
     } else {
         return false;
@@ -48,12 +47,13 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
     
-    ans[1] = 1;
-    ans[0] = 1;
+    int prime_numbers[MAX_N] = {0, };
+    prime_numbers[1] = 1;
+    prime_numbers[0] = 1;
     for (int i = 2; i * i < MAX_N; ++i) {
-        if (!ans[i]) {
+        if (!prime_numbers[i]) {
             for (int j = i * i; j < MAX_N; j += i) {
-                ans[j] = 1;
+                prime_numbers[j] = 1;
             }
         }
     }
@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
         }
         int ans = 0;
         for (int i = position_first; i <= position_second; ++i) {
-            if (IsPrime(Data[i])) {
+            if (IsPrime(Data[i], prime_numbers)) {
                 ans++;
             }
         }
