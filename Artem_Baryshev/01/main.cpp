@@ -38,8 +38,9 @@ counting_prefix_ans(int * prefix_ans, int * prime_numbers)
 int
 counting_ans(int position_first, int position_second, int * prefix_ans)
 {
+    
     int ans = 0;
-    if (position_first <= position_second) {
+    if (position_first <= position_second && position_second >= 0) {
         if (position_first > 0) {
             ans = prefix_ans[position_second] - prefix_ans[position_first - 1];
         } else {
@@ -54,12 +55,10 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
     
-    int *prime_numbers = new int[MAX_N];
-    memset(prime_numbers, 0, MAX_N);
+    int *prime_numbers = new int[MAX_N]();
     counting_prime_numbers(prime_numbers);
     
-    int *prefix_ans = new int[Size + 1];
-    memset(prefix_ans, 0, Size + 1);
+    int *prefix_ans = new int[Size + 1]();
     counting_prefix_ans(prefix_ans, prime_numbers);
     
     for (int i = 1; i < argc; i += 2) {
@@ -67,6 +66,9 @@ int main(int argc, const char * argv[]) {
         int second_value = std::atoi(argv[i + 1]);
         int position_first = std::lower_bound(Data, Data + Size, first_value) - Data;
         int position_second = std::upper_bound(Data, Data + Size, second_value) - Data - 1;
+        if (position_first == Size) {
+            position_first--;
+        }
         if (Data[position_first] != first_value || Data[position_second] != second_value) {
             printf("%d\n", 0);
             continue;
