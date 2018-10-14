@@ -1,0 +1,163 @@
+==1934== Memcheck, a memory error detector
+==1934== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==1934== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==1934== Command: ./hw1_Dokukin 1 100
+==1934== Parent PID: 1789
+==1934== 
+--1934-- 
+--1934-- Valgrind options:
+--1934--    --log-file=valgrind_log
+--1934--    --leak-check=full
+--1934--    --show-leak-kinds=all
+--1934--    -v
+--1934-- Contents of /proc/version:
+--1934--   Linux version 4.10.0-42-generic (buildd@lgw01-amd64-007) (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.5) ) #46~16.04.1-Ubuntu SMP Mon Dec 4 15:57:59 UTC 2017
+--1934-- 
+--1934-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-rdtscp-sse3
+--1934-- Page sizes: currently 4096, max supported 4096
+--1934-- Valgrind library directory: /usr/lib/valgrind
+--1934-- Reading syms from /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin
+--1934-- Reading syms from /lib/x86_64-linux-gnu/ld-2.23.so
+--1934--   Considering /lib/x86_64-linux-gnu/ld-2.23.so ..
+--1934--   .. CRC mismatch (computed aa979a42 wanted 9019bbb7)
+--1934--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.23.so ..
+--1934--   .. CRC is valid
+--1934-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--1934--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--1934--   .. CRC mismatch (computed eea41ea9 wanted 2009db78)
+--1934--    object doesn't have a symbol table
+--1934--    object doesn't have a dynamic symbol table
+--1934-- Scheduler: using generic scheduler lock implementation.
+--1934-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==1934== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-1934-by-sergy-on-???
+==1934== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-1934-by-sergy-on-???
+==1934== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-1934-by-sergy-on-???
+==1934== 
+==1934== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==1934== don't want to do, unless you know exactly what you're doing,
+==1934== or are doing some strange experiment):
+==1934==   /usr/lib/valgrind/../../bin/vgdb --pid=1934 ...command...
+==1934== 
+==1934== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==1934==   /path/to/gdb ./hw1_Dokukin
+==1934== and then give GDB the following command
+==1934==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=1934
+==1934== --pid is optional if only one valgrind process is running
+==1934== 
+--1934-- REDIR: 0x401cfd0 (ld-linux-x86-64.so.2:strlen) redirected to 0x3809e181 (???)
+--1934-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--1934--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--1934--   .. CRC mismatch (computed 2567ccf6 wanted 49420590)
+--1934--    object doesn't have a symbol table
+--1934-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--1934--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--1934--   .. CRC mismatch (computed 0e27c9a8 wanted ac585421)
+--1934--    object doesn't have a symbol table
+==1934== WARNING: new redirection conflicts with existing -- ignoring it
+--1934--     old: 0x0401cfd0 (strlen              ) R-> (0000.0) 0x3809e181 ???
+--1934--     new: 0x0401cfd0 (strlen              ) R-> (2007.0) 0x04c31020 strlen
+--1934-- REDIR: 0x401b920 (ld-linux-x86-64.so.2:index) redirected to 0x4c30bc0 (index)
+--1934-- REDIR: 0x401bb40 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c320d0 (strcmp)
+--1934-- REDIR: 0x401dd30 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c35270 (mempcpy)
+--1934-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+--1934--   Considering /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 ..
+--1934--   .. CRC mismatch (computed 3d999b0e wanted 70646140)
+--1934--    object doesn't have a symbol table
+--1934-- Reading syms from /lib/x86_64-linux-gnu/libm-2.23.so
+--1934--   Considering /lib/x86_64-linux-gnu/libm-2.23.so ..
+--1934--   .. CRC mismatch (computed e8c3647b wanted c3efddac)
+--1934--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.23.so ..
+--1934--   .. CRC is valid
+--1934-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1
+--1934--   Considering /lib/x86_64-linux-gnu/libgcc_s.so.1 ..
+--1934--   .. CRC mismatch (computed b9a68419 wanted 29d51b00)
+--1934--    object doesn't have a symbol table
+--1934-- Reading syms from /lib/x86_64-linux-gnu/libc-2.23.so
+--1934--   Considering /lib/x86_64-linux-gnu/libc-2.23.so ..
+--1934--   .. CRC mismatch (computed 7a8ee3e4 wanted a5190ac4)
+--1934--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.23.so ..
+--1934--   .. CRC is valid
+--1934-- REDIR: 0x576aa00 (libc.so.6:strcasecmp) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x5766280 (libc.so.6:strcspn) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x576ccf0 (libc.so.6:strncasecmp) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x57686f0 (libc.so.6:strpbrk) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x5768a80 (libc.so.6:strspn) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x576a14b (libc.so.6:memcpy@GLIBC_2.2.5) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x5768400 (libc.so.6:rindex) redirected to 0x4c308a0 (rindex)
+--1934-- REDIR: 0x575f130 (libc.so.6:malloc) redirected to 0x4c2db20 (malloc)
+--1934-- REDIR: 0x5766720 (libc.so.6:strlen) redirected to 0x4c30f60 (strlen)
+--1934-- REDIR: 0x5769bf0 (libc.so.6:__GI_memcmp) redirected to 0x4c33b90 (__GI_memcmp)
+--1934-- REDIR: 0x5764cd0 (libc.so.6:strcmp) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x577a570 (libc.so.6:__strcmp_sse2_unaligned) redirected to 0x4c31f90 (strcmp)
+--1934-- REDIR: 0x4ec7f10 (libstdc++.so.6:operator new[](unsigned long)) redirected to 0x4c2e7a0 (operator new[](unsigned long))
+==1934== Invalid write of size 1
+==1934==    at 0x4011BA: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==  Address 0x5acf320 is 0 bytes after a block of size 100,000 alloc'd
+==1934==    at 0x4C2E80F: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1934==    by 0x40102F: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934== 
+--1934-- REDIR: 0x4ec7e60 (libstdc++.so.6:operator new(unsigned long)) redirected to 0x4c2e080 (operator new(unsigned long))
+==1934== Invalid read of size 1
+==1934==    at 0x401233: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==  Address 0x5acf320 is 0 bytes after a block of size 100,000 alloc'd
+==1934==    at 0x4C2E80F: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1934==    by 0x40102F: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934== 
+--1934-- REDIR: 0x4ec5f40 (libstdc++.so.6:operator delete[](void*)) redirected to 0x4c2f6e0 (operator delete[](void*))
+--1934-- REDIR: 0x5769bb0 (libc.so.6:bcmp) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--1934-- REDIR: 0x5849430 (libc.so.6:__memcmp_sse4_1) redirected to 0x4c33cd0 (__memcmp_sse4_1)
+--1934-- REDIR: 0x4ec5f10 (libstdc++.so.6:operator delete(void*)) redirected to 0x4c2f1e0 (operator delete(void*))
+--1934-- REDIR: 0x575f4f0 (libc.so.6:free) redirected to 0x4c2ed80 (free)
+==1934== 
+==1934== HEAP SUMMARY:
+==1934==     in use at exit: 72,704 bytes in 1 blocks
+==1934==   total heap usage: 9,595 allocs, 9,594 frees, 557,408 bytes allocated
+==1934== 
+==1934== Searching for pointers to 1 not-freed blocks
+==1934== Checked 106,912 bytes
+==1934== 
+==1934== 72,704 bytes in 1 blocks are still reachable in loss record 1 of 1
+==1934==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1934==    by 0x4EC3EFF: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21)
+==1934==    by 0x40106B9: call_init.part.0 (dl-init.c:72)
+==1934==    by 0x40107CA: call_init (dl-init.c:30)
+==1934==    by 0x40107CA: _dl_init (dl-init.c:120)
+==1934==    by 0x4000C69: ??? (in /lib/x86_64-linux-gnu/ld-2.23.so)
+==1934==    by 0x2: ???
+==1934==    by 0xFFF0002AE: ???
+==1934==    by 0xFFF0002BC: ???
+==1934==    by 0xFFF0002BE: ???
+==1934== 
+==1934== LEAK SUMMARY:
+==1934==    definitely lost: 0 bytes in 0 blocks
+==1934==    indirectly lost: 0 bytes in 0 blocks
+==1934==      possibly lost: 0 bytes in 0 blocks
+==1934==    still reachable: 72,704 bytes in 1 blocks
+==1934==         suppressed: 0 bytes in 0 blocks
+==1934== 
+==1934== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+==1934== 
+==1934== 1 errors in context 1 of 2:
+==1934== Invalid read of size 1
+==1934==    at 0x401233: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==  Address 0x5acf320 is 0 bytes after a block of size 100,000 alloc'd
+==1934==    at 0x4C2E80F: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1934==    by 0x40102F: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934== 
+==1934== 
+==1934== 1 errors in context 2 of 2:
+==1934== Invalid write of size 1
+==1934==    at 0x4011BA: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==  Address 0x5acf320 is 0 bytes after a block of size 100,000 alloc'd
+==1934==    at 0x4C2E80F: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1934==    by 0x40102F: sieveOfAtkin(int const&, std::set<int, std::less<int>, std::allocator<int> >&) (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934==    by 0x400CB1: main (in /home/sergy/Рабочий стол/c++_hw/hw1_Dokukin)
+==1934== 
+==1934== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
