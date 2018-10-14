@@ -4,43 +4,44 @@
 #include <vector>
 #include <assert.h>
 #include <cstdint>
+#include <memory>
 #include "numbers.dat" 
 
-//table of primes on [0, n]
+
 class PrimeTable
 {
+//table of primes on [0, n]
+//table[i] equals 1 if prime; equals 0 if composite or 0, 1
 public:
     PrimeTable(int32_t _n): n(_n)
     {
         assert(n > 1);
 
-        table.assign(n + 1, true);
+        table.assign(n + 1, 1);
 
-        table[0] = false;
-        table[1] = false;
+        table[0] = 0;
+        table[1] = 0;
 
         for (int32_t i = 2; i * i <= n; i++)
-            if (table[i])
+            if (table[i] == 1)
                 for (int32_t j = i * i; j <= n; j += i)
-                    table[j] = false;
+                    table[j] = 0;
     }
 
-    bool operator[](size_t ind)
+    int8_t operator[](size_t ind) const
     {
         return table[ind];
     }
 
 private:
-    std::vector<bool> table;
+    std::vector<int8_t> table;
     int32_t n;
 
 };
 
 
-int32_t primeCountArray(int32_t lowerBound, int32_t upperBound, int32_t maxRightBound)
+int32_t primeCountArray(int32_t lowerBound, int32_t upperBound, const PrimeTable& primeTable)
 {
-    static PrimeTable primeTable(maxRightBound);
-
     if (lowerBound > upperBound)
         return 0;
 
@@ -59,7 +60,7 @@ int32_t primeCountArray(int32_t lowerBound, int32_t upperBound, int32_t maxRight
     //now we know that upperBound exists in array
     int32_t ans = 0;
     for (; (*leftIter) <= upperBound && leftIter < Data + Size; leftIter++)
-        ans += primeTable[(*leftIter)] ? 1 : 0;
+        ans += primeTable[(*leftIter)];
 
     return ans;
 }
@@ -67,7 +68,8 @@ int32_t primeCountArray(int32_t lowerBound, int32_t upperBound, int32_t maxRight
 int main(int argc, char* argv[])
 {
     const int32_t maxRightBound = 1e5;
-    
+    PrimeTable primeTable(maxRightBound);
+
     //incorrect input
     if (argc == 1 || argc % 2 == 0)
         return -1;
@@ -84,7 +86,7 @@ int main(int argc, char* argv[])
         if (sscanf(argv[i], "%d", &upperBound) != 1)
             return -1;
 
-        std::cout << primeCountArray(lowerBound, upperBound, maxRightBound) << std::endl;
+        std::cout << primeCountArray(lowerBound, upperBound, primeTable) << std::endl;
     }
 
     return 0;
