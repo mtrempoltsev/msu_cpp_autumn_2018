@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
         if (position_first == Size) {
             position_first--;
         }
-        if (Data[position_first] != first_value || Data[position_second] != second_value) {
+        if (position_second < 0 || Data[position_first] != first_value || Data[position_second] != second_value) {
             printf("%d\n", 0);
             continue;
         }
