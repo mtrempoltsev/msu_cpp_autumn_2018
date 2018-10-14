@@ -55,9 +55,11 @@ int main(int argc, const char * argv[]) {
     }
     
     int *prime_numbers = new int[MAX_N];
+    memset(prime_numbers, 0, MAX_N);
     counting_prime_numbers(prime_numbers);
     
     int *prefix_ans = new int[Size + 1];
+    memset(prefix_ans, 0, Size + 1);
     counting_prefix_ans(prefix_ans, prime_numbers);
     
     for (int i = 1; i < argc; i += 2) {
