@@ -1,46 +1,10 @@
 #include <iostream>
 #include "numbers.dat"
 #include <stdio.h>
+#include <algorithm>
 #include <cmath>
 
 const int MAX_N = 1e5 + 1;
-
-int find_first(int value) {
-    int left = 0, right = Size;
-    while (right - left > 1) {
-        int mid = (left + right) / 2;
-        if (Data[mid] >= value) {
-            right = mid;
-        } else {
-            left = mid;
-        }
-    }
-    if (Data[left] == value) {
-        right = left;
-    }
-    return right;
-}
-
-int find_second(int value) {
-    int left = 0, right = Size;
-    while (right - left > 1) {
-        int mid = (left + right) / 2;
-        if (Data[mid] <= value) {
-            left = mid;
-        } else {
-            right = mid;
-        }
-    }
-    return left;
-}
-
-bool IsPrime(const int number, const int * prime_numbers) {
-    if (!prime_numbers[number]) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 int main(int argc, const char * argv[]) {
     if (argc % 2 != 1 || argc == 1) {
@@ -58,19 +22,32 @@ int main(int argc, const char * argv[]) {
         }
     }
     
+    int prefix_ans[Size + 1] = {0, };
+    for (int i = 0; i < Size; ++i) {
+        if (i == 0 && !prime_numbers[Data[i]]) {
+            prefix_ans[i] = 1;
+        } else if (!prime_numbers[Data[i]]) {
+            prefix_ans[i] = prefix_ans[i - 1] + 1;
+        } else {
+            prefix_ans[i] = prefix_ans[i - 1];
+        }
+    }
+    
     for (int i = 1; i < argc; i += 2) {
         int first_value = std::atoi(argv[i]);
         int second_value = std::atoi(argv[i + 1]);
-        int position_first = find_first(first_value);
-        int position_second = find_second(second_value);
+        int position_first = std::lower_bound(Data, Data + Size, first_value) - Data;
+        int position_second = std::upper_bound(Data, Data + Size, second_value) - Data - 1;
         if (Data[position_first] != first_value || Data[position_second] != second_value) {
             printf("%d\n", 0);
             continue;
         }
         int ans = 0;
-        for (int i = position_first; i <= position_second; ++i) {
-            if (IsPrime(Data[i], prime_numbers)) {
-                ans++;
+        if (position_first <= position_second) {
+            if (position_first > 0) {
+                ans = prefix_ans[position_second] - prefix_ans[position_first - 1];
+            } else {
+                ans = prefix_ans[position_second];
             }
         }
         printf("%d\n", ans);
