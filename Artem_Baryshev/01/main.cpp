@@ -36,7 +36,7 @@ counting_prefix_ans(int * prefix_ans, int * prime_numbers)
 }
 
 int
-count_prime_numbers(int position_first, int position_second, int * prefix_ans)
+counting_ans(int position_first, int position_second, int * prefix_ans)
 {
     int ans = 0;
     if (position_first <= position_second) {
@@ -71,7 +71,7 @@ int main(int argc, const char * argv[]) {
             printf("%d\n", 0);
             continue;
         }
-        int ans = count_prime_numbers(position_first, position_second, prefix_ans);
+        int ans = counting_ans(position_first, position_second, prefix_ans);
         printf("%d\n", ans);
     }
     delete[] prime_numbers;
