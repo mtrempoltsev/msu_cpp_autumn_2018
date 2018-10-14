@@ -41,15 +41,15 @@ size_t post_search(int const * Data, size_t idx, int value) {
 	return idx;
 }
 
-size_t numbers_of_prime(bool * prime, int const * Data, size_t max_size, int first, int second) {
-	size_t begin = post_search(Data, binary_search(Data, first, 0, max_size - 1), first);
-	size_t end   = post_search(Data, binary_search(Data, second, 0, max_size - 1), second);
+size_t numbers_of_prime(bool * prime, int const * Data, size_t Size, int first, int second) {
+	size_t begin = post_search(Data, binary_search(Data, first, 0, Size - 1), first);
+	size_t end   = post_search(Data, binary_search(Data, second, 0, Size - 1), second);
 	size_t count = 0;
 
 	if (Data[begin] != first || Data[end] != second)
 		return count;
 
-	while (Data[begin] <= second && begin < max_size) {
+	while (Data[begin] <= second && begin < Size) {
 		if (prime[Data[begin]])
 			++count;
 		++begin;
@@ -59,7 +59,7 @@ size_t numbers_of_prime(bool * prime, int const * Data, size_t max_size, int fir
 }
 
 int main(int argc, char * argv[]) {
-	size_t const max_size = Size;
+	size_t const max_size = 100000 + 1;
 	bool * prime = new bool [max_size];
 	prepare(prime, max_size);
 
@@ -74,7 +74,7 @@ int main(int argc, char * argv[]) {
 
 		int second = std::atoi(argv[i + 1]);
 
-		std::cout << numbers_of_prime(prime, Data, max_size, first, second) << std::endl;
+		std::cout << numbers_of_prime(prime, Data, Size, first, second) << std::endl;
 	}
 
 	delete [] prime;
