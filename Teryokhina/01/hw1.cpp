@@ -34,7 +34,6 @@ int find_indexes(const int from, const int to, int &start, int &end){
 
   if(i < start)
     return -1;
-  end = i;
 
   return 0;
 }
