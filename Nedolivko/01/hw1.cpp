@@ -33,7 +33,7 @@ int main (int argc, char *argv[])
 				int count = 0;
 				data_t a = std::atoi(argv[i]);
 				data_t b = std::atoi(argv[i+1]);
-				if (a < b) {
+				if (a <= b) {
 					int j = find_begin(Data, a, Size);
 					bool equ = false;
 					for (; (Data[j] <= b) && (j < Size); j++) 
@@ -51,18 +51,11 @@ int main (int argc, char *argv[])
 							count++;
 						}
 					}				
-				} else if (a == b) {
-					if (is_prime(a)) {
-						int j = find_begin(Data, a, Size);
-						for (; Data[j] == a; ++j) {
-							count++;
-						}
-					}
 				}
 				std::cout << count << std::endl;
 			}
 		} else {
-			throw -1;
+			throw std::invalid_argument("Wrong number of input parameters!");
 		}
 	}
 	catch(...) {
