@@ -38,8 +38,8 @@ counting_prefix_ans(int * prefix_ans, int * prime_numbers)
 int
 counting_ans(int position_first, int position_second, int * prefix_ans, int first_value, int second_value)
 {
-    if (position_first <= position_second && position_first < Size
-        && Data[position_first] == first_value && Data[position_second] == second_value) {
+    if (position_first <= position_second
+            && Data[position_first] == first_value && Data[position_second] == second_value) {
         if (position_first > 0) {
             return prefix_ans[position_second] - prefix_ans[position_first - 1];
         } else {
