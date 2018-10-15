@@ -2,7 +2,7 @@
 #include <cmath>
 #include "numbers.dat"
 
-int Search_index(int input_range, int flag) {
+int search_index(int input_range, int flag) {
 	for (int i = 0; i < Size; ++i)
 		if (Data[i] == input_range) {
 			if (!flag)
@@ -17,12 +17,12 @@ int Search_index(int input_range, int flag) {
 	return -1;
 }
 
-int Arg(int index_arg, char *argv[], int flag) {
+int arg(int index_arg, char *argv[], int flag) {
 	int input_range = std::atoi(argv[index_arg]);
-	return Search_index(input_range, flag);
+	return search_index(input_range, flag);
 }
 
-bool Prime(int number) {
+bool is_prime(int number) {
 	if (number == 1)
 		return false;
 	for (int divisor = 2; divisor <= sqrt(number); ++divisor)
@@ -31,12 +31,11 @@ bool Prime(int number) {
 	return true;
 }
 
-int Prime_range(int range_flag1, int range_flag2) {
+int prime_range(int range_flag1, int range_flag2) {
 	int prime_numbers = 0;
-	for (int i = range_flag1; i < range_flag2; ++i) {
-		if (Prime(Data[i]))
+	for (int i = range_flag1; i < range_flag2; ++i)
+		if (is_prime(Data[i]))
 			prime_numbers++;
-	}
 	return prime_numbers;
 }
 
@@ -46,13 +45,13 @@ int main(int argc, char *argv[]) {
 			throw -1;
 		int range_flag1, range_flag2;
 		for (int i = 1; i < argc; i += 2) {
-			range_flag1 = Arg(i, argv, 0);
-			range_flag2 = Arg(i + 1, argv, 1);
+			range_flag1 = arg(i, argv, 0);
+			range_flag2 = arg(i + 1, argv, 1);
 			if ((range_flag1 == -1) || (range_flag2 == -1) || (range_flag1 > range_flag2)) {
 				std::cout << "0";
 			}
 			else
-				std::cout << Prime_range(range_flag1, range_flag2) << std::endl;
+				std::cout << prime_range(range_flag1, range_flag2) << std::endl;
 		}
 	}
 	catch (...) {
