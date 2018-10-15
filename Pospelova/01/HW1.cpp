@@ -43,7 +43,7 @@ int prime_range(int range_flag1, int range_flag2) {
 int main(int argc, char *argv[]) {
 	try {
 		if ((argc == 1) || (!(argc % 2)))
-			throw invalid_argument("Wrong number of arguments to the function");
+			throw std::invalid_argument("Wrong number of arguments to the function");
 		int range_flag1, range_flag2;
 		for (int i = 1; i < argc; i += 2) {
 			range_flag1 = arg(i, argv, 0);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 				std::cout << prime_range(range_flag1, range_flag2) << std::endl;
 		}
 	}
-	catch (...) {
+	catch (std::exception &e) {
 		std::cout << "-1";
 		return -1;
 	}
