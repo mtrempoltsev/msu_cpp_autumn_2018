@@ -33,7 +33,7 @@ bool is_prim(int n)
     static int last_in = 0;
     static bool last_res = false;
     // если функция вызвана несколько раз подряд с одним и тем же результатом,
-    // можно не вычислять ответ заново
+    //     можно не вычислять ответ заново
     if(n <= 1) {
         return false;
     }
@@ -43,10 +43,10 @@ bool is_prim(int n)
     last_in = n;
     for(int i = 2; i * i <= n; ++i) {
         if(n % i == 0) {
-            return last_res = false;
+            return (last_res = false);
         }
     }
-    return last_res = true;
+    return (last_res = true);
 }
 
 int main(int argc, char* argv[])
