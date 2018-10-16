@@ -3,8 +3,7 @@
 #include <iostream>
 #include <math.h>
 
-int
-prime_num(int x){
+int prime_num(int x){
     if (x < 2){
         return 0;
     }
@@ -16,8 +15,7 @@ prime_num(int x){
     return 1;
 }
 
-int
-find(int left_num, int right_num){
+int find(int left_num, int right_num){
     int left_ind = -1, right_ind = -1;
     for (int i = 0; i < Size && left_ind == -1; ++i){
         if (Data[i] == left_num){
@@ -52,8 +50,7 @@ find(int left_num, int right_num){
     return count;
 }
 
-int
-main(int argc, char *argv[]){
+int main(int argc, char *argv[]){
     if (argc == 1 || (argc - 1) % 2){
         return -1;
     }
