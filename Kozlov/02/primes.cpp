@@ -17,8 +17,8 @@ bool prime(int a)
 {
    int i;
    if (a <= 1 || a % 2 == 0)  return 0;
-   for(i = 3; i*i <= a && a % i; i += 2) ;
-   return a == 2 || i*i > a;
+   for(i = 3; i * i <= a && a % i; i += 2);
+   return a == 2 || i * i > a;
 }
 
 int lower(int a)
@@ -27,7 +27,7 @@ int lower(int a)
 
     while (l < r)
     {
-        int m = l + (r - l)/2;
+        int m = l + (r - l) / 2;
         if (Data[m] >= a)
             r = m;
         else
@@ -41,7 +41,7 @@ int upper(int a)
       int l = 0, r = Size - 1;
       while (l < r)
       {
-        int m = r - (r - l)/2;
+        int m = r - (r - l) / 2;
         if (Data[m] <= a)
           l = m;
         else
