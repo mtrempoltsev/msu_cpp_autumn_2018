@@ -23,7 +23,7 @@ char is_prime(int x) {
 int *array_first_pos(int size)
 {
 	int *pos_first = (int*)malloc(size * sizeof(*pos_first));
-	for (int i = 0; i < MAX_NUMBER + 1; i++) {
+	for (int i = 0; i < size; i++) {
 		pos_first[i] = -1;
 	}
 	for (int i = 0; i < Size; i++) {
@@ -37,7 +37,7 @@ int *array_first_pos(int size)
 int *array_last_pos(int size)
 {
 	int *pos_last = (int*)malloc(size * sizeof(*pos_last));
-	for (int i = 0; i < MAX_NUMBER + 1; i++) {
+	for (int i = 0; i < size; i++) {
 		pos_last[i] = -1;
 	}
 	for (int i = 0; i < Size; i++) {
