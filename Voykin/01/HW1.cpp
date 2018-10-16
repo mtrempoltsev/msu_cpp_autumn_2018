@@ -2,6 +2,7 @@
 #include <cmath>
 #include "numbers.dat"
 using namespace std;
+
 int search_limit(int x)
 {
     int left_limit = 0, right_limit = Size - 1;
@@ -22,7 +23,7 @@ int search_limit(int x)
         }
         else
         {
-            while ((cursor > 0)&&(Data[cursor]==Data[cursor-1]))
+            while ((cursor > 0) && (Data[cursor] == Data[cursor-1]))
             {
                 cursor--;
             }
@@ -41,32 +42,27 @@ int search_limit(int x)
         }
     }
 }
-int it_simple(int x, int* praim)
+void it_no_simple(bool* praim, int n)
 {
-    int sqrt_x = sqrt(x);
-    if (x != 1)
+    praim[0] = praim[1] = true;
+    for (int i=2; i*i < n; i++)
     {
-        for(int i = 0; praim[i] <= sqrt_x; i++)
+        if (!praim[i])
         {
-            if (x % praim[i] == 0)
+            for (int j = i*i; j < n; j += i)
             {
-                return 0;
+                praim[j] = true;
             }
         }
     }
-    else
-    {
-        return 0;
-    }
-    return 1;
 }
-void search_prime_numbers(int left_limit, int stop,int *praim)
+void search_prime_numbers(int left_limit, int stop,bool *praim)
 {
     int number_of_simple = 0;
     int i;
-    for (i = left_limit; (i<Size)&&(Data[i]<=stop); i++)
+    for (i = left_limit; (i < Size) && (Data[i] <= stop); i++)
     {
-        number_of_simple += it_simple(Data[i], praim);
+        number_of_simple += !praim[Data[i]];
     }
     if (Data[i-1] == stop)
     {
@@ -81,11 +77,10 @@ void search_prime_numbers(int left_limit, int stop,int *praim)
 int main(int argc, char* argv[])
 {
     int left_limit;
-    int *praim = new int [66]{2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,
-    137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293,307,311,313,317};
+    bool *praim = new bool [Data[Size-1]+1]{};
     if (argc == 1)
     {
-        cout << 0 <<endl;
+        cout << 0 << endl;
         return -1;
     }
     if (argc % 2 == 0)
@@ -97,11 +92,12 @@ int main(int argc, char* argv[])
         left_limit = search_limit(atoi(argv[i]));
         if (left_limit != -1)
         {
+            it_no_simple(praim,Data[Size-1]+1);
             search_prime_numbers(left_limit, atoi(argv[i+1]), praim);
         }
         else
         {
-            cout << 0 <<endl;
+            cout << 0 << endl;
         }
     }
     delete []praim;
