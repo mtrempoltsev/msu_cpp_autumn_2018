@@ -1,9 +1,8 @@
 #include <iostream>
 #include <malloc.h>
 #include "numbers.dat"
-//можно оптимизировать не считая все 10000 а находя максимальный в массиве и считая соотвественно до него
 
-int search_numbers_in_mas_using_mask(int x, int y, int* a, int n) {
+int search_numbers_in_arr_using_mask(int x, int y, int* a, int n) {
     int answ = 0;
     int i = -1, j = -1;
     for (int k = 0; k < Size; ++k){
@@ -12,7 +11,7 @@ int search_numbers_in_mas_using_mask(int x, int y, int* a, int n) {
     }
     if (i == -1 || j == -1) return 0;
     for (int k = i; k <= j; ++k){
-        if (Data[k] > n) throw 0;
+        if (Data[k] > n) throw std::out_of_range("out of mask");
         if (a[Data[k]]) answ++;
     }
     return answ;
@@ -38,14 +37,14 @@ int main(int argc, char* argv[])
     if (sieve == nullptr) return -1;
     try {
         build_sieve_of_eratosthenes(sieve, MAX_VALUE);
-        if (argc % 2 == 0 || argc == 1) throw 0;
+        if (argc % 2 == 0 || argc == 1) throw std::invalid_argument("strange count");
         for (int i = 1; i < argc; ++i)
         {
             int x = std::atoi(argv[i]);
             int y = std::atoi(argv[++i]);
-            std::cout << search_numbers_in_mas_using_mask(x, y, sieve, MAX_VALUE) << std::endl;
+            std::cout << search_numbers_in_arr_using_mask(x, y, sieve, MAX_VALUE) << std::endl;
         }
-    } catch(int) {
+    } catch(std::logic_error) {
         return_value = -1;
     }
     free(sieve);
