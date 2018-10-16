@@ -27,7 +27,7 @@ int lower(int a)
 
     while (l < r)
     {
-        int m = l + (r-l)/2;
+        int m = l + (r - l)/2;
         if (Data[m] >= a)
             r = m;
         else
@@ -52,11 +52,11 @@ int upper(int a)
 
 int process(int l, int r)
 {
-    if ( check(l, r) ) return 0;
+    if (check(l, r)) return 0;
     int counter = 0;
     while (l <= r)
     {
-        if (prime( Data[l] ) )
+        if (prime(Data[l]))
         {
             do
             {
