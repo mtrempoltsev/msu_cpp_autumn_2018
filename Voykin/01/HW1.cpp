@@ -45,11 +45,11 @@ int search_limit(int x)
 void it_no_simple(bool* praim, int n)
 {
     praim[0] = praim[1] = true;
-    for (int i=2; i*i<=n; i++)
+    for (int i=2; i*i < n; i++)
     {
         if (!praim[i])
         {
-            for (int j = i*i; j <= n; j += i)
+            for (int j = i*i; j < n; j += i)
             {
                 praim[j] = true;
             }
