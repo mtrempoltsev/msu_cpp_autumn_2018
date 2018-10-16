@@ -7,6 +7,7 @@
 
 const int MAX_N = 1e5 + 1;
 
+// O(NloglogN)
 void
 counting_prime_numbers(int * prime_numbers, int size_prime_numbers)
 {
@@ -21,6 +22,7 @@ counting_prime_numbers(int * prime_numbers, int size_prime_numbers)
     }
 }
 
+// O(N)
 void
 counting_prefix_ans(int * prefix_ans, int size_prefix_ans, int * prime_numbers)
 {
@@ -35,6 +37,7 @@ counting_prefix_ans(int * prefix_ans, int size_prefix_ans, int * prime_numbers)
     }
 }
 
+//O(1)
 int
 counting_ans(int position_first, int position_second, int * prefix_ans, int size_prefix_ans, int first_value, int second_value)
 {
@@ -54,10 +57,12 @@ counting_ans(int position_first, int position_second, int * prefix_ans, int size
     }
 }
 
+//O(NloglogN) + C * O(logN)
 int main(int argc, const char * argv[]) {
     if (argc % 2 != 1 || argc == 1) {
         return -1;
     }
+    
     
     int *prime_numbers = new int[MAX_N]();
     counting_prime_numbers(prime_numbers, MAX_N);
@@ -68,6 +73,7 @@ int main(int argc, const char * argv[]) {
     for (int i = 1; i < argc; i += 2) {
         int first_value = std::atoi(argv[i]);
         int second_value = std::atoi(argv[i + 1]);
+        //O(logN)
         int position_first = std::lower_bound(Data, Data + Size, first_value) - Data;
         int position_second = std::upper_bound(Data, Data + Size, second_value) - Data - 1;
         int ans = counting_ans(position_first, position_second, prefix_ans, Size, first_value, second_value);
