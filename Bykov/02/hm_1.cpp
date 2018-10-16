@@ -1,6 +1,6 @@
 ﻿#include"numbers.dat"
 #include<iostream>
-int isProst(int k){
+int isPrime(int k){
     for(int i=2; i * i < k + 1; i++)
         if(k % i==0)
             return 0;
@@ -36,21 +36,15 @@ int elementInData(int el){
 int main(int argc,char* argv[]){
     if(((argc-1)%2!=0)||(argc==1))
         return -1;
-    int *mas = new int[argc / 2];
     for(int i = 1; i < argc; i += 2){
         int counter = 0;
-        int nijn = atoi(argv[i]);
-        int verhn = atoi(argv[i+1]);
-        if(!(elementInData(verhn) && elementInData(nijn))){
-            delete []mas;
+        int left = atoi(argv[i]);
+        int right = atoi(argv[i+1]);
+        if(!(elementInData(left) && elementInData(right)))
             return -1;
-        }
-        int elemind = binSearch(nijn,0,Size);
-        while(Data[elemind]<=verhn)
-            counter += isProst(Data[elemind++]);
-        mas[i/2] = counter;
+        int elemind = binSearch(left, 0, Size);
+        while(Data[elemind] <= right)
+            counter += isPrime(Data[elemind++]);
+        std::cout<<counter<<'\n';
     }
-    for(int i = 0; i < argc / 2; i++)
-        std::cout<<mas[i]<<'\n';
-    delete []mas;
 }
