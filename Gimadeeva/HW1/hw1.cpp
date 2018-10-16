@@ -12,7 +12,7 @@ bool is_prime (int number) {
     return 1;
 }
 
-int find_left_idx (const int * Data, int Size, const int & left) {
+int find_left_idx (const int * Data, const int & Size, const int & left) {
     int left_idx=-1;
     for (int j=0; j<Size; ++j) {
         if (Data[j] == left) {
@@ -23,7 +23,7 @@ int find_left_idx (const int * Data, int Size, const int & left) {
     return left_idx;
 }
 
-int find_right_idx (const int * Data, int Size, const int & right, const int & left_idx) {
+int find_right_idx (const int * Data, const int & Size, const int & right, const int & left_idx) {
     int right_idx=-1;
     for (int j=left_idx; j<Size; ++j) {
         if ( Data[j] == right) {
