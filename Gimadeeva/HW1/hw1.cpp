@@ -5,7 +5,7 @@
 
 bool is_prime (int number) {
     if (number == 1) return 0;
-    for (int i= 2; i*i <= number; ++i) {
+    for (int i = 2; i*i <= number; ++i) {
         if (number % i == 0) return 0;
     }
 
@@ -13,10 +13,10 @@ bool is_prime (int number) {
 }
 
 int find_left_idx (const int * Data, const int & Size, const int & left) {
-    int left_idx=-1;
-    for (int j= 0; j < Size; ++j) {
+    int left_idx = -1;
+    for (int j = 0; j < Size; ++j) {
         if (Data[j] == left) {
-            left_idx=j;
+            left_idx = j;
             break;
         }
     }
@@ -24,10 +24,10 @@ int find_left_idx (const int * Data, const int & Size, const int & left) {
 }
 
 int find_right_idx (const int * Data, const int & Size, const int & right, const int & left_idx) {
-    int right_idx=-1;
-    for (int j= left_idx; j < Size; ++j) {
+    int right_idx = -1;
+    for (int j = left_idx; j < Size; ++j) {
         if ( Data[j] == right) {
-            right_idx= j;
+            right_idx = j;
         }
         if (Data[j] > right) break;
     }
@@ -35,9 +35,9 @@ int find_right_idx (const int * Data, const int & Size, const int & right, const
 }
 
 void sum_of_prime (const int * Data, const int & left_idx, const int & right_idx) {
-    int sum=0;
-    for (int j= left_idx;  j <= right_idx; j++) {
-        sum+= is_prime(Data[j]);
+    int sum = 0;
+    for (int j = left_idx; j <= right_idx; j++) {
+        sum += is_prime(Data[j]);
     }
     std::cout << sum << "\n";
 }
