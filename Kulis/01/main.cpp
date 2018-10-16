@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
 {
     // check for correct number of arguments
     if (argc < 3 || (argc % 2 == 0))
-        return 255;
+        return -1;
 
     for (int il = 1, ir = 2; il < argc; il += 2, ir += 2) {
         int left = atoi(argv[il]);
