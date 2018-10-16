@@ -8,7 +8,7 @@ using namespace std;
 
 void sieveOfAtkin(const int& MaxPrime, set<int>& prime_numbers)
 {
-	auto is_prime = make_unique<bool[]>(Size);
+	auto is_prime = make_unique<bool[]>(MaxPrime + 1);
 
 	int sqr_lim = (int)sqrt((long double)MaxPrime);
 	is_prime[2] = true;

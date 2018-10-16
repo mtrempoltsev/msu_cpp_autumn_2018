@@ -19,10 +19,10 @@ bool is_prime(int n) {
     return true;
 }
 
-//check for prime numbers in one interval
-int interval_check(const int a[], const int len, int left, int right) {
+//find indexes of left and right borders (or set -1 border value if doesn't exist)
+int find_borders(const int a[], int len, int &left, int &right) {
     int left_i = -1, right_i = -1;
-    for (int i = 0; i < len; i++) { //find indexes of left and right borders
+    for (int i = 0; i < len; i++) { //find first entry of left and last entry of right
         if ((left_i == -1) && (a[i] == left)) {
             left_i = i;
         }
@@ -30,9 +30,19 @@ int interval_check(const int a[], const int len, int left, int right) {
             right_i = i;
         }
     }
+    left = left_i;
+    right = right_i;
+    return 0;
+}
 
+//check for prime numbers in one interval
+int interval_count(const int a[], const int len, int left, int right) {
+    find_borders(a, len, left, right); //return 0 in case of invalid borders
+    if ((left == -1) || (right == -1)) {
+        return 0;
+    }
     int counter = 0;
-    for (int i = left_i; i <= right_i; i++) { //count prime numbers in existing interval
+    for (int i = left; i <= right; i++) { //count prime numbers in existing interval
         if (is_prime(a[i])) {
             counter++;
         }
@@ -48,7 +58,7 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc - 1; i += 2) {
         left = std::atoi(argv[i]);
         right = std::atoi(argv[i + 1]);
-        std::cout << interval_check(Data, Size, left, right) << std::endl;
+        std::cout << interval_count(Data, Size, left, right) << std::endl;
     }
     return 0;
 }

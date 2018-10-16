@@ -1,14 +1,15 @@
 #include <iostream>
-#include <cstdlib>
+#include <algorithm>
 #include "numbers.dat"
 
 bool isprime(int);
-int comp(const void*, const void*);
 
 int main(int argc, char* argv[])
 {
     int a = 0, b = 0, cnt = 0;
     int* begin_pos = nullptr, *end_pos = nullptr;
+    int* Data_begin = const_cast<int*>(Data);
+    int* Data_end = const_cast<int*>(Data + Size + 1);
     if ((argc == 1) || (argc % 2 != 1)) {
         return -1;
     }
@@ -19,9 +20,9 @@ int main(int argc, char* argv[])
             return -1;
         }
         cnt = 0;
-        begin_pos = (int*) std::bsearch(&a, Data, Size, sizeof(Data[0]), comp);
-        end_pos = (int*) std::bsearch(&b, Data, Size, sizeof(Data[0]), comp);
-        if (!begin_pos || !end_pos) {
+        begin_pos = const_cast<int*>(std::lower_bound(Data_begin, Data_end, a));
+        end_pos = const_cast<int*>(std::upper_bound(Data_begin, Data_end, b));
+        if ((end_pos == Data_end) || (begin_pos == Data_end)) {
             std::cout << 0 << std::endl;
         } else {
             for (int* myptr = begin_pos; myptr < end_pos; ++myptr) {
@@ -52,16 +53,4 @@ bool isprime(int num)
         }
     }
     return true;
-}
-
-int comp(const void* ap, const void* bp)
-{
-    const int* a = (int*) ap;
-    const int* b = (int*) bp;
-    if (*a < *b)
-        return -1;
-    else if (*a > *b)
-        return 1;
-    else
-        return 0;
 }
