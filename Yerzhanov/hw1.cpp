@@ -2,7 +2,6 @@
 #include <vector>
 #include <utility>
 #include <cstdlib>
-#include <algorithm>
 #include "numbers.dat"
 
 
@@ -15,7 +14,9 @@ const int max_numbers = 100000;
 
 
 void eratosfen(vector<bool>&);
-int process(pair<int, int>, const vector<int>& data, const vector<bool>&);
+int process(pair<int, int>, const vector<int>&, const vector<bool>&);
+int lower_bound(int);
+int upper_bound(int);
 
 
 int main(int argc, char* argv[]) {
@@ -42,18 +43,59 @@ int main(int argc, char* argv[]) {
 }
 
 
+int lower_bound(int key) {
+    int mid = Size / 2;
+    int left = 0;
+    int right = Size - 1;
+    if (key < Data[left])
+        return -1;
+    if (key == Data[left])
+        return left;
+    while (right - left > 1) {
+        if (Data[mid] >= key) {
+            right = mid;
+        } else {
+            left = mid;
+        }
+            mid = (right + left) / 2;
+    }
+    return right;
+}
+
+int upper_bound(int key) {
+    int mid = Size / 2;
+    int left = 0;    
+    int right = Size - 1;
+    if (key > Data[right]) {
+        return -1;
+    }
+    if (key == Data[right]) {
+        return right;
+    }
+    while (right - left > 1) {
+        if (Data[mid] <= key) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+        mid = (right + left) / 2;
+    }
+
+    return left;
+}
+
+
 int process(pair<int, int> borders, const vector<int>& data, const vector<bool>& primes) {
-    auto left = std::lower_bound(data.begin(), data.end(), borders.first);
-    auto right = std::upper_bound(data.begin(), data.end(), borders.second);
-    right--;
-    if (*left != borders.first || *right != borders.second) {
+    int left = lower_bound(borders.first);
+    int right = upper_bound(borders.second);
+    if (Data[left] != borders.first || Data[right] != borders.second) {
         return -1;
     }
 
 
     int counter = 0;
-    for (auto i = left; i <= right; i++) {
-        if (primes[*i]) {
+    for (int i = left; i <= right; i++) {
+        if (primes[Data[i]]) {
             counter++;
         }
     }
