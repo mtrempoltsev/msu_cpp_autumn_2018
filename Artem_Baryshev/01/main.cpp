@@ -8,13 +8,13 @@
 const int MAX_N = 1e5 + 1;
 
 void
-counting_prime_numbers(int * prime_numbers)
+counting_prime_numbers(int * prime_numbers, int size_prime_numbers)
 {
     prime_numbers[1] = 1;
     prime_numbers[0] = 1;
-    for (int i = 2; i * i < MAX_N; ++i) {
+    for (int i = 2; i * i < size_prime_numbers; ++i) {
         if (!prime_numbers[i]) {
-            for (int j = i * i; j < MAX_N; j += i) {
+            for (int j = i * i; j < size_prime_numbers; j += i) {
                 prime_numbers[j] = 1;
             }
         }
@@ -60,7 +60,7 @@ int main(int argc, const char * argv[]) {
     }
     
     int *prime_numbers = new int[MAX_N]();
-    counting_prime_numbers(prime_numbers);
+    counting_prime_numbers(prime_numbers, MAX_N);
     
     int *prefix_ans = new int[Size]();
     counting_prefix_ans(prefix_ans, Size, prime_numbers);
