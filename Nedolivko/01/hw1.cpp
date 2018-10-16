@@ -25,40 +25,36 @@ int find_begin(const data_t *data, data_t begin, int size)
 
 int main (int argc, char *argv[])
 {
-	try {
-		if ((argc % 2) && (argc > 2))
+	if ((argc % 2) && (argc > 2))
+	{
+		for (int i = 1; i < argc; i = i + 2) 
 		{
-			for (int i = 1; i < argc; i = i + 2) 
-			{
-				int count = 0;
-				data_t a = std::atoi(argv[i]);
-				data_t b = std::atoi(argv[i+1]);
-				if (a <= b) {
-					int j = find_begin(Data, a, Size);
-					bool equ = false;
-					for (; (Data[j] <= b) && (j < Size); j++) 
-					{
-						if (equ) {
-							if (Data[j] == Data[j-1]) {
-								count++;
-								continue;
-							} else {
-								equ = false;
-							}
-						}
-						if (is_prime(Data[j])){
-							equ = true;
+			int count = 0;
+			data_t a = std::atoi(argv[i]);
+			data_t b = std::atoi(argv[i+1]);
+			if (a <= b) {
+				int j = find_begin(Data, a, Size);
+				bool equ = false;
+				for (; (Data[j] <= b) && (j < Size); j++) 
+				{
+					if (equ) {
+						if (Data[j] == Data[j-1]) {
 							count++;
+							continue;
+						} else {
+							equ = false;
 						}
-					}				
-				}
-				std::cout << count << std::endl;
+					}
+					if (is_prime(Data[j])){
+						equ = true;
+						count++;
+					}
+				}				
 			}
-		} else {
-			throw std::invalid_argument("Wrong number of input parameters!");
+			std::cout << count << std::endl;
 		}
-	}
-	catch(...) {
+	} else {
+		std::cout << "Wrong number of input parameters!" << std::endl;
 		return -1;
 	}	
 	return 0;
