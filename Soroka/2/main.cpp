@@ -33,11 +33,11 @@ int main(int argc, char* argv[])
         }
 
         auto start = std::lower_bound(Data, Data + Size, left);
-        auto end = std::upper_bound(Data, Data + Size, right);
+        auto end1 = std::upper_bound(Data, Data + Size, right);
 
-        if(*start == Data[Size - 1] || *end == Data[Size - 1]) return -1;
+        if(start == &Data[Size - 1] || end1 == &Data[Size - 1]) return -1;
 
-        for(auto it = start; it != end; ++it)
+        for(auto it = start; it != end1; ++it)
         {
             if(isPrime(*it)) prime_count++;
         }
