@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     if (argc == 1) { return -1; }
     if (!(argc & 1)) { return -1; }
     for (int i = 1; i < argc; ++i) {
-        if (sscanf(argv[i], "%d", &a[i - 1])) {} else { return -1; }
+        if (!sscanf(argv[i], "%d", &a[i - 1])) { return -1; }
         if (a[i - 1] >= Data[0] && a[i - 1] <= Data[Size - 1]) {} else { return -1; }
     }
     for (int i = 0; i < argc - 1; i += 2) {
