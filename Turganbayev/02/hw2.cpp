@@ -1,34 +1,30 @@
 #include<iostream>
-#include <memory>
 #include "numbers.dat"
 using namespace std;
 
-int GetMaxNum(const unique_ptr<unique_ptr<int []> []>& pairs, size_t len) {
-    int max = pairs[0][1];
-    for (size_t i = 0; i < len; i++) {
-        if (max < pairs[i][1]) max = pairs[i][1];
+bool is_prime(int number) {
+    if (number <= 1) {
+        return false;
     }
-    return max;
+    else if (number <= 3) {
+        return true;
+    }
+    else if (number % 2 == 0 || number % 3 == 0) {
+        return false;
+    }
+    int i = 5;
+    while (i * i <= number) {
+        if (number % i == 0 || number % (i + 2) == 0) {
+            return false;
+        }
+        i += 6;
+    }
+    return true;
 }
 
-unique_ptr<bool []> IsPrime(size_t maxNum) {
-    //решето Эратосфена
-    unique_ptr<bool []> result(new bool[maxNum + 1]);
-    for (size_t i = 0; i < maxNum + 1; i++) {
-        result[i] = true;
-    }
-    result[0] = result[1] = false;
-    for (size_t i = 2; i <= maxNum; i++)
-        if (result[i])
-            if (i * i <= maxNum)
-                for (size_t j = i * i; j <= maxNum; j += i)
-                    result[j] = false;
-    return result;
-}
-
-int SearchStartIdx(const int data[],int  number, size_t size) {
+int search_start_idx(const int data[], size_t data_size, int  number) {
     //бинарный поиск влево
-    size_t l = 0, r = size - 1;
+    size_t l = 0, r = data_size - 1;
     while (l < r) {
         size_t m = l + (r - l) / 2;
         if (data[m] == number && data[m - 1] < number) {
@@ -43,9 +39,9 @@ int SearchStartIdx(const int data[],int  number, size_t size) {
     return -1;
 }
 
-int SearchFinishIdx(const int data[], int number, size_t size) {
+int search_finish_idx(const int data[], size_t data_size, int number) {
     //бинарный поиск вправо
-    size_t l = 0, r = size - 1;
+    size_t l = 0, r = data_size - 1;
     while (r - l > 1) {
         size_t m = l + (r - l) / 2;
         if (data[m] == number && data[m + 1] > number) {
@@ -61,45 +57,22 @@ int SearchFinishIdx(const int data[], int number, size_t size) {
     return -1;
 }
 
-int CountPrimes(const int data[], size_t data_size,
-                const unique_ptr<bool []>& isPrime, int minNum, int maxNum) {
-    int startIdx = SearchStartIdx(data, minNum, data_size);
-    int finishIdx = SearchFinishIdx(data, maxNum, data_size);
+int count_primes(const int data[], size_t data_size, int minNum, int maxNum) {
+    int startIdx = search_start_idx(data, data_size, minNum);
+    int finishIdx = search_finish_idx(data, data_size, maxNum);
     int result = 0;
     if (startIdx == -1 || finishIdx == -1) return result;
     for (int i = startIdx; i <= finishIdx; i++) {
-        if (isPrime[data[i]]) result++;
-    }
-    return result;
-}
-
-unique_ptr<unique_ptr<int []> []> GetPairs(int argc, char const *argv[]) {
-    if ((argc - 1) % 2 != 0 || argc == 1) {
-        throw invalid_argument("invalid number of arguments");
-    }
-    unique_ptr<unique_ptr<int []> []> result(new unique_ptr<int []>[argc / 2]);
-    for (int i = 1; i < argc; i += 2) {
-        int lhs = atoi(argv[i]), rhs = atoi(argv[i + 1]);
-        auto pair = unique_ptr<int []>(new int[2]);
-        pair[0] = lhs;
-        pair[1] = rhs;
-        result[(i - 1) / 2] = move(pair);
+        if (is_prime(data[i])) result++;
     }
     return result;
 }
 
 int main(int argc, char const *argv[]) {
-    unique_ptr<unique_ptr<int []> []>  pairs = nullptr;
-    try {
-        pairs = GetPairs(argc, argv);
-    } catch (const exception& ex) {
-        return -1;
-    }
-    size_t pairs_count = argc / 2;
-    int MaxNum = GetMaxNum(pairs, pairs_count);
-    auto primes = IsPrime(MaxNum);
-    for (size_t i = 0; i < pairs_count; i++) {
-        cout << CountPrimes(Data, Size, primes, pairs[i][0], pairs[i][1]) << endl;
+    if (argc % 2 != 1) return -1;
+    for (int i = 1; i < argc; i += 2) {
+        int lhs = atoi(argv[i]), rhs = atoi(argv[i + 1]);
+        cout << count_primes(Data, Size, lhs, rhs) << endl;
     }
     return 0;
 }
