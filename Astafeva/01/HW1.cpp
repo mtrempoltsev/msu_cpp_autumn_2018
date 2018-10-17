@@ -2,22 +2,24 @@
 #include "numbers.dat"
 #include <algorithm>
 
+const size_t MAXN = 100000;
+
 void find_simp_nums(bool* p) {
     p[0] = 0;
     p[1] = 0;
-    for (int i = 2; i <= 100000; ++i) {
+    for (int i = 2; i <= MAXN; ++i) {
         p[i] = 1;
     }
     int i = 2;
-    while (i * i <= 100000) {
-        for (int j = 2; j * i <= 100000; ++j)
+    while (i * i <= MAXN) {
+        for (int j = 2; j * i <= MAXN; ++j)
             p[i * j] = 0;
         ++i;
     }
 }
 
 int main(int argc, char* argv[]) {
-    bool p[100000];
+    bool p[MAXN];
     find_simp_nums(p);
     int* a = (int*) malloc(sizeof(int) * (argc - 1));
     if (argc == 1) { return -1; }
