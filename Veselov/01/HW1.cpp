@@ -94,8 +94,7 @@ int main(int argc, char* argv[]) {
 
 	long long primes_in_interval = 0;
 
-	for (int i = 1; i < argc; i+= 2)
-	{
+	for (int i = 1; i < argc; i+= 2) {
 		int l = std::atoi(argv[i]);
 		int r = std::atoi(argv[i + 1]);
 
