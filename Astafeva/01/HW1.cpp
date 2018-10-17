@@ -2,7 +2,7 @@
 #include "numbers.dat"
 #include <algorithm>
 
-void make_p(bool* p) {
+void find_simp_nums(bool* p) {
     p[0] = 0;
     p[1] = 0;
     for (int i = 2; i <= 100000; ++i) {
@@ -18,10 +18,10 @@ void make_p(bool* p) {
 
 int main(int argc, char* argv[]) {
     bool p[100000];
-    make_p(p);
+    find_simp_nums(p);
     int* a = (int*) malloc(sizeof(int) * (argc - 1));
     if (argc == 1) { return -1; }
-    if (argc & 1) {} else { return -1; }
+    if (!(argc & 1)) { return -1; }
     for (int i = 1; i < argc; ++i) {
         if (sscanf(argv[i], "%d", &a[i - 1])) {} else { return -1; }
         if (a[i - 1] >= Data[0] && a[i - 1] <= Data[Size - 1]) {} else { return -1; }
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < argc - 1; i += 2) {
         int cnt = 0;
         if (a[i] > a[i + 1]) { std::cout << 0 << std::endl; continue; }
-        int *pt = (int*) std::lower_bound(Data, Data + Size, a[i]);
+        const int *pt = std::lower_bound(Data, Data + Size, a[i]);
         if (*pt != a[i]) {
             std::cout << 0 << std::endl;
             continue;
