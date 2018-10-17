@@ -95,23 +95,23 @@ int main(int argc, char* argv[]) {
 	long long primes_in_interval = 0;
 
 	for (int i = 1; i < argc; i+= 2)
-    {
-        int l = std::atoi(argv[i]);
-        int r = std::atoi(argv[i + 1]);
+	{
+		int l = std::atoi(argv[i]);
+		int r = std::atoi(argv[i + 1]);
 
-        if (l < 0 || r < 0) {
-        	//std::cout << "Values must be integers" << std::endl;
-        	return -1;
-        }
+		if (l < 0 || r < 0) {
+			//std::cout << "Values must be integers" << std::endl;
+			return -1;
+		}
 
-        primes_in_interval = count_primes_in_interval(Data, Size, primes, l, r);
-        if (primes_in_interval == -1) {
-        	//std::cout << "Error counting number of primes" << std::endl;
-        	return -1;
-        } else {
-        	std::cout << primes_in_interval << std::endl;
-        }
-    }
+		primes_in_interval = count_primes_in_interval(Data, Size, primes, l, r);
+		if (primes_in_interval == -1) {
+			//std::cout << "Error counting number of primes" << std::endl;
+			return -1;
+		} else {
+			std::cout << primes_in_interval << std::endl;
+		}
+	}
 
 	return 0;
 }
