@@ -10,6 +10,7 @@ struct Operations {
 
 class Parser {
 public:
+    Parser() = delete;
     static int64_t Parse(const char* s);
 private:
     static int64_t Atom(std::istringstream& expr);
