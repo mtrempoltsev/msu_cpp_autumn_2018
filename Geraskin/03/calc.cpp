@@ -94,7 +94,7 @@ int64_t Parser::Parse(const char* s) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        std::cout << "Usage: ./calc 'expr'\n";
+        std::cout << "error\n";
         return 1;
     }
 
