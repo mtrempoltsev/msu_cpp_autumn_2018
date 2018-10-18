@@ -4,10 +4,17 @@
 #include <algorithm>
 
 
-int Prime(const int a, const int i)
+bool isPrime(size_t a)
 {
-    if (a == 1) return 0;
-    return i*i <= a ? (a%i) && Prime(a, i + 1) : 1;
+    if (a < 2) return false;
+
+    for (size_t i = 2; i * i <= a; ++i)
+    {
+        if (a % i == 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 
@@ -25,14 +32,14 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        if(!(std::binary_search(Data, Data + Size, left)) || !(std::binary_search(Data, Data + Size, right))) return -1;
-
         auto start = std::lower_bound(Data, Data + Size, left);
-        auto end = std::upper_bound(Data, Data + Size, right);
+        auto end1 = std::upper_bound(Data, Data + Size, right);
 
-        for(auto it = start; it != end; ++it)
+        if(*start == Data[Size - 1] || (*end1 == Data[Size - 1] && Data[Size - 2] != right)) return -1;
+
+        for(auto it = start; it != end1; ++it)
         {
-            if(Prime(*it, 2)) prime_count++;
+            if(isPrime(*it)) prime_count++;
         }
         std::cout << prime_count << std::endl;
     }
