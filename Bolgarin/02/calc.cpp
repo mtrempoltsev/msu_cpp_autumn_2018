@@ -58,7 +58,7 @@ private:
                 left *= right;
             } else {
                 if (right == 0)
-                    throw std::invalid_argument("kDivision by zero");
+                    throw std::invalid_argument("Division by zero");
 
                 left /= right;
             }
@@ -99,7 +99,6 @@ int main(int argc, char* argv[]) {
     if (argc == 2) {
         try {
             std::cout << Calculator::Parse(argv[1]);
-
         } catch (std::invalid_argument&) {
             std::cerr << Calculator::kErrorMessage;
             return 1;
