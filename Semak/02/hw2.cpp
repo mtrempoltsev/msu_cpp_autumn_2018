@@ -4,9 +4,10 @@
 
 using namespace std;
 
-int64_t calc(stringstream&);
+int64_t Calc(stringstream&);
 int64_t MulDiv(stringstream&);
-int64_t AddSub(stringstream&);
+int64_t AddSub(stringstream&, int);
+int64_t Num(stringstream&);
 
 int main(int argc, char** argv)
 {
@@ -21,7 +22,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		result = calc(expr);
+		result = Calc(expr);
 	}
 	catch(exception& ex)
 	{
@@ -36,18 +37,15 @@ int main(int argc, char** argv)
 
 int64_t calc(stringstream& expr)
 {
-    return AddSub(expr);
+    return AddSub(expr, 1);
 }
 
 int64_t MulDiv(stringstream& expr)
 {
-    int64_t result;
+    int64_t result = Num(expr);
 
-    expr >> result;
-    if(expr.fail())
-    {
-        throw runtime_error("error");
-    }
+    if(expr.eof())
+        return result;
 
     char op;
     expr >> op;
@@ -81,7 +79,7 @@ int64_t MulDiv(stringstream& expr)
     }
 }
 
-int64_t AddSub(stringstream& expr)
+int64_t AddSub(stringstream& expr, int sign)
 {
     int64_t result;
 
@@ -98,9 +96,15 @@ int64_t AddSub(stringstream& expr)
     switch (op)
     {
         case '+':
-            return result + AddSub(expr);
+            if(sign == 1)
+                return result + AddSub(expr, sign);
+            else
+                return result - AddSub(expr, -1 * sign);
         case '-':
-            return result - AddSub(expr);
+            if(sign == 1)
+                return result - AddSub(expr, -1 * sign);
+            else
+                return result + AddSub(expr, sign);
         case '*':
         case '/':
         {
@@ -110,4 +114,30 @@ int64_t AddSub(stringstream& expr)
         default:
             throw runtime_error("error");
     }
+}
+
+int64_t Num(stringstream& expr)
+{
+    char sym;
+    int64_t result;
+    int sign = 1;
+
+    expr >> sym;
+    if(sym == '-')
+        sign = -1;
+    else
+        expr.unget();
+
+    expr >> sym;
+    while(isspace(sym)) {
+        expr >> sym;
+    }
+    expr.unget();
+
+    expr >> result;
+    if(expr.fail())
+    {
+        throw runtime_error("error");
+    }
+    return sign * result;
 }
