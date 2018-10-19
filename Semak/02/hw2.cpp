@@ -4,10 +4,24 @@
 
 using namespace std;
 
-int64_t Calc(stringstream&);
-int64_t MulDiv(stringstream&);
-int64_t AddSub(stringstream&, int);
-int64_t Num(stringstream&);
+class Calculator
+{
+public:
+
+    explicit Calculator(const char*);
+    int64_t calc(); // вычисляет результат выражения expr
+
+private:
+    // Грамматика для метода рекурсивного спуска (addSub - аксиома грамматики):
+    // addSub --> mulDiv + addSub | mulDiv - addSub | mullDiv
+    // mulDiv --> num * mulDiv | num / mulDiv | num
+    // num --> -?[0-9]+
+    int64_t addSub(bool);
+    int64_t mulDiv();
+    int64_t num();
+
+    stringstream expr;
+};
 
 int main(int argc, char** argv)
 {
@@ -17,12 +31,11 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	stringstream expr(argv[1]);
 	int64_t result;
 
 	try
 	{
-		result = Calc(expr);
+	    result = Calculator(argv[1]).calc();
 	}
 	catch(exception& ex)
 	{
@@ -35,14 +48,19 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-int64_t calc(stringstream& expr)
+Calculator::Calculator(const char* expr)
 {
-    return AddSub(expr, 1);
+    this->expr = stringstream(expr);
 }
 
-int64_t MulDiv(stringstream& expr)
+int64_t Calculator::calc()
 {
-    int64_t result = Num(expr);
+    return addSub(false);
+}
+
+int64_t Calculator::mulDiv()
+{
+    int64_t result = num();
 
     if(expr.eof())
         return result;
@@ -58,10 +76,10 @@ int64_t MulDiv(stringstream& expr)
     switch (op)
     {
         case '*':
-            return result * MulDiv(expr);
+            return result * mulDiv();
         case '/':
         {
-            int64_t tmp = MulDiv(expr);
+            int64_t tmp = mulDiv();
 
             if(tmp == 0)
                 throw runtime_error("error");
@@ -79,11 +97,11 @@ int64_t MulDiv(stringstream& expr)
     }
 }
 
-int64_t AddSub(stringstream& expr, int sign)
+int64_t Calculator::addSub(bool minusFlag)
 {
     int64_t result;
 
-    result = MulDiv(expr);
+    result = mulDiv();
 
     if(expr.eof())
         return result;
@@ -96,15 +114,15 @@ int64_t AddSub(stringstream& expr, int sign)
     switch (op)
     {
         case '+':
-            if(sign == 1)
-                return result + AddSub(expr, sign);
+            if(!minusFlag)
+                return result + addSub(minusFlag);
             else
-                return result - AddSub(expr, -1 * sign);
+                return result - addSub(~minusFlag);
         case '-':
-            if(sign == 1)
-                return result - AddSub(expr, -1 * sign);
+            if(!minusFlag)
+                return result - addSub(~minusFlag);
             else
-                return result + AddSub(expr, sign);
+                return result + addSub(minusFlag);
         case '*':
         case '/':
         {
@@ -116,7 +134,7 @@ int64_t AddSub(stringstream& expr, int sign)
     }
 }
 
-int64_t Num(stringstream& expr)
+int64_t Calculator::num()
 {
     char sym;
     int64_t result;
