@@ -12,25 +12,29 @@ using std::istringstream;
 
 using Int = int64_t;
 
-namespace Calc
+class Calc
 {
-    Int read_minus(istringstream& ssexpr);
-    Int read_num(istringstream& ssexpr);
-    Int mul_div(istringstream& ssexpr);
-    Int sum_sub(istringstream& ssexpr);
-    Int calculate(const string& expr);
-}
+    istringstream ssexpr;
+    Int read_minus();
+    Int read_num();
+    Int mul_div();
+    Int sum_sub();
+public:
+    explicit Calc(const string& expr): ssexpr{expr} {};
+    Int get_result();
+};
 
 int main(int argc, char* argv[])
 {
-    const char* argerr = "error";
+    const char* argerr{"error"};
     if (argc != 2) {
         cerr << argerr << endl;
         return 1;
     }
-    const char* arithexpr = argv[1];
+    const char* arithexpr{argv[1]};
+    Calc mycalc{arithexpr};
     try {
-        cout << Calc::calculate(arithexpr) << endl;
+        cout << mycalc.get_result() << endl;
         return 0;
     } catch (invalid_argument&) {
         cerr << argerr << endl;
@@ -39,18 +43,17 @@ int main(int argc, char* argv[])
     return 1;
 }
 
-Int Calc::calculate(const string& expr)
+Int Calc::get_result()
 {
-    istringstream ssexpr{expr};
-    return sum_sub(ssexpr);
+    return sum_sub();
 }
 
-Int Calc::sum_sub(istringstream& ssexpr)
+Int Calc::sum_sub()
 {
-    Int larg = mul_div(ssexpr);
+    Int larg = mul_div();
     char op;
     while ((ssexpr >> op) && (op == '+' || op == '-')) {
-        Int rarg = mul_div(ssexpr);
+        Int rarg = mul_div();
         if (op == '+') {
             larg += rarg;
         } else {
@@ -63,12 +66,12 @@ Int Calc::sum_sub(istringstream& ssexpr)
     return larg;
 }
 
-Int Calc::mul_div(istringstream& ssexpr)
+Int Calc::mul_div()
 {
-    Int larg = read_num(ssexpr);
+    Int larg = read_num();
     char op;
     while ((ssexpr >> op) && (op == '*' || op == '/')) {
-        Int rarg = read_num(ssexpr);
+        Int rarg = read_num();
         if (op == '*') {
             larg *= rarg;
         } else {
@@ -84,9 +87,9 @@ Int Calc::mul_div(istringstream& ssexpr)
     return larg;
 }
 
-Int Calc::read_num(istringstream& ssexpr)
+Int Calc::read_num()
 {
-    Int sign = read_minus(ssexpr);
+    Int sign = read_minus();
     Int num;
     ssexpr >> num;
     if (!ssexpr) {
@@ -95,7 +98,7 @@ Int Calc::read_num(istringstream& ssexpr)
     return sign * num;
 }
 
-Int Calc::read_minus(istringstream& ssexpr)
+Int Calc::read_minus()
 {
     char minus;
     ssexpr >> minus;
