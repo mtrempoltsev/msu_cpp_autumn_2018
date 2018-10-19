@@ -1,61 +1,41 @@
-#include <chrono>
 #include <iostream>
-#include <string.h>
+#include <math.h>
+#include "numbers.dat"
 
-class Timer
-{
-    using clock_t = std::chrono::high_resolution_clock;
-    using microseconds = std::chrono::microseconds;
-public:
-    Timer()
-        : start_(clock_t::now())
-    {
-    }
+using namespace std;
 
-    ~Timer()
-    {
-        const auto finish = clock_t::now();
-        const auto us =
-            std::chrono::duration_cast<microseconds>
-                (finish - start_).count();
-        std::cout << us << " us" << std::endl;
-    }
-
-private:
-    const clock_t::time_point start_;
-};
-
-int main ()
-{
-  double *matrix = new double [10000 * 10000];
-  memset (matrix, 1, 10000 * 10000 * sizeof (double));
-
-  std::cout << "Columns first" << std::endl;
-
-  for (int test_num = 0; test_num < 10; ++test_num)
-    {
-      std::cout << "Test " << test_num << std::endl;
-      double sum = 0;
-      int i, j;
-      Timer t;
-      for (i = 0; i < 10000; ++i)
-        for (j = 0; j < 10000; j += 10)
-          sum += matrix[i * 10000 + j] + matrix[i * 10000 + j + 1] + matrix[i * 10000 + j + 2] + matrix[i * 10000 + j + 3] + matrix[i * 10000 + j + 4] +
-              matrix[i * 10000 + j + 5] + matrix[i * 10000 + j + 6] + matrix[i * 10000 + j + 7] + matrix[i * 10000 + j + 8] + matrix[i * 10000 + j + 9];
-      std::cout << sum << std::endl << std::endl;
-    }
-
-  std::cout << "Rows first" << std::endl;
-
-  for (int test_num = 0; test_num < 10; ++test_num)
-    {
-      std::cout << "Test " << test_num << std::endl;
-      double sum = 0;
-      int i, j;
-      Timer t;
-      for (i = 0; i < 10000; ++i)
-        for (j = 0; j < 10000; ++j)
-          sum += matrix[i * 10000 + j];
-      std::cout << sum << std::endl << std::endl;
-    }
+inline bool check_simppe (int n) {
+  if (n == 1)
+    return false;
+  for (int dev = 2; dev <= sqrt(n); ++dev)
+    if (n % dev == 0)
+      return false;
+  return true;
 }
+
+int main(int argc, char *argv[])
+{
+  // Check amount of args
+  if (argc % 2 == 0 || argc == 1)
+    return -1;
+  for (int pair = 1; pair < argc; pair += 2) {
+    int first = atoi(argv[pair]);
+    int last = atoi(argv[pair + 1]);
+    if (first > last) {
+      cout << 0 << endl;
+      continue;
+    }
+    int pos = 0;
+    int res = 0;
+    // Search position for first
+    for (; Data[pos] != first && pos < Size; ++pos);
+    if (pos == Size)
+      return -1;
+    for (; Data[pos] <= last && pos < Size; ++pos)
+      if (check_simppe(Data[pos]))
+        res++;
+    cout << res << endl;
+  }
+  return 0;
+}
+

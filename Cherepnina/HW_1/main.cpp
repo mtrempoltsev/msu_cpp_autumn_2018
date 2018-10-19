@@ -24,22 +24,16 @@ bool isPrime(const int digit) {
 
 int main(int argc, char *argv[]) {
 
-    if ((argc % 2 != 1)||(argc == 1)) {
-//        std::cout << "incorrect input" << std::endl;
-        exit(-1);
-    }
+    if ((argc % 2 != 1) || (argc == 1))
+        return (-1);
 
     for (int j = 1; j < argc; j += 2) {
         int sum = 0;
         int begin;
         int end;
-        try {
-            begin = atoi(argv[j]);
-            end = atoi(argv[j+1]);
-        } catch (...) {
-//            std::cout << "incorrect input" << std::endl;
-            exit(-1);
-        }
+
+        begin = atoi(argv[j]);
+        end = atoi(argv[j + 1]);
 
         //go to required part of an array
         int i = 0;
@@ -63,7 +57,6 @@ int main(int argc, char *argv[]) {
         }
         std::cout << sum << std::endl;
     }
-
-
+    
     return 0;
 }
