@@ -76,6 +76,7 @@ bool calculator::convert(const char *s)
     }
 
     if (operands.size() == operators.size())
+        //last input unit is operator, operand expected
         return false;
 
     return true;
