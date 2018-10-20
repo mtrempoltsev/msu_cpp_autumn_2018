@@ -19,7 +19,6 @@ class Calc
     int64_t expr2();
     int64_t expr1();
     int64_t operand();
-
 public:
     Calc(const char* input): input(input) {}
     int64_t calculate();
@@ -144,7 +143,8 @@ int64_t Calc::calculate()
     return expr2();
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     if(argc != 2) {
         std::cout << "error" << std::endl;
         return 1;
