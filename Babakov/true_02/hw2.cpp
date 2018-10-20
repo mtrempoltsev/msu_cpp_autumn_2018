@@ -12,11 +12,9 @@ enum Lexem_type {
     NUM,
     FIN
 };
-
 enum {
     MAGIC_NUMBER = 7 // Means absolutely nothing
 };
-
 typedef std::pair<int, Lexem_type> poliz_elem;
 
 class Analyzer {
@@ -25,6 +23,7 @@ class Analyzer {
     size_t index = 0;
     Lexem_type lex_type;
     int lex_value;
+
     std::vector<poliz_elem> poliz;
     std::stack<int> value_stack;
 
@@ -66,10 +65,10 @@ class Analyzer {
         return lex_type;
     }
 
-    // S -> A F
-    // A -> B + A | B - A | B
-    // B -> N * B | N / B | N
-    // N -> - '0'..'9' | '0'..'9'
+ // S -> A F
+ // A -> B + A | B - A | B
+ // B -> N * B | N / B | N
+ // N -> - '0'..'9' | '0'..'9'
 
     void F() {
         if (lex_type != FIN) {
@@ -117,7 +116,7 @@ class Analyzer {
     }
 
 public:
-    Analyzer(std::string init) {
+    Analyzer(std::string& init) {
         expr = init;
         expr_len = expr.size();
         getlex();
@@ -186,7 +185,7 @@ int main(int argc, char* argv[])
         analyze.start();
         std::cout << analyze.result() << std::endl;
         return 0;
-    } catch (...) {
+    } catch (std::invalid_argument&) {
         std::cout << "error" << std::endl;
         return 1;
     }
