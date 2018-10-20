@@ -152,10 +152,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     Calc calc = Calc(argv[1]);
-    // do {
-    //     calc.read_lex();
-    //     std::cout << calc.cur_lex.op << calc.cur_lex.num << std::endl;
-    // } while(calc.cur_lex.op);
     try {
         int64_t res = calc.calculate();
         std::cout << res << std::endl;
