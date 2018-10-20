@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stack>
 #include <cstdint>
 #include <cstring>
 
@@ -13,7 +12,6 @@ class Calc
     Lex cur_lex = Lex();
     const char* input;
     size_t input_pos = 0;
-    std::stack<Lex> st;
 
     char getc();
     void ungetc();
