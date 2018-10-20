@@ -19,58 +19,50 @@ class Calculator
 			switch(stat)
 			{
 				case usual:
-					if (whoAmI(c, numbers.empty(), signs, cur_sign, stat))
-					{
-						if (stat == num) cur_num = c - 48;
-						cur_pos += 1;
-						return Parse(input, cur_pos, numbers, signs, \
-									 cur_num, cur_sign, stat);
-					}
-					else return false;	
+					whoAmI(c, numbers.empty(), cur_sign, stat);
+					if (stat == num) cur_num = c - 48;
+					cur_pos += 1;
+					return Parse(input, cur_pos, numbers, signs, \
+								 cur_num, cur_sign, stat);
 					break;
 					
 				case num:
-					if (whoAmI(c, numbers.empty(), signs, cur_sign, stat))
-					{	
-						if (stat == num)
-						{
-							cur_num *= 10;
-							cur_num += c - 48;
-						}
-						else
-						{
-							numbers.push(cur_num);
-							cur_num = 0;
-						}
-						
-						cur_pos += 1;
-						return Parse(input, cur_pos, numbers, signs, \
-									 cur_num, cur_sign, stat);
+					whoAmI(c, numbers.empty(), cur_sign, stat);
+					
+					if (stat == num)
+					{
+						cur_num *= 10;
+						cur_num += c - 48;
 					}
-					else return false;	
+					else
+					{
+						numbers.push(cur_num);
+						cur_num = 0;
+					}
+					
+					cur_pos += 1;
+					return Parse(input, cur_pos, numbers, signs, \
+								 cur_num, cur_sign, stat);
 					break;
 					
 				case sign:
-					if (whoAmI(c, numbers.empty(), signs, cur_sign, stat))
+					whoAmI(c, numbers.empty(), cur_sign, stat);
+					
+					if (stat == num)
 					{
-						if (stat == num)
+						cur_num = c - 48;
+						if (numbers.empty())
 						{
-							cur_num = c - 48;
-							if (numbers.empty())
-							{
-								if (cur_sign == '-') cur_num *= -1;
-							}
-							else signs.push(cur_sign);
-							cur_sign = '!';
+							if (cur_sign == '-') cur_num *= -1;
 						}
-						
-						if (stat == usual) stat = sign;
-						
-						cur_pos += 1;
-						return Parse(input, cur_pos, numbers, signs, \
-									 cur_num, cur_sign, stat);
+						else signs.push(cur_sign);
+						cur_sign = '!';
 					}
-					else return false;	
+					if (stat == usual) stat = sign;
+					
+					cur_pos += 1;
+					return Parse(input, cur_pos, numbers, signs, \
+								 cur_num, cur_sign, stat);
 					break;
 
 				case error:
@@ -100,19 +92,11 @@ class Calculator
 		return true;
 	}
 	
-	bool whoAmI(const char& c, const bool numbers_empty, \
-				stack<char>& signs, char& cur_sign, status& stat)
+	void whoAmI(const char& c, const bool numbers_empty, \
+				char& cur_sign, status& stat)
 	{
-		if ((c >= 48) && (c <= 57))
-		{
-			stat = num;
-			return true;
-		}
-		else if (c == ' ')
-		{
-			stat = usual;
-			return true;
-		}
+		if ((c >= 48) && (c <= 57)) stat = num;
+		else if (c == ' ') stat = usual;
 		else if ((c == '-') || (c == '+'))
 		{
 			if (stat == sign)
@@ -121,19 +105,13 @@ class Calculator
 				{		 
 					if (cur_sign != c) cur_sign = '-';
 					else cur_sign = '+';
-					return true;
 				}
-				else
-				{
-					stat = error;
-					return false;
-				}
+				else stat = error;
 			}
 			else
 			{
 				cur_sign = c;
 				stat = sign;
-				return true;
 			}
 		}
 		else if ((c == '/') || (c == '*'))
@@ -142,31 +120,22 @@ class Calculator
 		    {
 				cur_sign = c;
 				stat = sign;
-				return true;
 			}
-			else
-			{
-				stat = error;
-				return false;
-			}
+			else stat = error;
 		}
 		else stat = error;
-		return false;
 	}
 	
 	bool CalculateResult(stack<i64>& numbers, stack<char>& signs, i64& result)
 	{
-		char cur_sign;
-		i64 num1, num2;
-		
 		result = 0;		
 		
 		while ((numbers.size() != 1) && (signs.size() != 0))
 		{
-			num1 = numbers.top();
+			i64 num1 = numbers.top();
 			numbers.pop();
 			
-			cur_sign = signs.top();
+			char cur_sign = signs.top();
 			signs.pop();
 			
 			if (cur_sign == '+')
@@ -185,7 +154,7 @@ class Calculator
 			{
 				if (numbers.size() != 0)
 				{
-					num2 = numbers.top();
+					i64 num2 = numbers.top();
 					numbers.pop();
 					if (cur_sign == '*') num2 *= num1;
 					else if (num1 != 0) num2 /= num1;
@@ -220,7 +189,7 @@ public:
 	}
 };
 
-i64 raiseError()
+size_t raiseError()
 {
 	cout << "error" << endl;
 	return 1;
@@ -231,7 +200,7 @@ int main(int argc, char* argv[])
 	if (argc == 2)
 	{
 		Calculator calc;
-		i64 result = 0;
+		i64 result;
 		if (calc.Calculate(argv[1], result)) cout << result << endl;
 		else return raiseError();
 	}
