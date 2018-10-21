@@ -13,8 +13,6 @@ public:
         return ParsePlusMinus(expression);
     }
 
-    static constexpr char* kErrorMessage = "error";
-
 private:
     struct Operations {
         static constexpr auto kAdd = '+';
@@ -96,16 +94,18 @@ private:
 
 
 int main(int argc, char* argv[]) {
+    std::string error_message = "error";
+    
     if (argc == 2) {
         try {
             std::cout << Calculator::Parse(argv[1]);
         } catch (std::invalid_argument&) {
-            std::cerr << Calculator::kErrorMessage;
+            std::cerr << error_message;
             return 1;
         }
 
     } else {
-        std::cerr << Calculator::kErrorMessage;
+        std::cerr << error_message;
         return 1;
     }
 
