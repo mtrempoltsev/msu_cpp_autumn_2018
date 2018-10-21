@@ -26,30 +26,30 @@ private:
     char *s;
     Lex lex;
 
-    int64_t A() {
-        int64_t cur = M();
+    int64_t state_A() {
+        int64_t cur = state_M();
         if (lex.t != EOL) {
             if (lex.t == OP) {
                 if (lex.d == ADD) {
-                    cur += A();
+                    cur += state_A();
                 } else if (lex.d == SUB) {
-                    cur += A();
+                    cur += state_A();
                 }
             }
         }
         return cur;
     }
 
-    int64_t M() {
-        int64_t cur = N();
+    int64_t state_M() {
+        int64_t cur = state_N();
         if (lex.t != EOL) {
             if (lex.t == OP) {
                 if (lex.d == MUL) {
                     parse_lex();
-                    cur *= M();
+                    cur *= state_M();
                 } else if (lex.d == DIV) {
                     parse_lex();
-                    int64_t divisor = M();
+                    int64_t divisor = state_M();
                     if (divisor == 0) {
                         error();
                     }
@@ -60,7 +60,7 @@ private:
         return cur;
     }
 
-    int64_t N() {
+    int64_t state_N() {
         if (lex.t == EOL) {
             error();
         }
@@ -71,10 +71,10 @@ private:
         } else if (lex.t == OP) {
             if (lex.d == ADD) {
                 parse_lex();
-                return N();
+                return state_N();
             } else if (lex.d == SUB) {
                 parse_lex();
-                return -N();
+                return -state_N();
             }
         }
         error();
@@ -121,7 +121,7 @@ public:
 
     int64_t eval() {
         parse_lex();
-        return A();
+        return state_A();
     }
 };
 
