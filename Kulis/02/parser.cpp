@@ -1,7 +1,7 @@
 #include <cctype>
 #include <iostream>
 #include <exception>
-#include "lex.h"
+#include "parser.h"
 
 Lex::Lex(LexType type, int64_t value)
     : type(type)
