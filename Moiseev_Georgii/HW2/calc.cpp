@@ -114,8 +114,8 @@ std::pair<bool, int64_t> Calculator::compute(size_t leftInd, size_t rightInd)
 
     if (operators[rightInd - 1] == DIV)
     {   
+        //division by zero error
         if (operands[rightInd] == 0)
-            //division by zero error
             return {false, 1};
 
         auto left = compute(leftInd, rightInd - 1);
