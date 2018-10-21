@@ -9,6 +9,7 @@ class MyCalc {
 public:
     MyCalc(const char* s) {
         orig = this->s = (char*)malloc((strlen(s) + 1) * sizeof(char));
+        if (orig == nullptr) throw std::std::out_of_range("malloc fault");
         strcpy(this->s, s);
     }
     int64_t get_result() {
