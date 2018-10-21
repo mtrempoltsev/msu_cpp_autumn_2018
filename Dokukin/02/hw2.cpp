@@ -8,9 +8,10 @@ using ui64 = unsigned int64_t;
 
 class Calculator
 {
+	string input;
 	typedef enum{usual, num, sign, error} status;
 	
-	bool Parse(const string& input, ui64 cur_pos, stack<i64>& numbers, \
+	bool Parse(ui64 cur_pos, stack<i64>& numbers,
 	           stack<char>& signs, i64 cur_num, char cur_sign, status stat)
 	{
 		if (cur_pos < input.length())
@@ -20,9 +21,12 @@ class Calculator
 			{
 				case usual:
 					whoAmI(c, numbers.empty(), cur_sign, stat);
-					if (stat == num) cur_num = c - 48;
+					if (stat == num)
+					{
+						cur_num = c - 48;
+					}
 					cur_pos += 1;
-					return Parse(input, cur_pos, numbers, signs, \
+					return Parse(cur_pos, numbers, signs,
 								 cur_num, cur_sign, stat);
 					break;
 					
@@ -41,7 +45,7 @@ class Calculator
 					}
 					
 					cur_pos += 1;
-					return Parse(input, cur_pos, numbers, signs, \
+					return Parse(cur_pos, numbers, signs,
 								 cur_num, cur_sign, stat);
 					break;
 					
@@ -53,15 +57,21 @@ class Calculator
 						cur_num = c - 48;
 						if (numbers.empty())
 						{
-							if (cur_sign == '-') cur_num *= -1;
+							if (cur_sign == '-')
+							{
+								cur_num *= -1;
+							}
 						}
 						else signs.push(cur_sign);
 						cur_sign = '!';
 					}
-					if (stat == usual) stat = sign;
+					if (stat == usual)
+					{
+						stat = sign;
+					}
 					
 					cur_pos += 1;
-					return Parse(input, cur_pos, numbers, signs, \
+					return Parse(cur_pos, numbers, signs,
 								 cur_num, cur_sign, stat);
 					break;
 
@@ -92,38 +102,71 @@ class Calculator
 		return true;
 	}
 	
-	void whoAmI(const char& c, const bool numbers_empty, \
+	void whoAmI(char c, const bool numbers_empty,
 				char& cur_sign, status& stat)
 	{
-		if ((c >= 48) && (c <= 57)) stat = num;
-		else if (c == ' ') stat = usual;
-		else if ((c == '-') || (c == '+'))
+		if ((c >= 48) && (c <= 57))
+		{
+			stat = num;
+			return;
+		}
+		
+		if (c == ' ')
+		{
+			stat = usual;
+			return;
+		}
+		
+		if ((c == '-') || (c == '+'))
 		{
 			if (stat == sign)
 			{
 				if ((cur_sign == '-') || (cur_sign == '+'))
 				{		 
-					if (cur_sign != c) cur_sign = '-';
-					else cur_sign = '+';
+					if (cur_sign != c)
+					{
+						cur_sign = '-';
+						return;
+					}
+					else
+					{
+						cur_sign = '+';
+						return;
+					}
 				}
-				else stat = error;
+				else
+				{
+					stat = error;
+					return;
+				}
 			}
 			else
 			{
 				cur_sign = c;
 				stat = sign;
+				return;
 			}
 		}
+		
 		else if ((c == '/') || (c == '*'))
 		{
 			if ((stat != sign) && ((numbers_empty == false) || (stat == num)))
 		    {
 				cur_sign = c;
 				stat = sign;
+				return;
 			}
-			else stat = error;
+			else
+			{
+				stat = error;
+				return;
+			}
 		}
-		else stat = error;
+		else
+		{
+			stat = error;
+			return;
+		}
 	}
 	
 	bool CalculateResult(stack<i64>& numbers, stack<char>& signs, i64& result)
@@ -156,12 +199,28 @@ class Calculator
 				{
 					i64 num2 = numbers.top();
 					numbers.pop();
-					if (cur_sign == '*') num2 *= num1;
-					else if (num1 != 0) num2 /= num1;
-					else return false;
+					
+					if (cur_sign == '*')
+					{
+						num2 *= num1;
+					}
+					else
+					{
+						if (num1 != 0)
+						{
+							num2 /= num1;
+						}
+						else
+						{
+							return false;
+						}
+					}
 					numbers.push(num2);
 				}	
-				else return false;	
+				else
+				{
+					return false;	
+				}
 				continue;
 			}
 		}
@@ -177,14 +236,22 @@ class Calculator
 	}
 	
 public:
+
+	Calculator(const string& str) : input("") 
+	{
+		input = str;	
+	}
 	
-	bool Calculate(const string& input, i64& result)
+	bool Calculate(i64& result)
 	{
 		status stat = usual;
 		stack<i64> numbers;
 		stack<char> signs;
 		
-		if (!Parse(input, 0, numbers, signs, 0, '!', stat)) return false;
+		if (!Parse(0, numbers, signs, 0, '!', stat))
+		{
+			return false;
+		}
 		return CalculateResult(numbers, signs, result);
 	}
 };
@@ -199,10 +266,16 @@ int main(int argc, char* argv[])
 {
 	if (argc == 2)
 	{
-		Calculator calc;
+		Calculator calc(argv[1]);
 		i64 result;
-		if (calc.Calculate(argv[1], result)) cout << result << endl;
-		else return raiseError();
+		if (calc.Calculate(result))
+		{
+			cout << result << endl;
+		}
+		else
+		{
+			return raiseError();
+		}
 	}
 	else return raiseError();
 	return 0;
