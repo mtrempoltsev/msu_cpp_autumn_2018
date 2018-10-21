@@ -35,8 +35,8 @@ bool Calculator::convert(const char *s)
                 readNum = true;
             }
 
+        //only spaces till next non-digit case
         if (readNum == false)
-            //only spaces till next non-digit
             return false;
 
         if (minusFlag == true)
@@ -75,8 +75,8 @@ bool Calculator::convert(const char *s)
         }
     }
 
+    //if last input unit is operator, operand expected
     if (operands.size() == operators.size())
-        //last input unit is operator, operand expected
         return false;
 
     return true;
