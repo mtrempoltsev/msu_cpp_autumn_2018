@@ -11,10 +11,16 @@ int main(int argc, char* argv[])
     }
 
 
-    calculator Calc(argv[1]);
-
-    if (Calc.printAns() == false)
+    try
+    {
+        Calculator calc(argv[1]);
+        std::cout << calc.getAns() << std::endl;  
+    }
+    catch (std::exception& e) 
+    {
+        std::cout << "error" << std::endl;
         return 1;
-    else
-        return 0;
+    }
+
+    return 0;
 }
