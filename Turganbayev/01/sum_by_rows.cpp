@@ -25,7 +25,8 @@ private:
 };
 
 int main(void) {
-    int row = 1000, col = 1000, sum = 0;
+    size_t row = 1000, col = 1000;
+    int sum = 0;
     int** matrix = new int*[row];
     for (size_t i = 0; i < row; i++) {
         matrix[i] = new int[col];
@@ -42,7 +43,8 @@ int main(void) {
                 sum += matrix[i][j];
             }
         }
-        delete [] matrix;
     }
+    delete [] matrix;
+    std::cout << "sum = " << sum << std::endl;
     return 0;
 }

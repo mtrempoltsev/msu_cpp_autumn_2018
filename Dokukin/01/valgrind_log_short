@@ -1,0 +1,21 @@
+==2363== Memcheck, a memory error detector
+==2363== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==2363== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==2363== Command: ./hw1_Dokukin 1 99999
+==2363== Parent PID: 2012
+==2363== 
+==2363== 
+==2363== HEAP SUMMARY:
+==2363==     in use at exit: 72,704 bytes in 1 blocks
+==2363==   total heap usage: 9,595 allocs, 9,594 frees, 557,409 bytes allocated
+==2363== 
+==2363== LEAK SUMMARY:
+==2363==    definitely lost: 0 bytes in 0 blocks
+==2363==    indirectly lost: 0 bytes in 0 blocks
+==2363==      possibly lost: 0 bytes in 0 blocks
+==2363==    still reachable: 72,704 bytes in 1 blocks
+==2363==         suppressed: 0 bytes in 0 blocks
+==2363== Rerun with --leak-check=full to see details of leaked memory
+==2363== 
+==2363== For counts of detected and suppressed errors, rerun with: -v
+==2363== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
