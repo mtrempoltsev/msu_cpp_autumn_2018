@@ -4,31 +4,21 @@
 //using recursion on grammar
 
 class MyCalc {
-    char* s;
-    char* orig;
+    const char* s;
 public:
     MyCalc(const char* s) {
-        orig = this->s = (char*)malloc((strlen(s) + 1) * sizeof(char));
-        if (orig == nullptr) throw std::std::out_of_range("malloc fault");
-        strcpy(this->s, s);
+        this->s = s;
     }
     int64_t get_result() {
         return parce_add_sub();
-    }
-    ~MyCalc(){
-        free(orig);
     }
 private:
     int64_t parce_add_sub() {
         int64_t num, temp_num;
         char sim;
-        try {
-            num = parce_mul_div();
-        } catch (std::out_of_range&) {
-            throw std::invalid_argument("empty or not correct input");
-        }
+        num = parce_mul_div();
         while (true) {
-            char* ts = s;
+            const char* ts = s;
             try {
                 sim = get_sim();
             } catch (std::out_of_range&) {
@@ -54,7 +44,7 @@ private:
         int64_t num1 = get_num(), num2;
         char sim;
         while(true) {
-            char* ts = s;
+            const char* ts = s;
             try {
                 sim = get_sim();
             } catch (std::out_of_range&) {
