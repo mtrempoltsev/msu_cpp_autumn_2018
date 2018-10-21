@@ -54,16 +54,16 @@ private:
 			multiplication();
 			switch (_operator)
 			{
-			case '+':
-			{
-				res += result;
-				break;
-			}
-			case '-':
-			{
-				res -= result;
-				break;
-			}
+				case '+':
+				{
+					res += result;
+					break;
+				}
+				case '-':
+				{
+					res -= result;
+					break;
+				}
 			}
 			result = res;
 		}
