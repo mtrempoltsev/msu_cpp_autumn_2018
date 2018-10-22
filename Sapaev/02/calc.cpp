@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
         std::cout << calc.get_result() << std::endl;
         return 0;
     }
-    catch (...) {
+    catch (std::invalid_argument&) {
         std::cout << "error" << std::endl;
         return 1;
     }
