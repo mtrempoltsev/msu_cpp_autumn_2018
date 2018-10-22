@@ -3,27 +3,25 @@
 #include <iostream>
 #include <cstdint>
 #include <vector>
+#include <exception>
 
 
-class calculator
+class Calculator
 {
 public:
-    calculator(const char* s) : convertStatus(convert(s)), computeStatus(false) {}
-
-    bool getStatus()
+    Calculator(const char* s)
     {
-        return convertStatus && computeStatus;
+        if (convert(s) == false)
+            throw std::invalid_argument("Wrong input");
     }
     
-    bool printAns();
+    int64_t getAns();
 
 private:
     enum mathOp{ADD, SUBS, MULT, DIV};
 
     std::vector<int64_t> operands;
     std::vector<mathOp> operators;
-    bool convertStatus;
-    bool computeStatus;
 
     bool convert(const char* s);
     std::pair<bool, int64_t> compute(size_t leftInd, size_t rightInd);

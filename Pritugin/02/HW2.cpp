@@ -8,7 +8,7 @@
 class Calculator
 {
 private:
-	std::stringstream cin;
+	std::stringstream in;
 	char now = 0;
 	int64_t v;
 	int64_t answer;
@@ -16,9 +16,11 @@ private:
 	char check()
 	{
 		char c;
-		if (!cin.get(c)) 
-			if (cin.eof()) return now = 0;
-			else throw std::invalid_argument("Exception");
+		if (!in.get(c)) 
+			if (in.eof()) 
+				return now = 0;
+			else 
+				throw std::invalid_argument("Exception");
         switch (c)
         {
 			case 0:	return now = 0;
@@ -27,8 +29,8 @@ private:
 			case '*': return now = '*';
 			case '/': return now = '/';
 			default:
-				cin.putback(c);
-				cin >> v;
+				in.putback(c);
+				in >> v;
 				return now = 1;
         }
     }
@@ -38,7 +40,10 @@ private:
         if (flag) check();
         switch (now)
         {
-			case '-': return -near(true);
+			case '-': 
+				{
+					return -near(true);
+				}
 			case 1:
 				{
 					int64_t buf = v;
@@ -85,20 +90,41 @@ private:
 	}
 
 public:
-    Calculator (std::string str)
+
+	bool setExpression(const char* s)
 	{
+		std::string str(s);
 		str.erase( std::remove( str.begin(), str.end(), ' ' ), str.end() );
-		cin = std::stringstream(str);
+		in = std::stringstream(str);
 		try
 		{
 			check();
 			if (now == 0) answer = 0;
 			else answer = start(false);
+			return true;
 		}
 		catch (std::exception& e)
 		{
 			std::cout << "error" << std::endl;
-			exit(1);
+			return false;
+		}
+	}
+	
+	bool setExpression(std::string str)
+	{
+		str.erase( std::remove( str.begin(), str.end(), ' ' ), str.end() );
+		in = std::stringstream(str);
+		try
+		{
+			check();
+			if (now == 0) answer = 0;
+			else answer = start(false);
+			return true;
+		}
+		catch (std::exception& e)
+		{
+			std::cout << "error" << std::endl;
+			return false;
 		}
 	}
 
@@ -112,10 +138,13 @@ public:
 int main (int argc, char* argv[])
 {
 	if (argc == 1) { std::cout << "error" << std::endl; return 1; }
+	Calculator calc;
 	if (argc == 2)
 	{
-		Calculator calc = Calculator (std::string(argv[1]));
-		std::cout << calc.getAnswer() << std::endl;
+		if(calc.setExpression(argv[1]))
+			std::cout << calc.getAnswer() << std::endl;
+		else
+			return 1;
 		return 0;
 	}
     std::cout << "error" << std::endl; return 1;

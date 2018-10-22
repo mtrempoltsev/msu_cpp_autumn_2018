@@ -10,22 +10,22 @@ inline int64_t toDigit(char c)
     return c - '0';
 }
 
-bool calculator::convert(const char *s)
+bool Calculator::convert(const char *s)
 {
     for (const char *p = s; *p != '\0';)
     {
         while ((*p) == ' ')
             p++;
 
-    //operand section
-    //unary munis subsection
+        //operand section
+        //unary munis subsection
         bool minusFlag = false;
         if ((*p) == '-')
         {
             minusFlag = true;
             p++;
         }
-    //only digit symbols subsection
+        //only digit symbols subsection
         int64_t num = 0;
         bool readNum = false;
         for (; isDigit(*p) || (*p) == ' '; p++)
@@ -35,16 +35,16 @@ bool calculator::convert(const char *s)
                 readNum = true;
             }
 
+        //only spaces till next non-digit case
         if (readNum == false)
-            //only spaces till next non-digit
             return false;
 
         if (minusFlag == true)
             num *= -1;
 
         operands.push_back(num);
-    //operator section
-    //expecting operator or end of string(after last operand) as non-space & non-digit
+        //operator section
+        //expecting operator or end of string(after last operand) as non-space & non-digit
         switch (*p)
         {
             case '\0':
@@ -75,14 +75,14 @@ bool calculator::convert(const char *s)
         }
     }
 
+    //if last input unit is operator, operand expected
     if (operands.size() == operators.size())
-        //last input unit is operator, operand expected
         return false;
 
     return true;
 }
 
-std::pair<bool, int64_t> calculator::compute(size_t leftInd, size_t rightInd)
+std::pair<bool, int64_t> Calculator::compute(size_t leftInd, size_t rightInd)
 {
     if (leftInd == rightInd)
         return {true, operands[leftInd]};
@@ -114,8 +114,8 @@ std::pair<bool, int64_t> calculator::compute(size_t leftInd, size_t rightInd)
 
     if (operators[rightInd - 1] == DIV)
     {   
+        //division by zero error
         if (operands[rightInd] == 0)
-            //division by zero error
             return {false, 1};
 
         auto left = compute(leftInd, rightInd - 1);
@@ -123,25 +123,12 @@ std::pair<bool, int64_t> calculator::compute(size_t leftInd, size_t rightInd)
     }
 }
 
-bool calculator::printAns()
+int64_t Calculator::getAns()
 {
-    if (convertStatus == false)
-    {
-        std::cout << "error" << std::endl;
-        return false;
-    }
-
     auto res = compute(0, operators.size());
-    computeStatus = res.first;
 
-    if (computeStatus == true)
-    {
-        std::cout << res.second << std::endl;
-        return true;
-    }
-    else
-    {
-        std::cout << "error" << std::endl;
-        return false;
-    }    
+    if (res.first == false)
+        throw std::runtime_error("Division by zero");
+
+    return res.second;
 }

@@ -7,15 +7,14 @@ class Calculator {
     using Int = int64_t;
 
 public:
-    static Int Parse(const char* str) {
-        std::istringstream expression(str);
+    Calculator(const char* str) : expression_(str) { }
 
-        return ParsePlusMinus(expression);
+    Int Parse() {
+        return ParsePlusMinus();
     }
 
-    static constexpr char* kErrorMessage = "error";
-
 private:
+    std::istringstream expression_;
     struct Operations {
         static constexpr auto kAdd = '+';
         static constexpr auto kSubstraction = '-';
@@ -24,36 +23,36 @@ private:
         static constexpr auto kMinus = '-';
     };
 
-    static Int ParsePlusMinus(std::istringstream& expression) {
-        Int left = ParseMulDiv(expression);
+    Int ParsePlusMinus() {
+        Int left = ParseMulDiv();
         char operation;
 
-        while (expression >> operation &&
+        while (expression_ >> operation &&
                 (operation == Operations::kAdd ||
                 operation == Operations::kSubstraction)) {
 
-            Int right = ParseMulDiv(expression);
+            Int right = ParseMulDiv();
             if (operation == Operations::kAdd)
                 left += right;
             else
                 left -= right;
         }
 
-        if (expression)
-            throw std::invalid_argument("Wrong expression!");
+        if (expression_)
+            throw std::invalid_argument("Wrong expression_!");
 
         return left;
     }
 
-    static Int ParseMulDiv(std::istringstream& expression) {
-        Int left = ParseNumber(expression);
+    Int ParseMulDiv() {
+        Int left = ParseNumber();
         char operation;
 
-        while (expression >> operation &&
+        while (expression_ >> operation &&
                 (operation == Operations::kMultiplication ||
                 operation == Operations::kDivision)) {
 
-            Int right = ParseNumber(expression);
+            Int right = ParseNumber();
             if (operation == Operations::kMultiplication) {
                 left *= right;
             } else {
@@ -64,48 +63,51 @@ private:
             }
         }
 
-        if (expression)
-            expression.putback(operation);
+        if (expression_)
+            expression_.putback(operation);
 
         return left;
     }
 
-    static Int ParseNumber(std::istringstream& expression) {
-        Int sign = ParseNumberSign(expression);
+    Int ParseNumber() {
+        Int sign = ParseNumberSign();
         Int number;
 
-        if (!(expression >> number))
+        if (!(expression_ >> number))
             throw std::invalid_argument("Invalid input");
 
         return sign * number;
     }
 
-    static Int ParseNumberSign(std::istringstream& expression) {
+    Int ParseNumberSign() {
         char sign;
 
-        if (!(expression >> sign))
+        if (!(expression_ >> sign))
             throw std::invalid_argument("Invalid input");
 
         if (sign == Operations::kMinus)
             return -1;
 
-        expression.putback(sign);
+        expression_.putback(sign);
         return 1;
     }
 };
 
 
 int main(int argc, char* argv[]) {
+    const std::string error_message = "error";
+
     if (argc == 2) {
+        Calculator calc(argv[1]);
+
         try {
-            std::cout << Calculator::Parse(argv[1]);
+            std::cout << calc.Parse();
         } catch (std::invalid_argument&) {
-            std::cerr << Calculator::kErrorMessage;
+            std::cerr << error_message;
             return 1;
         }
-
     } else {
-        std::cerr << Calculator::kErrorMessage;
+        std::cerr << error_message;
         return 1;
     }
 
