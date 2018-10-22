@@ -86,9 +86,9 @@ class Calculator{
     }
 
 public:
-    Calculator(const std::string &expr):answer(0){
-        expression = std::istringstream(expr);
-    }
+    Calculator(const std::string &expr)
+        :answer(0),
+        expression(std::istringstream(expr)){}
 
     bool compute_answer(){
         return addition_subtraction();
