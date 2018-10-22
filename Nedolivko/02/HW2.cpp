@@ -24,7 +24,7 @@ class Calculator
 public:
 	// calculator: add
 	//        add: mult | add + mult | add - mult
-    //       mult: num  | mult * num | mult / num 
+        //       mult: num  | mult * num | mult / num 
 	//        num: integer number|- integer number
 	Calculator(const char *arg);
 	bool calculate();
