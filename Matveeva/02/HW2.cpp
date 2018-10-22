@@ -6,17 +6,14 @@ class Calculator {
     const int n;
 public:
     Calculator(const char* st, const int m) : s(st), n(m){}
-    ~Calculator()
-    {
-        delete [] (s - n);
-    }
+    ~Calculator() {}
     int64_t calculation() 
     {
         int64_t res;
         res = monom();
         if (*s == '\0')
             return res;
-        while (1) 
+        while (true) 
         {
             if (*s == '\0')
                 return res;
@@ -38,7 +35,7 @@ private:
     {
         int64_t monom = number();
         int64_t divisor;
-        while(1) 
+        while(true) 
         {
             if (*s == '\0')
                 return monom;
