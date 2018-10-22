@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdint>
 #include <cstring>
+#include <stdexcept>
 
 class Calc
 {
@@ -12,7 +13,8 @@ class Calc
     Lex cur_lex = Lex();
     const char* input;
     size_t input_pos = 0;
-
+    size_t input_len;
+    
     char getc();
     void ungetc();
     void read_lex();
@@ -20,13 +22,13 @@ class Calc
     int64_t expr1();
     int64_t operand();
 public:
-    Calc(const char* input): input(input) {}
+    Calc(const char* input): input(input), input_len(strlen(input)) {}
     int64_t calculate();
 };
 
 char Calc::getc()
 {
-    if(input_pos < strlen(input)) {
+    if(input_pos < input_len) {
         return input[input_pos++];
     } else {
         return '\0';
@@ -45,29 +47,23 @@ void Calc::read_lex()
         c = getc();
     } while(c == ' ');
     if(isdigit(c)) {
-        char buf[32] = {0};
-        buf[0] = c;
-        size_t i = 1;
+        int64_t num = c - '0';
         while(c = getc()) {
             if(!isdigit(c)) {
                 break;
             }
-            buf[i++] = c;
+            num = 10 * num + (c - '0');
         }
         if(c) {
             ungetc();
         }
-        int64_t num = atoi(buf);
         cur_lex = Lex('n', num);
         return;
-    } else if(c == '+' || c == '-'
-    || c == '*' || c == '/'
-    || c == '\0'
-    ) {
+    } else if(c == '+' || c == '-' || c == '*' || c == '/' || c == '\0') {
         cur_lex = Lex(c);
         return;
     } else {
-        throw false;
+        throw std::runtime_error("unexpected symbol");
     }
 }
 
@@ -106,7 +102,7 @@ int64_t Calc::expr1()
             read_lex();
             opnd = operand();
             if(opnd == 0) {
-                throw false;
+                throw std::runtime_error("division by zero");
             }
             res /= opnd;
         } else {
@@ -124,13 +120,13 @@ int64_t Calc::operand()
         if(cur_lex.op == 'n') {
             ret = -cur_lex.num;
         } else {
-            throw false;
+            throw std::runtime_error("syntax error");
         }
     } else {
         if(cur_lex.op == 'n') {
             ret = cur_lex.num;
         } else {
-            throw false;
+            throw std::runtime_error("syntax error");
         }
     }
     read_lex();
@@ -154,7 +150,7 @@ int main(int argc, char* argv[])
         int64_t res = calc.calculate();
         std::cout << res << std::endl;
     }
-    catch(bool) {
+    catch(std::exception&) {
         std::cout << "error" << std::endl;
         return 1;
     }
