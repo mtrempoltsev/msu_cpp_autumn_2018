@@ -237,10 +237,8 @@ class Calculator
 	
 public:
 
-	Calculator(const string& str) : input("") 
-	{
-		input = str;	
-	}
+	Calculator(const string& str = "") : input(str) 
+	{}
 	
 	bool Calculate(i64& result)
 	{
