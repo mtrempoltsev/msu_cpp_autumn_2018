@@ -3,11 +3,15 @@
 #include "numbers.dat"
 using namespace std;
 
-bool is_integer(const char* str)
+bool my_atoi(const char* str, unsigned int& res)
 {
 	size_t i = 0;
+	res = 0;
 	while(str[i] >= '0' && str[i] <= '9')
+	{
+		res = str[i] - '0' + res * 10;
 		i++;
+	}
 	if(str[i] != '\0')
 		return false;
 	return true;
@@ -23,6 +27,7 @@ bool is_prime(unsigned int num)
 			return false;
 	return true;
 }
+
 int main(int argc, char const *argv[])
 {
 	unsigned int left = 0;
@@ -33,14 +38,10 @@ int main(int argc, char const *argv[])
 	if(!(argc % 2) || argc == 1)
 		return -1;
 
-	for(int i = 1; i < argc; i++)
-		if(!is_integer(argv[i]))
-			return -1;
-
 	while(pos * 2 + 2 < argc)
 	{
-		left = atoi(argv[pos * 2 + 1]);
-		right = atoi(argv[pos * 2 + 2]);
+		if(!my_atoi(argv[pos * 2 + 1], left) || !my_atoi(argv[pos * 2 + 2], right))
+			return -1;
 		pos++;
 		res = 0;
 
