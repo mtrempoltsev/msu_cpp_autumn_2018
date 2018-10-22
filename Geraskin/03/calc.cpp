@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string_view>
 
 struct Operations {
     static constexpr auto Add = '+';
@@ -11,7 +12,7 @@ struct Operations {
 class Parser {
 public:
     Parser() = delete;
-    static int64_t Parse(const char* s);
+    static int64_t Parse(std::string_view s);
 private:
     static int64_t Atom(std::istringstream& expr);
     static int64_t DivMul(std::istringstream& expr);
@@ -88,8 +89,8 @@ int64_t Parser::AddSub(std::istringstream& expr) {
     return lhs;
 }
 
-int64_t Parser::Parse(const char* s) {
-    std::istringstream expr(s);
+int64_t Parser::Parse(std::string_view s) {
+    std::istringstream expr(s.data());
     return AddSub(expr);
 }
 
