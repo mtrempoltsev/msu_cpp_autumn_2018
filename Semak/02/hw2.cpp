@@ -48,9 +48,8 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-Calculator::Calculator(const char* expr)
+Calculator::Calculator(const char* expr) : expr(expr)
 {
-    this->expr = stringstream(expr);
 }
 
 int64_t Calculator::calc()
