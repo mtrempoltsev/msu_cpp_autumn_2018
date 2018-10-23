@@ -10,34 +10,35 @@ using namespace std;
 class Recurs_descent_calc {
 public:
 	bool there_was_error;
-	int64_t count_up(char* str_expr) {
+	int64_t count_up(const char* str_expr) {
 		expr = str_expr;
 		return add();
 	}
-	Recurs_descent_calc(): there_was_error(false) {}
+	Recurs_descent_calc(): there_was_error(false), index(0) {}
 private:
-	char* expr;
-	void eat_up_next_spaces() { for(; expr[0] == ' '; expr++); }
+	const char* expr;
+	size_t index;
+	void eat_up_next_spaces() { for(; *(expr+index) == ' '; index++); }
 	int64_t add() {
 		eat_up_next_spaces();
 		int64_t counted = sub();
 		eat_up_next_spaces();
-		if(*expr == '+') { expr++; return counted + add(); }
+		if(*(expr+index) == '+') { index++; return counted + add(); }
 		return counted;
 	}
 	int64_t sub() {
 		eat_up_next_spaces();
 		int64_t counted = mul_div();
 		eat_up_next_spaces();
-		if(*expr == '-') { expr++; return counted - sub(); }
+		if(*(expr+index) == '-') { index++; return counted - sub(); }
 		return counted;
 	}
 	int64_t mul_div() {
 		eat_up_next_spaces();
 		int64_t counted = minus();
 		eat_up_next_spaces();
-		if(*expr == '*') { expr++; return counted * mul_div(); }
-		if(*expr == '/') {
+		if(*(expr+index) == '*') { index++; return counted * mul_div(); }
+		if(*(expr+index) == '/') {
 			expr++;
 			int64_t divider = mul_div();
 			if(divider != 0) return counted / divider;
@@ -47,8 +48,8 @@ private:
 	}
 	int64_t minus() {
 		eat_up_next_spaces();
-		if(*expr == '-') {
-			expr++;
+		if(*(expr+index) == '-') {
+			index++;
 			return -1 * minus();
 		}
 		return num();
@@ -61,8 +62,8 @@ private:
 	int64_t num() {
 		eat_up_next_spaces();
 		int64_t number;
-		if(*expr != '\0' && sscanf(expr, "%" SCNd64, &number)) {
-			expr += number_of_digits(number);
+		if(*(expr+index) != '\0' && sscanf(expr+index, "%" SCNd64, &number)) {
+			index += number_of_digits(number);
 			eat_up_next_spaces();
 			return number;
 		}
