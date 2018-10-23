@@ -115,14 +115,13 @@ public:
     }
 };
 
-Calculator Expression;
-
 int main(int argc, char* argv[])
 {
     if (argc > 2 || argc == 1) {
         cout << "error" << endl;
         return 1;
     }
+    Calculator Expression;
     Expression.read(argv[1]);
     return 0;
 }
