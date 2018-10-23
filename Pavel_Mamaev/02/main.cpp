@@ -19,11 +19,24 @@ using namespace std;
 class calc_expression {
 public:
     bool fail;
-    calc_expression(string &s, size_t npos = 0) : exp(s), fail(false), pos(npos) {
+    calc_expression(string &s, size_t npos = 0) : exp(s), fail(false), pos(npos), res(0) {
     }
     void del_spaces() {
         exp.erase(remove(exp.begin(), exp.end(), ' '), exp.end());
     }
+    int64_t get_res() {
+        return res;
+    }
+    bool calculate_res() {
+        res = calculate();
+        return fail;
+    }
+    ~calc_expression() {
+    }
+private:
+    string exp;
+    size_t pos;
+    int64_t res;
     int64_t take_number() {
         size_t last_pos = pos;
         while (pos < exp.size() && exp[pos] == '-') {
@@ -33,7 +46,6 @@ public:
             fail = true;
             return 1;
         }
-        
         int64_t tmp_sign = 1;
         if (((pos - last_pos) & 1) == 1) {
             tmp_sign = -1;
@@ -41,7 +53,7 @@ public:
         int64_t elem = get_num(pos);
         return elem * tmp_sign;
     }
-    int64_t get_num(size_t &pos){
+    int64_t get_num(size_t &pos) {
         int64_t res = 0;
         char *st = &exp[pos];
         char *end;
@@ -50,9 +62,8 @@ public:
         pos = pos + (size_t) diff;
         return res;
     }
-    int64_t calc(bool fast = false) {
-        int64_t first;
-        first = take_number();
+    int64_t calculate(bool fast = false) {
+        int64_t first = take_number();
         if (fail) {
             return 1;
         }
@@ -66,19 +77,18 @@ public:
                 if (oper == '-') {
                     pos--;
                 }
-                int64_t second;
                 calc_expression temp(exp, pos);
-                second = temp.calc();
-                fail = temp.fail;
+                fail = temp.calculate_res();
+                int64_t second = temp.get_res();
                 return first + second;
             } else if (oper == '*') {
-                int64_t second = calc(true);
+                int64_t second = calculate(true);
                 if (fail) {
                     return 1;
                 }
                 first *= second;
             } else if (oper == '/') {
-                int64_t second = calc(true);
+                int64_t second = calculate(true);
                 if (fail || second == 0) {
                     fail = true;
                     return 1;
@@ -88,14 +98,6 @@ public:
         }
         return first;
     }
-    bool check() const {
-        return fail;
-    }
-    ~calc_expression() {
-    }
-private:
-    string exp;
-    size_t pos;
 };
 int main(int argc, const char * argv[]) {
     if (argc != 2){
@@ -105,12 +107,11 @@ int main(int argc, const char * argv[]) {
     string a = argv[1];
     calc_expression A(a);
     A.del_spaces();
-    int64_t ans = A.calc();
-    if (A.check()){
+    if (A.calculate_res()){
         cout << "error" << endl;
         return 1;
     } else {
-        cout << ans << endl;
+        cout << A.get_res() << endl;
     }
     return 0;
 }
