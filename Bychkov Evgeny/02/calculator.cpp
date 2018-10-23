@@ -316,24 +316,26 @@ public:
 
 int main(int argc, char const *argv[])
 {
-	if(argc != 2)
-	{
-		cout << "error" << endl;
-		return 1;
-	}
-	syn_analyzer s(argv[1]);
-	if(!s.parse())
+    if(argc != 2)
+    {
+        cout << "error" << endl;
+        return 1;
+    }
+
+    syn_analyzer s(argv[1]);
+
+    if(!s.parse())
     {
         cout << "error" << endl;
         return 1;
     }
     try
     {
-    	cout << s.execute() << endl;
+        cout << s.execute() << endl;
     }
     catch(...)
     {
-    	cout << "error" << endl;
+        cout << "error" << endl;
         return 1;
     }
     return 0;
