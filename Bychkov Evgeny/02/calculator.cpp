@@ -269,50 +269,49 @@ public:
         {
             switch (i.get_type())
             {
-            case LEX_INTEGER:
-                poliz_stack.push(i);
-                break;
+                case LEX_INTEGER:
+                    poliz_stack.push(i);
+                    break;
 
-            case LEX_FIN:
-                return poliz_stack.top().get_value();
+                case LEX_FIN:
+                    return poliz_stack.top().get_value();
 
-            case LEX_UNARY:
-                poliz_stack.top().set_value(-poliz_stack.top().get_value());
-                break;
+                case LEX_UNARY:
+                    poliz_stack.top().set_value(-poliz_stack.top().get_value());
+                    break;
 
-            case LEX_MINUS:
-                top = poliz_stack.top().get_value();
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() - top);
-                break;
+                case LEX_MINUS:
+                    top = poliz_stack.top().get_value();
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() - top);
+                    break;
 
-            case LEX_PLUS:
-                top = poliz_stack.top().get_value();
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() + top);
-                break;
+                case LEX_PLUS:
+                    top = poliz_stack.top().get_value();
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() + top);
+                    break;
 
-            case LEX_STAR:
-                top = poliz_stack.top().get_value();
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() * top);
-                break;
+                case LEX_STAR:
+                    top = poliz_stack.top().get_value();
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() * top);
+                    break;
 
-            case LEX_SLASH:
-                if((top = poliz_stack.top().get_value()) == 0)
-                    throw 1;
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() / top);
-                break;
+                case LEX_SLASH:
+                    if((top = poliz_stack.top().get_value()) == 0)
+                        throw 1;
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() / top);
+                    break;
 
-            default:
-                cout << "smth bad happend" << endl;
+                default:
+                    cout << "smth bad happend" << endl;
             }
         }
         return 0;
     }
 };
-
 
 int main(int argc, char const *argv[])
 {
