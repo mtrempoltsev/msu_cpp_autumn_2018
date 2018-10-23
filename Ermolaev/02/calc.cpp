@@ -98,9 +98,8 @@ int main(int argc, char* argv[]){
         return 1;
     }
     auto s = string(argv[1]);
+    Calc* calc = new Calc();
     try{
-        //cout << 1/0 << endl;
-        Calc* calc = new Calc();
         cout << calc->run(s) << endl;
     }
     catch(exception& e){
