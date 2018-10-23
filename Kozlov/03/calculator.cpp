@@ -5,9 +5,7 @@
 #include <cstdlib>
 /*
 expr := addend [+-] ... [+-] addend
-
 addend := factor [/*] ... [/*] factor
-
 factor := number | -factor
 */
 
@@ -31,12 +29,12 @@ Calculator::Calculator(const char *init)
     char *str = (char*)malloc(sizeof(char)*(len+1));
     unsigned j = 0;
 
-
     for (unsigned i = 0; i < len; ++i) {
         if (!isspace(init[i])) {
             str[j++] = init[i];
         }
     }
+
     str[j] = 0;
     s = str;
     start = str;
