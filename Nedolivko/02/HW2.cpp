@@ -24,11 +24,11 @@ class Calculator
 public:
 	// calculator: add
 	//        add: mult | add + mult | add - mult
-	//       mult: num  | mult * num | mult / num 
+    	//       mult: num  | mult * num | mult / num 
 	//        num: integer number|- integer number
 	Calculator(const char *arg);
 	bool calculate();
-	void print();
+	int64_t get_result();
 };
 
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	if (argc == 2) {
 		Calculator calc(argv[1]);
 		if (calc.calculate()){
-			calc.print();
+			cout << calc.get_result() << endl;
 		} else {
 			return 1;
 		}
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-Calculator::Calculator(const char *arg): result(0), str(stringstream(arg)), numbers(), operations(){}
+Calculator::Calculator(const char *arg): result(0), str(arg){}
 
 bool Calculator::parse()
 {
@@ -191,7 +191,7 @@ bool Calculator::mult()
 	return success;
 }
 
-void Calculator::print()
+int64_t Calculator::get_result()
 {
-	cout << result << endl;
+	return result;
 }
