@@ -19,7 +19,7 @@ class Calculator
 	
 	bool parse();
 	bool read_number(bool sign = false);
-	char read_probels();
+	char read_spaces();
 	
 public:
 	// calculator: add
@@ -56,7 +56,7 @@ bool Calculator::parse()
 	bool number_f;
 	while (not str.eof()){
 		// read number
-		cur_c = read_probels();
+		cur_c = read_spaces();
 		if (str.eof()) {
 		    return false;
 		}
@@ -72,7 +72,7 @@ bool Calculator::parse()
 			return false;
 		// if not end of line, read operator
 		if (not str.eof()) {
-			cur_c = read_probels();
+			cur_c = read_spaces();
 			if (cur_c == '+' or cur_c == '-' or cur_c == '/' or cur_c == '*') {
 				operations.push(cur_c);
 			} else if (not str.eof()){
@@ -97,7 +97,7 @@ bool Calculator::read_number(bool sign)
 	return true;
 }
 
-char Calculator::read_probels()
+char Calculator::read_spaces()
 {
 	char cur_c;
 	do {
