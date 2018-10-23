@@ -10,41 +10,55 @@ struct Operations {
 
 class Parser {
 public:
-    Parser() = delete;
-    static int64_t Parse(const char* s);
+    explicit Parser(const char* s);
+    int64_t GetResult() const;
+
 private:
-    static int64_t Atom(std::istringstream& expr);
-    static int64_t DivMul(std::istringstream& expr);
-    static int64_t AddSub(std::istringstream& expr);
+    std::istringstream Expr;
+    const int64_t Result;
+
+    int64_t Atom();
+    int64_t DivMul();
+    int64_t AddSub();
 };
 
-int64_t Parser::Atom(std::istringstream& expr) {
+Parser::Parser(const char* s)
+    : Expr(s)
+    , Result(AddSub())
+{
+}
+
+int64_t Parser::GetResult() const {
+    return Result;
+}
+
+int64_t Parser::Atom() {
     char c;
     int64_t x;
 
-    expr >> c;
+    Expr >> c;
 
     if (c == Operations::Sub) {
-        expr >> x;
+        Expr >> x;
         x = -x;
     } else {
-        expr.putback(c);
-        expr >> x;
+        Expr.putback(c);
+        Expr >> x;
     }
 
-    if (!expr) {
-        throw std::invalid_argument("Wrong expression!");
+    if (!Expr) {
+        throw std::invalid_argument("Wrong Expression!");
     }
 
     return x;
 }
 
-int64_t Parser::DivMul(std::istringstream& expr) {
+int64_t Parser::DivMul() {
     char op;
-    auto lhs = Atom(expr);
+    auto lhs = Atom();
 
-    while (expr >> op && (op == Operations::Mul || op == Operations::Div)) {
-        auto rhs = Atom(expr);
+    while (Expr >> op && (op == Operations::Mul || op == Operations::Div)) {
+        auto rhs = Atom();
         switch (op) {
             case Operations::Mul: {
                 lhs *= rhs;
@@ -58,19 +72,19 @@ int64_t Parser::DivMul(std::istringstream& expr) {
         }
     }
 
-    if (expr) {
-        expr.putback(op);
+    if (Expr) {
+        Expr.putback(op);
     }
 
     return lhs;
 }
 
-int64_t Parser::AddSub(std::istringstream& expr) {
+int64_t Parser::AddSub() {
     char op;
-    auto lhs = DivMul(expr);
+    auto lhs = DivMul();
 
-    while (expr >> op && (op == Operations::Add || op == Operations::Sub)) {
-        auto rhs = DivMul(expr);
+    while (Expr >> op && (op == Operations::Add || op == Operations::Sub)) {
+        auto rhs = DivMul();
         switch (op) {
             case Operations::Add: {
                 lhs += rhs;
@@ -81,16 +95,11 @@ int64_t Parser::AddSub(std::istringstream& expr) {
         }
     }
 
-    if (expr) {
-        throw std::invalid_argument("Wrong expression!");
+    if (Expr) {
+        throw std::invalid_argument("Wrong Expression!");
     }
 
     return lhs;
-}
-
-int64_t Parser::Parse(const char* s) {
-    std::istringstream expr(s);
-    return AddSub(expr);
 }
 
 int main(int argc, char *argv[]) {
@@ -100,8 +109,8 @@ int main(int argc, char *argv[]) {
     }
 
     try {
-        std::cout << Parser::Parse(argv[1]) << '\n';
-    } catch (...) {
+        std::cout << Parser(argv[1]).GetResult() << '\n';
+    } catch (std::exception& /*e*/) {
         std::cout << "error\n";
         return 1;
     }
