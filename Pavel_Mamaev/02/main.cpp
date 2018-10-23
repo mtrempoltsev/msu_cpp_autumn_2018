@@ -19,10 +19,7 @@ using namespace std;
 class calc_expression {
 public:
     bool fail;
-    calc_expression(string s) {
-        exp = s;
-        fail = false;
-        pos = 0;
+    calc_expression(string &s, size_t npos = 0) : exp(s), fail(false), pos(npos) {
     }
     void del_spaces() {
         exp.erase(remove(exp.begin(), exp.end(), ' '), exp.end());
@@ -46,10 +43,11 @@ public:
     }
     int64_t get_num(size_t &pos){
         int64_t res = 0;
-        while (exp[pos] >= '0' && exp[pos] <= '9') {
-            res = res * 10 + exp[pos] - '0';
-            ++pos;
-        }
+        char *st = &exp[pos];
+        char *end;
+        res = (int64_t) strtoll(st, &end, 10);
+        ptrdiff_t diff = end - st;
+        pos = pos + (size_t) diff;
         return res;
     }
     int64_t calc(bool fast = false) {
@@ -69,7 +67,7 @@ public:
                     pos--;
                 }
                 int64_t second;
-                calc_expression temp(exp.substr(pos));
+                calc_expression temp(exp, pos);
                 second = temp.calc();
                 fail = temp.fail;
                 return first + second;
@@ -90,10 +88,11 @@ public:
         }
         return first;
     }
-    bool check() {
+    bool check() const {
         return fail;
     }
-    ~calc_expression() {}
+    ~calc_expression() {
+    }
 private:
     string exp;
     size_t pos;
