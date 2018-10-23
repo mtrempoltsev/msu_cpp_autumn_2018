@@ -9,12 +9,12 @@ class ERROR{};
 class leksem{
     types type;
     int64_t value;
-    bool isSign(char* str);
-    size_t isNum(char* str);
+    bool isSign(const char* str);
+    size_t isNum(const char* str);
     int normalizeFirst();
 public:
     leksem *next;
-    leksem(char *expr);
+    leksem(const char *expr);
     types gettype(){
         return type;
     }
@@ -32,7 +32,7 @@ public:
     }
     void normalize();
     ~leksem(){
-        leksem *l = this;
+        leksem *l = this->next;
         while(l != nullptr){
             leksem *lnext = l->next;
             free(l);
@@ -68,7 +68,8 @@ int leksem::normalizeFirst(){
                 l2 = deleteLex(l2);
             }
             this->next = l->next;
-            free(l);
+            if(l != nullptr)
+                free(l);
         }
     }
     else{
@@ -110,7 +111,7 @@ void leksem::normalize(){
     lastImpLex->next = nullptr;
 }
 
-bool leksem::isSign(char *str){
+bool leksem::isSign(const char *str){
     char c = *str;
     switch(c){
         case '+':
@@ -133,10 +134,10 @@ bool leksem::isSign(char *str){
     }
 }
 
-size_t leksem::isNum(char* str){
+size_t leksem::isNum(const char* str){
     if((*str > '9') || (*str < '0'))
         return 0;
-    char *iter = str;
+    const char *iter = str;
     this->type = NUM;
     int64_t res=0;
     char digit;
@@ -148,10 +149,10 @@ size_t leksem::isNum(char* str){
     size_t n = iter - str;
     return n;
 }
-leksem::leksem(char *expr){
+leksem::leksem(const char *expr){
     this->next = nullptr;
     this->value = 0;
-    char *oldexpr = expr;
+    const char *oldexpr = expr;
     int mv = 0;
     if(*expr != '\0')
           mv += isNum(expr);
@@ -174,11 +175,15 @@ public:
     CalcTree(leksem *l);
     int calc();
     ~CalcTree(){
-        if(left != nullptr)
-            delete left;
-        if(right != nullptr)
-            delete right;
-        free(this);
+        CalcTree *l = this;
+        if(l->left != nullptr)
+            delete l->left;
+        l->left = nullptr;
+        if(l->right != nullptr)
+            delete l->right;
+        l->right = nullptr;
+        if(l == nullptr)
+            free(l);
     }
 };
 
@@ -192,8 +197,9 @@ int CalcTree::calc(){
             return left->calc() * right->calc();
         case DIV:{
             int r = right->calc();
+            ERROR e;
             if(r == 0)
-                throw ERROR();
+                throw e;
             return left->calc() / r;
         }
         case NUM:
@@ -255,19 +261,29 @@ CalcTree::CalcTree(leksem *l){
     right = new CalcTree(rightLex->next);
     l2->next = rightLex;
 }
+
 int main(int argc, char* argv[]){
     if(argc != 2){
         std::cout<<"error";
         return 1;
     }
+    leksem *l = nullptr;
+    CalcTree *tree = nullptr;
     try{
-        leksem *l = new leksem(argv[1]);
+        l = new leksem(argv[1]);
         l->normalize();
-        CalcTree *tree = new CalcTree(l);
+        tree = new CalcTree(l);
         std::cout<<tree->calc();
+        delete tree;
     }
-    catch(ERROR e){
+    catch(ERROR &e){
         std::cout<<"error";
         return 1;
     }
+
+    if(l != nullptr){
+        delete l;
+        l = nullptr;
+    }
+    return 0;
 }
