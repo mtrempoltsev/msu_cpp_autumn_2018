@@ -89,6 +89,7 @@ void remove_space(char * x, char* c)
 }
 
 int main(int argc, char* argv[])
+
 {
     if (argc != 2)
     {
@@ -109,6 +110,7 @@ int main(int argc, char* argv[])
         cout << "error" << endl;
         delete []c;
         return 1;
+
     }
     return 0;
 }
