@@ -23,16 +23,8 @@ class Lex
     type_of_lex type;
     int64_t value;
 public:
-    Lex(type_of_lex t = LEX_NULL, int64_t v = 0)
-    {
-        type = t;
-        value = v;
-    }
-    Lex(const Lex &l)
-    {
-        type = l.type;
-        value = l.value;
-    }
+    Lex(type_of_lex t = LEX_NULL, int64_t v = 0):type(t), value(v) {}
+    Lex(const Lex &l): type(l.type), value(l.value) {}
     type_of_lex get_type() const
     {
         return  type;
@@ -97,7 +89,7 @@ public:
         return s << " }";
     }
 };
-class sin_analizator
+class syn_analyzer
 {
     string inp;
     vector<Lex> poliz_vector;
@@ -254,13 +246,7 @@ class sin_analizator
             return false;
     }
 public:
-    sin_analizator(string s)
-    {
-        inp = s;
-        curr_value = 0;
-        curr_lex = LEX_NULL;
-        curr_char = '\0';
-    }
+    syn_analyzer(string s): inp(s), curr_lex(LEX_NULL), curr_value(0), curr_char('\0') {}
     bool parse()
     {
         if((curr_char = gc()) == '\0')
@@ -283,68 +269,74 @@ public:
         {
             switch (i.get_type())
             {
-            case LEX_INTEGER:
-                poliz_stack.push(i);
-                break;
+                case LEX_INTEGER:
+                    poliz_stack.push(i);
+                    break;
 
-            case LEX_FIN:
-                return poliz_stack.top().get_value();
+                case LEX_FIN:
+                    return poliz_stack.top().get_value();
 
-            case LEX_UNARY:
-                poliz_stack.top().set_value(-poliz_stack.top().get_value());
-                break;
+                case LEX_UNARY:
+                    poliz_stack.top().set_value(-poliz_stack.top().get_value());
+                    break;
 
-            case LEX_MINUS:
-                top = poliz_stack.top().get_value();
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() - top);
-                break;
+                case LEX_MINUS:
+                    top = poliz_stack.top().get_value();
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() - top);
+                    break;
 
-            case LEX_PLUS:
-                top = poliz_stack.top().get_value();
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() + top);
-                break;
+                case LEX_PLUS:
+                    top = poliz_stack.top().get_value();
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() + top);
+                    break;
 
-            case LEX_STAR:
-                top = poliz_stack.top().get_value();
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() * top);
-                break;
+                case LEX_STAR:
+                    top = poliz_stack.top().get_value();
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() * top);
+                    break;
 
-            case LEX_SLASH:
-                if((top = poliz_stack.top().get_value()) == 0)
-                {
-                	cout << "error" << endl;
-                	exit(1);
-                }
-                poliz_stack.pop();
-                poliz_stack.top().set_value(poliz_stack.top().get_value() / top);
-                break;
+                case LEX_SLASH:
+                    if((top = poliz_stack.top().get_value()) == 0)
+                        throw 1;
+                    poliz_stack.pop();
+                    poliz_stack.top().set_value(poliz_stack.top().get_value() / top);
+                    break;
 
-            default:
-                cout << "smth bad happend" << endl;
+                default:
+                    cout << "smth bad happend" << endl;
             }
         }
         return 0;
     }
 };
 
-
 int main(int argc, char const *argv[])
 {
-	if(argc != 2)
-	{
-		cout << "error" << endl;
-		return 1;
-	}
-	sin_analizator s(argv[1]);
-	if(!s.parse())
+    if(argc != 2)
     {
         cout << "error" << endl;
         return 1;
     }
-    cout << s.execute() << endl;
+
+    syn_analyzer s(argv[1]);
+
+    if(!s.parse())
+    {
+        cout << "error" << endl;
+        return 1;
+    }
+    try
+    {
+        cout << s.execute() << endl;
+    }
+    catch(...)
+    {
+        cout << "error" << endl;
+        return 1;
+    }
     return 0;
 }
 

@@ -115,8 +115,7 @@ private:
     }
 
 public:
-    Expr(const char *_s) {
-        s = _s;
+    Expr(const char *_s) : s(_s) {
         try {
             parse_lex();
             value = parse_state_A();
