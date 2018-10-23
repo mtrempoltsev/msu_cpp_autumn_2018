@@ -17,7 +17,7 @@ public:
 	Recurs_descent_calc(): there_was_error(false), index(0) {}
 private:
 	const char* expr;
-	size_t index;
+	ptrdiff_t index;
 	void eat_up_next_spaces() { for(; *(expr+index) == ' '; index++); }
 	int64_t add() {
 		eat_up_next_spaces();
@@ -39,7 +39,7 @@ private:
 		eat_up_next_spaces();
 		if(*(expr+index) == '*') { index++; return counted * mul_div(); }
 		if(*(expr+index) == '/') {
-			expr++;
+			index++;
 			int64_t divider = mul_div();
 			if(divider != 0) return counted / divider;
 			there_was_error = true;
