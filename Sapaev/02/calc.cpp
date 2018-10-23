@@ -177,9 +177,8 @@ class Calculator {
     }
 
 public:
-    Calculator(std::string str)
+    Calculator(const std::string& str): expr(str)
     {
-        expr = str;
         expr_size = str.size();
         cur_index = 0;
         get_lex();
