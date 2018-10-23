@@ -121,7 +121,7 @@ public:
             parse_lex();
             value = parse_state_A();
             correct = true;
-        } catch (Error) {
+        } catch (Error&) {
             correct = false;
         }
     }
