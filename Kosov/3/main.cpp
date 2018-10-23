@@ -55,7 +55,7 @@ private:
         return true;
     }
 public:
-    Calculator(std::string const& str){
+    Calculator(std::string const& str) : res(0){
         std::istringstream in(str);
         if(!sum(in, res)) throw std::invalid_argument("error");
     }
@@ -74,7 +74,7 @@ int main(int argc, char **argv){
     try{
         Calculator calc(argv[1]);
         std::cout << calc;
-    }catch(std::exception){
+    }catch(std::exception& e){
         std::cout << "error";
         return 1;
     }
