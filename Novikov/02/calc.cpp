@@ -10,8 +10,8 @@ using namespace std;
 class Recurs_descent_calc {
 public:
 	bool there_was_error;
-	int64_t count_up(char* str_expr) {
-		expr = str_expr;
+	int64_t count_up(const char* str_expr) {
+		expr = (char*)str_expr;
 		return add();
 	}
 	Recurs_descent_calc(): there_was_error(false) {}

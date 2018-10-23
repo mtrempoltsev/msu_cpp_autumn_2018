@@ -116,8 +116,8 @@ class Analyzer {
     }
 
 public:
-    Analyzer(std::string init) : expr(init) {
-        expr_len = expr.size();
+    Analyzer(const char* init) : expr(std::string(init)), 
+                                 expr_len(expr.size()) {
         getlex();
     }
 
@@ -179,8 +179,7 @@ int main(int argc, char* argv[])
         if (argc != 2) {
             throw std::invalid_argument("Wrong amount of arguments");
         }
-        std::string exp = argv[1];
-        Analyzer analyze(exp);
+        Analyzer analyze(argv[1]);
         analyze.start();
         std::cout << analyze.result() << std::endl;
         return 0;

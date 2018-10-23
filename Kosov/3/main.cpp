@@ -2,53 +2,62 @@
 #include <string>
 #include <sstream>
 #include <ctype.h>
+#include <stdexcept>
 
 
 class Calculator{
 private:
     int64_t res;
-    int64_t num(std::istringstream& in){
+    bool num(std::istringstream& in, int64_t& arg){
         char minus;
-        if(!(in >> minus)) throw "error";
+        if(!(in >> minus)) return false;
         int64_t buf;
         if(minus == '-'){
-            if(!(in >> buf)) throw "error";
-            return -buf;
+            if(!(in >> buf)) return false;
+            arg = -buf;
+            return true;
         }else{
-            if(!isdigit(minus)) throw "error";
+            if(!isdigit(minus)) return false;
             in.putback(minus);
             in >> buf;
-            return buf;
+            arg = buf;
+            return true;
         }
     }
-    int64_t mul(std::istringstream& in){
-        int64_t num1 = num(in);
+    bool mul(std::istringstream& in, int64_t& arg){
+        int64_t num1;
+        if(!num(in, num1)) return false;
         char buf;
         while((in >> buf) && (buf == '*' || buf == '/')){
-            int64_t num2 = num(in);
+            int64_t num2;
+            if(!num(in, num2)) return false;
             if(buf == '*') num1 *= num2;
             if(buf == '/'){
-                if(num2 == 0) throw "error";
+                if(num2 == 0) return false;
                 num1 /= num2;
             }
         }
         in.putback(buf);
-        return num1;
+        arg = num1;
+        return true;
     }
-    int64_t sum(std::istringstream& in){
-        int64_t num1 = mul(in);
+    bool sum(std::istringstream& in, int64_t& arg){
+        int64_t num1;
+        if(!mul(in, num1)) return false;
         char buf;
         while(in >> buf && (buf == '+' || buf == '-')){
-            int64_t num2 = mul(in);
+            int64_t num2;
+            if(!mul(in, num2)) return false;
             if(buf == '+') num1 += num2;
             if(buf == '-') num1 -= num2;
         }
-        return num1;
+        arg = num1;
+        return true;
     }
 public:
     Calculator(std::string const& str){
         std::istringstream in(str);
-        res = sum(in);
+        if(!sum(in, res)) throw std::invalid_argument("error");
     }
     friend std::ostream & operator<<(std::ostream& out, const Calculator& calc);
 };
@@ -65,8 +74,8 @@ int main(int argc, char **argv){
     try{
         Calculator calc(argv[1]);
         std::cout << calc;
-    }catch(const char* str){
-        std::cout << str;
+    }catch(std::exception){
+        std::cout << "error";
         return 1;
     }
     return 0;
