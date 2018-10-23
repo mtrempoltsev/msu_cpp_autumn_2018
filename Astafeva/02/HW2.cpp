@@ -5,14 +5,21 @@
 
 using namespace std;
 
+class Answer {
+public:
+    bool is_error = 0;
+    int64_t res = 0;
+};
+
 class Calculator{
+    Answer A;
     vector <int64_t> num;
     vector <char> op;
     void skip_sp(char* &pos) {
         while (*pos == ' ')
             ++pos;
     }
-    int64_t calc(int l, int r) const {
+    int64_t calc(int l, int r) {
         if (l == r) {
             switch (op[l]) {
             case '+':
@@ -21,8 +28,8 @@ class Calculator{
                 return num[l] * num[l + 1];
             case '/':
                 if (num[l + 1] == 0) {
-                    cout << "error" << endl;
-                    exit(1);
+                    A.is_error = 1;
+                    throw A;
                 }
                 return num[l] / num[l + 1];
             }
@@ -49,8 +56,8 @@ class Calculator{
                 break;
             case '/':
                 if (num[i + 1] == 0) {
-                    cout << "error" << endl;
-                    exit(1);
+                    A.is_error = 1;
+                    throw A;
                 }
                 res /= num[i + 1];
                 break;
@@ -60,7 +67,7 @@ class Calculator{
     }
 
 public:
-    void read(char *str) {
+    Calculator(char *str) {
         num.resize(0);
         op.resize(0);
         int64_t c_num;
@@ -72,8 +79,8 @@ public:
             ++p_pos;
             c_num = strtoll(p_pos, &pos, 10);
             if (p_pos == pos || c_num <= 0) {
-                cout << "error" << endl;
-                exit(1);
+                A.is_error = 1;
+                throw A;
             }
             c_num = -c_num;
         } else
@@ -88,12 +95,13 @@ public:
                     op[i] = '+';
                     num[i + 1] = -num[i + 1];
                 }
-                cout << this->calc(0, op.size() - 1) << endl;
-                exit(0);
+                A.is_error = 0;
+                A.res = this->calc(0, op.size() - 1);
+                throw A;
             }
             if (c_op != '+' && c_op != '-' && c_op != '*' && c_op != '/'){
-                cout << "error" << endl;
-                exit(1);
+                A.is_error = 1;
+                throw A;
             }
             ++pos;
             skip_sp(pos);
@@ -103,15 +111,15 @@ public:
                 ++p_pos;
                 c_num = strtoll(p_pos, &pos, 10);
                 if (p_pos == pos || c_num <= 0) {
-                    cout << "error" << endl;
-                    exit(1);
+                    A.is_error = 1;
+                    throw A;
                 }
                 c_num = -c_num;
             } else
                 c_num = strtoll(p_pos, &pos, 10);
         }
-        cout << "error" << endl;
-        exit(1);
+        A.is_error = 1;
+        throw A;
     }
 };
 
@@ -121,7 +129,16 @@ int main(int argc, char* argv[])
         cout << "error" << endl;
         return 1;
     }
-    Calculator Expression;
-    Expression.read(argv[1]);
+    try {
+        Calculator Expression(argv[1]);
+    } catch (Answer &A) {
+        if (A.is_error) {
+            cout << "error" << endl;
+            return 1;
+        } else {
+            cout << A.res << endl;
+            return 0;
+        }
+    }
     return 0;
 }
