@@ -8,8 +8,8 @@ using namespace std;
 #define __DBG__ 0
 
 /*
-S -> S + T | S - T |  T
-T -> T * E | T / E | E
+S -> S + S | S - S |  T
+T -> T * T | T / T | E
 E -> int64_t
 */
 
