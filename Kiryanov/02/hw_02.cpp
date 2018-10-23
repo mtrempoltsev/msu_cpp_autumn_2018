@@ -1,89 +1,149 @@
 #include <iostream>
-#include <math.h>
 #include <stdlib.h>
-#include "numbers.dat"
+#include <string>
+#include <cctype>
+#include <cstdlib>
+
 using namespace std;
 
-int bin_search_right(const int obj)
+class Calculator
 {
-	int left = 0, right = Size, middle;
-	while (right-left>1)
-	{	
-		middle = (right + left) / 2;
-		if (Data[middle] <= obj)
-			left = middle;
-		else
-			right = middle;
-	}
-	if (obj == Data[left])
-		return left;
-	if (obj == Data[right])
-		return right;
-	return -1;
-}
+	using Int = int64_t;
+	bool error;
+	string expression;
 
-int bin_search_left(const int obj)
-{
-	int left = 0, right = Size, middle;
-	while (right - left>1)
+public:
+	Int result;
+	Calculator(const string &input)
+		:error(false),
+		expression(edit(input)),
+		result(0)
 	{
-		middle = (right + left) / 2;
-		if (Data[middle] >= obj)
-			right = middle;
-		else
-			left = middle;
+		parse();
+		if (error)
+			throw invalid_argument("Invalid input");
 	}
-	if (obj == Data[left])
-		return left;
-	if (obj == Data[right])
-		return right;
-	return -1;
-}
 
-void prime_numbers(bool* array,const int max)
-{
-	array[0]=array[1]=false;
-	for (int i = 2; i <= max; i++)
-		array[i] = true;
-	for (int i = 4; i <= max; i++)
+private:
+	string edit(const string &input)
 	{
-		for (int j = 2; j<=int(sqrt(i)); j++)
+		string a;
+		for (int i = 0; i<input.length(); i++)
 		{
-			if (i%j==0)
-			{
-				array[i] = false;
-				break;
+			if ((input[i] >= '(') && (input[i] <= '9'))
+				a += input[i];
+			else if (input[i] != ' ')
+			{	
+				error = true;
+				return "";
 			}
 		}
-	}
-}
+		return a;
+	};
 
+	void parse(void)
+	{
+		if (error)
+			return;
+		multiplication();
+		Int res = result;
+		while (expression.length() > 0)
+		{
+			char _operator = expression[0];
+			expression.erase(0, 1);
+			multiplication();
+			switch (_operator)
+			{
+				case '+':
+				{
+					res += result;
+					break;
+				}
+				case '-':
+				{
+					res -= result;
+					break;
+				}
+			}
+			result = res;
+		}
+	};
+
+	void get_digit(void)
+	{
+		if (error)
+			return;
+		Int i = 0;
+		Int sign = 1;
+		string a;
+		if (expression[0] == '-')
+		{
+			sign = -1;
+			expression.erase(0,1);
+		}
+		while (isdigit(expression[i]))
+		{
+			a += expression[i];
+			i++;
+		}
+		if (i == 0)
+		{
+			error = true;
+			return;
+		}
+		result = sign * atoi(a.c_str());
+		expression.erase(0, i);
+	};
+
+	void multiplication(void)
+	{
+		if (error)
+			return;
+		get_digit();
+		Int res = result;
+		while (expression[0] == '*' || expression[0] == '/')
+		{
+			char _operator = expression[0];
+			expression.erase(0, 1);
+			get_digit();
+			switch (_operator)
+			{
+				case '*':
+				{
+					res *= result;
+					break;
+				}
+				case '/':
+				{
+					if (result == 0)
+					{
+						error = true;
+						return;
+					}
+					res /= result;
+					break;
+				}
+			}
+			result = res;
+		}
+	};
+
+};
 int main(int argc, char *argv[])
-{	
-	const int max = 100000;
-	bool* prime = (bool*)malloc(max+1);
-	prime_numbers(prime, max);
-	int counter = 0, a, b;
-	
-	if ((argc-1)%2!=0 || argc == 1)
-		return -1;
-	else
-		for (int i = 1; i < argc; i += 2)
-		{
-			a = atoi(argv[i]);
-			b = atoi(argv[i + 1]);
-			int right = bin_search_right(b);
-			int left = bin_search_left(a);
-			
-			if (left != -1 && right != -1)
-			{
-				for (int i = left; i <= right; i++)
-					counter += prime[Data[i]];
-			}
-			
-			cout << counter << endl;
-			counter = 0;
-		}
-	free(prime);
+{
+	if (argc != 2)
+	{
+		cerr << "error";
+		return 1;
+	}
+	const string s = string(argv[1]);
+	try {
+		Calculator b(s);
+		cout << b.result << endl;
+	}
+	catch (invalid_argument&) {
+		cerr << "error";
+		return 1;
+	}
 	return 0;
 }

@@ -18,10 +18,15 @@ bool is_prime(int a) {
 }
 
 int main(int argc, char *argv[]) {
-    const int *beg = Data;
-    const int *end = &Data[Size + 1];
 
-    if (argc < 3 || !(argc & 1)) {
+    constexpr int l_bound = 0;
+    constexpr int r_bound = 1e5;
+    constexpr int min_num_arg = 3;
+
+    const int *beg = Data;
+    const int *end = Data + Size + 1;
+
+    if (argc < min_num_arg || !(argc & 1)) {
         return -1;
     }
 
@@ -29,8 +34,8 @@ int main(int argc, char *argv[]) {
         int res = 0;
         int f = std::atoi(argv[i]);
         int s = std::atoi(argv[i + 1]);
-        if (!(0 <= f && f <= 100000) ||
-                !(0 <= s && s <= 100000)) {
+        if (!(l_bound <= f && f <= r_bound) ||
+                !(l_bound <= s && s <= r_bound)) {
             return -1;
         }
         
@@ -39,13 +44,13 @@ int main(int argc, char *argv[]) {
             return 0;
         }
 
-        int *ff = const_cast<int*>(std::lower_bound(beg, end, f));
-        int *ss = const_cast<int*>(std::upper_bound(beg, end, s));
+        const int *ff = std::lower_bound(beg, end, f);
+        const int *ss = std::upper_bound(beg, end, s);
 
         if (ff == end || ss == end) {
             std::cout << 0 << std::endl;
         } else {
-            for (int *ptr = ff; ptr != ss; ++ptr) {
+            for (const int *ptr = ff; ptr != ss; ++ptr) {
                 res += is_prime(*ptr);
             }
         }
