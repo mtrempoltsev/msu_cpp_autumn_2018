@@ -117,7 +117,7 @@ class Analyzer {
 
 public:
     Analyzer(const char* init) : expr(std::string(init)), 
-    							 expr_len(expr.size()) {
+                                 expr_len(expr.size()) {
         getlex();
     }
 
