@@ -7,11 +7,11 @@
 //
 
 #include <iostream>
-#include <stdio.h>
 #include <ctype.h>
 #include <cstdlib>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 enum
 {
@@ -68,7 +68,7 @@ class calculator {
     }
     
     void removing_spaces() {
-        s.erase(remove(s.begin(), s.end(), ' '), s.end());
+        s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
     }
     
     size_t division_and_multiplication(int64_t & first_number, char & operation, size_t pos) {
@@ -120,7 +120,7 @@ class calculator {
     
 public:
     
-    calculator(char *string_now): s(std::string(string_now)), correct_syntax(true)
+    calculator(const char *string_now): s(std::string(string_now)), correct_syntax(true)
     {
         correct_syntax = check_correctness();
         if (correct_syntax) {
@@ -142,7 +142,7 @@ public:
     
 };
 
-int main(int argc, char * argv[]) {
+int main(int argc, const char * argv[]) {
     if (argc == 2) {
         calculator my_calculator(argv[1]);
         if (!my_calculator.get_correct_syntax()) {
