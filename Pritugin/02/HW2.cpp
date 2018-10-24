@@ -105,7 +105,6 @@ public:
 		}
 		catch (std::exception& e)
 		{
-			std::cout << "error" << std::endl;
 			return false;
 		}
 	}
@@ -144,7 +143,10 @@ int main (int argc, char* argv[])
 		if(calc.setExpression(argv[1]))
 			std::cout << calc.getAnswer() << std::endl;
 		else
+		{
+			std::cout << "error" << std::endl;
 			return 1;
+		}
 		return 0;
 	}
     std::cout << "error" << std::endl; return 1;
