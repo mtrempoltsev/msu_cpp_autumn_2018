@@ -1,0 +1,246 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <exception>
+
+
+using std::string;
+using std::vector;
+
+
+enum Type { oper, num };
+
+
+class Lexem {
+public:
+    Lexem() {}
+    virtual Type get_type(void) {
+    }
+    virtual int64_t get_val(void) {
+    }
+};
+
+class LogicError: public std::exception {
+} logic_ex;
+
+class LexicalError: public std::exception {
+} lexical_ex;
+
+class Oper: public Lexem {
+private:
+    int64_t oper_;
+    int64_t prior_;
+public:
+    Oper(char oper, char prior): oper_(oper), prior_(prior) {}
+    Type get_type(void) const {
+        return oper;
+    }
+    char get_priority(void) const {
+        return prior_;
+    }
+    int64_t get_val(void) const {
+        return oper_;
+    }
+};
+
+class Num: public Lexem {
+private:
+    int64_t val_;
+public:
+    Num(int64_t val): val_(val) {}
+    Type get_type(void) const {
+        return num;
+    }
+    int64_t get_val(void) const {
+        return val_;
+    }
+};
+
+
+//Чтобы UMIN нормально парсился
+string remove_spaces(char input[]) {
+    string tmp("");
+    int64_t i;
+    for (i = 0; input[i] != 0; i++) {
+        if (!(input[i] == ' ' || input[i] == '\t'))
+            tmp += input[i];
+    }
+    return tmp;
+}
+
+struct Expression {
+    Lexem* val;
+    Expression* left, *right;
+    Expression() {}
+    Expression(Lexem* s) {
+        val = s;
+    }
+};
+
+class Calculator {
+private:
+    string input_;
+    vector<Lexem*> expression_;
+    Expression* calc_tree_;
+public:
+    Calculator(char input[]): input_(remove_spaces(input)) {}
+    Lexem* get_next_lexem(int64_t& pos) const;
+    void lexical_analis(void);
+    void fill_tree(void);
+    Expression* parse(int64_t left, int64_t right);
+    int64_t get_ans(void);
+    int64_t calculate(Expression*) const;
+    void print_tree(void) const;
+};
+
+
+Lexem* Calculator::get_next_lexem(int64_t& pos) const {
+    if (input_[pos] == 0) {
+        return nullptr;
+    }
+
+//Check for Number
+    using std::isdigit;
+    int64_t tmp = 0;
+    bool is_number = false;
+    while (input_[pos] != 0 && isdigit(input_[pos])) {
+        is_number = true;
+        tmp *= 10;
+        tmp += input_[pos] - '0';
+        pos += 1;
+    }
+    if (is_number) {
+        return new Num(tmp);
+    }
+
+//Get Operation
+    if (input_[pos] == '-' && (pos == 0 || !(isdigit(input_[pos - 1])))) {
+        pos += 1;
+        //Return UMIN
+        return new Oper('_', 5);
+    }
+    if (input_[pos] == '/') {
+        return new Oper(input_[pos++], 4);
+    }
+    if (input_[pos] == '*') {
+        //Return * || /
+        return new Oper(input_[pos++], 3);
+    }
+    //Return + || -
+    if (input_[pos] == '+') {
+        return new Oper(input_[pos++], 1);
+    }
+    
+    if (input_[pos] == '-') {
+        return new Oper(input_[pos++], 2);
+    }
+
+//If not number or operation then error
+    throw lexical_ex;
+}
+
+//EXPR = MUL + MUL | MUL - MUL
+//MUL = MIN * MIN | MIN / MIN
+//MIN = -MIN | {0, ..., MAX_INT}
+void Calculator::lexical_analis(void) {
+    int64_t pos = 0;
+    Lexem* tmp;
+    while ((tmp = get_next_lexem(pos)) != nullptr) {
+        expression_.push_back(tmp);
+    }
+}
+
+
+Expression* Calculator::parse(int64_t left, int64_t right) {
+    if (left == right) {
+        return new Expression(expression_[left]);
+    }
+//If no argument after operation throw
+    if (left > right) {
+        throw lexical_ex;
+    }
+    int64_t min = 10;
+    int64_t pos_min = -1;
+    for (int64_t i = left; i <= right; i++) {
+        if (expression_[i]->get_type() == oper && ((Oper*)expression_[i])->get_priority() < min) {
+            min = ((Oper*)expression_[i])->get_priority();
+            pos_min = i;
+        }
+    }
+    Expression* tmp = new Expression;
+    tmp->val = expression_[pos_min];
+    tmp->right = parse(pos_min + 1, right);
+    if (expression_[pos_min]->get_val() == '_') {
+        tmp->left = nullptr;
+        return tmp;
+    }
+    tmp->left = parse(left, pos_min - 1);
+    return tmp;
+}
+
+
+void Calculator::fill_tree(void) {
+    calc_tree_ = parse(0, expression_.size() - 1);
+}
+
+
+int64_t Calculator::calculate(Expression* calc_tree) const {
+    if (calc_tree->left == nullptr && calc_tree->right == nullptr) {
+        return calc_tree->val->get_val();
+    }
+    switch (calc_tree->val->get_val()) {
+        case '+': {
+            return calculate(calc_tree->left) + calculate(calc_tree->right);
+        }
+        case '-': {
+            return calculate(calc_tree->left) - calculate(calc_tree->right);
+        }
+        case '*': {
+            return calculate(calc_tree->left) * calculate(calc_tree->right);
+        }
+        case '/': {
+            int64_t tmp = calculate(calc_tree->right);
+            if (tmp == 0)
+                throw logic_ex;
+            return calculate(calc_tree->left) / tmp;
+        }
+        case '_': {
+            return (-1) * calculate(calc_tree->right);
+        }
+    }
+}
+
+
+int64_t Calculator::get_ans(void) {
+    return calculate(calc_tree_);
+}
+
+void print_tree_(Expression* tree) {
+    if (tree == nullptr)
+        return;
+    std::cout << tree->val->get_val() << ' ';
+    print_tree_(tree->left);
+    if (tree->right != nullptr)
+        print_tree_(tree->right);
+}
+
+void Calculator::print_tree(void) const {
+    print_tree_(calc_tree_);
+}
+
+int main(int argc, char* argv[]) {
+    vector<Lexem*> expr;
+    try {
+        if (argc != 2)
+            throw lexical_ex;
+        Calculator calculator(argv[1]);
+        calculator.lexical_analis();
+        calculator.fill_tree();
+        std::cout << calculator.get_ans() << std::endl;
+        return 0;
+    } catch (std::exception&) {
+        std::cout << "error" << std::endl;
+        return 1;
+    }
+    return 0;
+}
