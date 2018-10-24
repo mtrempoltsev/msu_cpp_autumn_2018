@@ -9,7 +9,7 @@ class ERROR{};
 class leksem{
     types type;
     int64_t value;
-    bool isSign(const char* str);
+    bool isSign(char c);
     size_t isNum(const char* str);
     int normalizeFirst();
 public:
@@ -33,11 +33,9 @@ public:
     void normalize();
     ~leksem(){
         leksem *l = this->next;
-        while(l != nullptr){
-            leksem *lnext = l->next;
-            free(l);
-            l = lnext;
-        }
+        if(l != nullptr)
+            delete l;
+        this->next = nullptr;
     }
 };
 
@@ -111,8 +109,7 @@ void leksem::normalize(){
     lastImpLex->next = nullptr;
 }
 
-bool leksem::isSign(const char *str){
-    char c = *str;
+bool leksem::isSign(char c){
     switch(c){
         case '+':
             this->type = SUM;
@@ -149,21 +146,23 @@ size_t leksem::isNum(const char* str){
     size_t n = iter - str;
     return n;
 }
+
 leksem::leksem(const char *expr){
-    this->next = nullptr;
     this->value = 0;
     const char *oldexpr = expr;
     int mv = 0;
     if(*expr != '\0')
           mv += isNum(expr);
           if(mv == 0)
-              mv += isSign(expr);
+              mv += isSign(*expr);
     ERROR e;
     if(mv == 0)
         throw e;
     expr += mv;
     if(*expr != '\0')
         this->next = new leksem(expr);
+    else
+         this->next = nullptr;
 }
 
 class CalcTree{
