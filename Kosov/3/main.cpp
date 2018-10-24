@@ -8,6 +8,7 @@
 class Calculator{
 private:
     int64_t res;
+    std::istringstream in;
     bool num(std::istringstream& in, int64_t& arg){
         char minus;
         if(!(in >> minus)) return false;
@@ -55,8 +56,7 @@ private:
         return true;
     }
 public:
-    Calculator(std::string const& str) : res(0){
-        std::istringstream in(str);
+    Calculator(std::string const& str) : res(0), in(str){
         if(!sum(in, res)) throw std::invalid_argument("error");
     }
     friend std::ostream & operator<<(std::ostream& out, const Calculator& calc);
