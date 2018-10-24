@@ -37,14 +37,14 @@ class calculator {
             
             if (s[i] == '-') {
                 if (count_last_sigh >= 2 || (is_first_number && count_last_sigh >= 1)) {
-                    return false;
+                    return false;    //кол-во '-' перед число >= 3 или кол-во '-' перед первым число >= 2
                 }
                 count_last_sigh++;
             }
             
             if (s[i] == '+' || s[i] == '*' || s[i] == '/') {
                 if (is_first_number || count_last_sigh >= 1) {
-                    return false;
+                    return false; // арифмитический знак до 1-го числа или кол-во знаков >=2  перед числом
                 }
                 count_last_sigh++;
             }
@@ -62,7 +62,7 @@ class calculator {
             }
         }
         if (count_last_sigh >= 1 || is_first_number) {
-            return false;
+            return false; // арифмитические знаки в конце строки или строка пустая
         }
         return true;
     }
@@ -105,11 +105,14 @@ class calculator {
         if (pos >= s.size()) {
             return sum;
         }
-        char operation = s[pos];
-        pos++;
+        
+        char operation = s[pos++];
         
         if (operation == '*' || operation == '/') {
             pos = division_and_multiplication(sum, operation, pos);
+            if (correct_syntax == false) {
+                return sum;
+            }
         }
         
         return sum + summation_and_difference(operation, pos);
@@ -117,7 +120,7 @@ class calculator {
     
 public:
     
-    calculator(char *string_now): s(std::string(string_now))
+    calculator(char *string_now): s(std::string(string_now)), correct_syntax(true)
     {
         correct_syntax = check_correctness();
         if (correct_syntax) {
@@ -126,11 +129,13 @@ public:
         }
     }
     
-    int64_t get_ans() {
+    int64_t get_ans() const
+    {
         return ans;
     }
     
-    bool get_correct_syntax() {
+    bool get_correct_syntax() const
+    {
         return correct_syntax;
     }
     
