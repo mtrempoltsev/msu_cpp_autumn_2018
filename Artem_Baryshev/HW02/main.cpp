@@ -71,7 +71,7 @@ class calculator {
         s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
     }
     
-    size_t division_and_multiplication(int64_t & first_number, char & operation, size_t pos) {
+    void division_and_multiplication(int64_t & first_number, char & operation, size_t & pos) {
         while (operation == '/' || operation == '*') {
             size_t next_pos;
             int64_t now = stoll(std::string(s.begin() + pos, s.end()), &next_pos, BASE);
@@ -79,7 +79,7 @@ class calculator {
             if (operation == '/') {
                 if (now == 0) {
                     correct_syntax = false;
-                    return pos;
+                    return;
                 }
                 first_number /= now;
             } else {
@@ -87,7 +87,6 @@ class calculator {
             }
             operation = s[pos++];
         }
-        return pos;
     }
     
     int64_t summation_and_difference(char & operation, size_t pos = 0) {
@@ -109,7 +108,7 @@ class calculator {
         operation = s[pos++];
         
         if (operation == '*' || operation == '/') {
-            pos = division_and_multiplication(sum, operation, pos);
+            division_and_multiplication(sum, operation, pos);
             if (correct_syntax == false) {
                 return sum;
             }
