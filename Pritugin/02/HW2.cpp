@@ -21,8 +21,8 @@ private:
 				return now = 0;
 			else 
 				throw std::invalid_argument("Exception");
-        switch (c)
-        {
+		switch (c)
+		{
 			case 0:	return now = 0;
 			case '+': return now = '+';
 			case '-': return now = '-';
