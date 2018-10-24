@@ -2,13 +2,13 @@
 #include <string>
 #include <cstring>
 
-#define INCORRECT_INPUT 1
+#define INCORRECT_INPUT invalid_argument("")
 
 using namespace std;
 
 class Calc {
     int pointer;
-    char *argv;
+    const char *argv;
 
     int64_t get_number(int *const pointer) {
         char digit = 0;
@@ -70,7 +70,7 @@ class Calc {
                 return add(argument * get_number(&pointer));
             case '/': {
                 int64_t divider = get_number(&pointer);
-                if (divider == 0) throw 136;
+                if (divider == 0) throw INCORRECT_INPUT;
                 return add(argument / divider);
             }
             case '\0':
@@ -81,9 +81,7 @@ class Calc {
     }
 
 public:
-    Calc(char *arg_string) {
-        argv = arg_string;
-    }
+    Calc(const char *arg_string):argv{arg_string}{}
 
     int64_t get_result() {
         pointer = 0;
@@ -93,16 +91,17 @@ public:
 
 
 int main(int argc, char *argv[]) {
+    Calc *cl = new Calc(argv[1]);
+    char return_result = 0;
     try {
         if (argc != 2)
             throw INCORRECT_INPUT;
-        Calc *cl = new Calc(argv[1]);
-        std::cout << cl->get_result() << std::endl;
-        delete cl;
+        cout << cl->get_result() << endl;
     }
-    catch (int e) {
-        cout << "error" << endl;
-        return INCORRECT_INPUT;
+    catch (invalid_argument&) {
+        cerr << "error" << endl;
+        return_result = 1;
     };
-    return 0;
+    delete cl;
+    return return_result;
 }
