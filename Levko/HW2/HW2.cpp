@@ -14,10 +14,21 @@ class Calc {
     
     class Expression {
     public:
-        Int value = 0;
-        Operations operation = Operations::NUMBER;
-        Expression *left = nullptr;
-        Expression *right = nullptr;
+        Int value;
+        Operations operation;
+        Expression *left;
+        Expression *right;
+        
+        Expression() {
+            value = 0;
+            operation = Operations::NUMBER;
+            left = nullptr;
+            right = nullptr;
+        }
+        
+        ~Expression(){}
+            
+        
     };
     
 public:
@@ -25,7 +36,7 @@ public:
     Int ans(const std::string &s) {
         Expression *pExpression = CreateExpression(s);
         const Int result = CalculateExpression(pExpression);
-        DisposeExpression(pExpression);
+        delete pExpression;
         return result;
     }
         
@@ -160,24 +171,14 @@ private:
 
             Expression *right = nullptr;
             
-            try {
-                right = ParseMulDiv(str);
-            } catch (...) {
-                DisposeExpression(left);
-                throw;
-            }
+            right = ParseMulDiv(str);
 
-            try {
-                Expression *expr = new Expression;
-                expr->left = left;
-                expr->right = right;
-                expr->operation = op;
-                left = expr;
-            } catch (...) {
-                DisposeExpression(left);
-                DisposeExpression(right);
-                throw;
-            }
+            Expression *expr = new Expression;
+            expr->left = left;
+            expr->right = right;
+            expr->operation = op;
+            left = expr;
+
         }
         return left;
     }
@@ -199,24 +200,14 @@ private:
             str = remainingStr;
 
             Expression *right = nullptr;
-            try {
-                right = ParseAtom(str);
-            } catch (...) {
-                DisposeExpression(left);
-                throw;
-            }
+        
+            right = ParseAtom(str);
 
-            try {
-                Expression *expr = new Expression;
-                expr->left = left;
-                expr->right = right;
-                expr->operation = op;
-                left = expr;
-            } catch (...) {
-                DisposeExpression(left);
-                DisposeExpression(right);
-                throw;
-            }
+            Expression *expr = new Expression;
+            expr->left = left;
+            expr->right = right;
+            expr->operation = op;
+            left = expr;
         }
         return left;
     }
@@ -225,7 +216,6 @@ private:
         Expression *expr = new Expression;
         
         if (!parseNumber(str, expr->value)) {
-            DisposeExpression(expr);
             throw std::invalid_argument("Expected number at: " + str);
         }
         return expr;
@@ -244,24 +234,6 @@ private:
 
         return pExpr;
     }
-
-    void DisposeExpression(Expression *pExpression) {
-        if (pExpression) {
-            
-            if (pExpression->left) {
-                DisposeExpression(pExpression->left);
-                pExpression->left = nullptr;
-            }
-            
-            if (pExpression->right) {
-                DisposeExpression(pExpression->right);
-                pExpression->right = nullptr;
-            }
-            
-            delete pExpression;
-        }
-    }
-
 };
 
 
