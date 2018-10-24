@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include <cstdlib>
 #include <vector>
+#include <string>
 
 enum
 {
@@ -19,16 +20,15 @@ enum
 
 
 class calculator {
-    char *s;
-    const size_t size_s;
+    std::string s;
     bool correct_syntax;
     int64_t ans;
     
     bool check_correctness() const
     {
-        bool is_first_number = 0;
+        bool is_first_number = true;
         int count_last_sigh = 0;
-        for (int i = 0; i < size_s; i++) {
+        for (int i = 0; i < s.size(); i++) {
             
             if ((s[i] < '0' || s[i] > '9') && !isspace(s[i])
                 && s[i] != '-' && s[i] != '+' && s[i] != '*' && s[i] != '/') {
@@ -36,91 +36,88 @@ class calculator {
             }
             
             if (s[i] == '-') {
-                if (count_last_sigh >= 2 || (!is_first_number && count_last_sigh >= 1)) {
+                if (count_last_sigh >= 2 || (is_first_number && count_last_sigh >= 1)) {
                     return false;
                 }
                 count_last_sigh++;
             }
             
             if (s[i] == '+' || s[i] == '*' || s[i] == '/') {
-                if (!is_first_number || count_last_sigh >= 1) {
+                if (is_first_number || count_last_sigh >= 1) {
                     return false;
                 }
                 count_last_sigh++;
             }
             
             if (s[i] >= '0' && s[i] <= '9') {
-                if (count_last_sigh == 0 && is_first_number) {   //два числа подряд без арифмитической операции
+                if (count_last_sigh == 0 && !is_first_number) {   //два числа подряд без арифмитической операции
                     return false;
                 }
-                is_first_number = true;
+                while (i < s.size() && s[i] >= '0' && s[i] <= '9') {
+                    i++;
+                }
+                i--;
+                is_first_number = false;
                 count_last_sigh = 0;
             }
-            
         }
-        if (count_last_sigh >= 1 || !is_first_number) {
+        if (count_last_sigh >= 1 || is_first_number) {
             return false;
         }
         return true;
     }
     
     void removing_spaces() {
-        char *now = s;
-        char *next = s;
-        while (*next) {
-            while (*next == ' ') {
-                next++;
-            }
-            *now = *next;
-            next++;
-            now++;
-        }
-        *now = *next;
+        s.erase(remove(s.begin(), s.end(), ' '), s.end());
     }
     
-    void division_and_multiplication(int64_t & first_number, char & operation) {
+    size_t division_and_multiplication(int64_t & first_number, char & operation, size_t pos) {
         while (operation == '/' || operation == '*') {
-            int64_t now = strtoll(s, &s, BASE);
+            size_t next_pos;
+            int64_t now = stoll(std::string(s.begin() + pos, s.end()), &next_pos, BASE);
+            pos += next_pos;
             if (operation == '/') {
                 if (now == 0) {
                     correct_syntax = false;
-                    return;
+                    return pos;
                 }
                 first_number /= now;
             } else {
                 first_number *= now;
             }
-            operation = *s;
-            s++;
+            operation = s[pos++];
         }
+        return pos;
     }
     
-    int64_t summation_and_difference(char last_operation) {
+    int64_t summation_and_difference(char last_operation, size_t pos = 0) {
         
-        if (!*s) {
+        if (pos >= s.size()) {
             return 0;
         }
-        int64_t sum = strtoll(s, &s, BASE);
+        size_t next_pos;
+        int64_t sum = stoll(std::string(s.begin() + pos, s.end()), &next_pos, BASE);
+        pos += next_pos;
         if (last_operation == '-') {
             sum = -sum;
         }
         
-        char operation = *s;
-        if (!*s) {
+        if (pos >= s.size()) {
             return sum;
         }
-        s++;
+        char operation = s[pos];
+        pos++;
         
         if (operation == '*' || operation == '/') {
-            division_and_multiplication(sum, operation);
+            pos = division_and_multiplication(sum, operation, pos);
         }
         
-        return sum + summation_and_difference(operation);
+        return sum + summation_and_difference(operation, pos);
     }
     
 public:
     
-    calculator(char *string_now): s(string_now), size_s(strlen(s))
+    calculator(char *string_now): s(std::string(string_now))
     {
         correct_syntax = check_correctness();
         if (correct_syntax) {
