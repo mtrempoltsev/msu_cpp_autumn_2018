@@ -182,8 +182,6 @@ public:
         if(l->right != nullptr)
             delete l->right;
         l->right = nullptr;
-        if(l == nullptr)
-            free(l);
     }
 };
 
@@ -274,7 +272,6 @@ int main(int argc, char* argv[]){
         l->normalize();
         tree = new CalcTree(l);
         std::cout<<tree->calc();
-        delete tree;
     }
     catch(ERROR &e){
         std::cout<<"error";
@@ -284,6 +281,10 @@ int main(int argc, char* argv[]){
     if(l != nullptr){
         delete l;
         l = nullptr;
+    }
+    if(tree != nullptr){
+        delete tree;
+        tree = nullptr;
     }
     return 0;
 }
