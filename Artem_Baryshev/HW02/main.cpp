@@ -21,11 +21,13 @@ enum
 class calculator {
     char *s;
     const size_t size_s;
+    bool correct_syntax;
+    int64_t ans;
     
     bool check_correctness() const
     {
         bool is_first_number = 0;
-        int kol_last_sigh = 0;
+        int count_last_sigh = 0;
         for (int i = 0; i < size_s; i++) {
             
             if ((s[i] < '0' || s[i] > '9') && !isspace(s[i])
@@ -34,29 +36,29 @@ class calculator {
             }
             
             if (s[i] == '-') {
-                if (kol_last_sigh >= 2 || (!is_first_number && kol_last_sigh >= 1)) {
+                if (count_last_sigh >= 2 || (!is_first_number && count_last_sigh >= 1)) {
                     return false;
                 }
-                kol_last_sigh++;
+                count_last_sigh++;
             }
             
             if (s[i] == '+' || s[i] == '*' || s[i] == '/') {
-                if (!is_first_number || kol_last_sigh >= 1) {
+                if (!is_first_number || count_last_sigh >= 1) {
                     return false;
                 }
-                kol_last_sigh++;
+                count_last_sigh++;
             }
             
             if (s[i] >= '0' && s[i] <= '9') {
-                if (kol_last_sigh == 0 && is_first_number) {   //два числа подряд без арифмитической операции
+                if (count_last_sigh == 0 && is_first_number) {   //два числа подряд без арифмитической операции
                     return false;
                 }
                 is_first_number = true;
-                kol_last_sigh = 0;
+                count_last_sigh = 0;
             }
             
         }
-        if (kol_last_sigh >= 1 || !is_first_number) {
+        if (count_last_sigh >= 1 || !is_first_number) {
             return false;
         }
         return true;
@@ -118,9 +120,6 @@ class calculator {
     
 public:
     
-    bool correct_syntax;
-    int64_t ans;
-    
     calculator(char *string_now): s(string_now), size_s(strlen(s))
     {
         correct_syntax = check_correctness();
@@ -129,16 +128,25 @@ public:
             ans = summation_and_difference('+');
         }
     }
+    
+    int64_t get_ans() {
+        return ans;
+    }
+    
+    bool get_correct_syntax() {
+        return correct_syntax;
+    }
+    
 };
 
 int main(int argc, char * argv[]) {
     if (argc == 2) {
         calculator my_calculator(argv[1]);
-        if (!my_calculator.correct_syntax) {
+        if (!my_calculator.get_correct_syntax()) {
             std::cout << "error\n";
             return 1;
         }
-        std::cout << my_calculator.ans << std::endl;
+        std::cout << my_calculator.get_ans() << std::endl;
         
     } else {
         std::cout << "error\n";
