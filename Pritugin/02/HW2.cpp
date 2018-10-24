@@ -35,11 +35,11 @@ private:
         }
     }
 
-    int64_t near(bool flag)
-    {
-        if (flag) check();
-        switch (now)
-        {
+	int64_t near(bool flag)
+	{
+		if (flag) check();
+		switch (now)
+		{
 			case '-': 
 				{
 					return -near(true);
@@ -56,7 +56,7 @@ private:
         }
     }
 
-    int64_t next(bool flag)
+	int64_t next(bool flag)
 	{
 		int64_t l = near(flag);
 		while (true)
@@ -75,7 +75,7 @@ private:
 		}
 	}
 
-    int64_t start (bool flag)
+	int64_t start (bool flag)
 	{
 		int64_t l = next(flag);
 		while (true)
