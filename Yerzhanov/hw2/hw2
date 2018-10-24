@@ -1,246 +1,113 @@
 #include <iostream>
-#include <string>
-#include <vector>
 #include <exception>
 
 
-using std::string;
-using std::vector;
+class LexicalEx: public std::exception {
+} lexical;
+
+class LogicalEx: public std::exception {
+} logical;
 
 
-enum Type { oper, num };
-
-
-class Lexem {
-public:
-    Lexem() {}
-    virtual Type get_type(void) {
-    }
-    virtual int64_t get_val(void) {
-    }
-};
-
-class LogicError: public std::exception {
-} logic_ex;
-
-class LexicalError: public std::exception {
-} lexical_ex;
-
-class Oper: public Lexem {
+class Calc {
 private:
-    int64_t oper_;
-    int64_t prior_;
+    int pos;
 public:
-    Oper(char oper, char prior): oper_(oper), prior_(prior) {}
-    Type get_type(void) const {
-        return oper;
-    }
-    char get_priority(void) const {
-        return prior_;
-    }
-    int64_t get_val(void) const {
-        return oper_;
-    }
+    Calc(): pos(0) {return;}
+    int64_t get_ans(int argc, const char* argv);
+    int64_t get_expr(int sign, const char* argv);
+    int64_t get_mul_div(char sign, int64_t current, const char* argv);
+    int64_t get_num(const char* argv);
 };
 
-class Num: public Lexem {
-private:
-    int64_t val_;
-public:
-    Num(int64_t val): val_(val) {}
-    Type get_type(void) const {
-        return num;
-    }
-    int64_t get_val(void) const {
-        return val_;
-    }
-};
-
-
-//Чтобы UMIN нормально парсился
-string remove_spaces(char input[]) {
-    string tmp("");
-    int64_t i;
-    for (i = 0; input[i] != 0; i++) {
-        if (!(input[i] == ' ' || input[i] == '\t'))
-            tmp += input[i];
-    }
-    return tmp;
-}
-
-struct Expression {
-    Lexem* val;
-    Expression* left, *right;
-    Expression() {}
-    Expression(Lexem* s) {
-        val = s;
-    }
-};
-
-class Calculator {
-private:
-    string input_;
-    vector<Lexem*> expression_;
-    Expression* calc_tree_;
-public:
-    Calculator(char input[]): input_(remove_spaces(input)) {}
-    Lexem* get_next_lexem(int64_t& pos) const;
-    void lexical_analis(void);
-    void fill_tree(void);
-    Expression* parse(int64_t left, int64_t right);
-    int64_t get_ans(void);
-    int64_t calculate(Expression*) const;
-    void print_tree(void) const;
-};
-
-
-Lexem* Calculator::get_next_lexem(int64_t& pos) const {
-    if (input_[pos] == 0) {
-        return nullptr;
-    }
-
-//Check for Number
-    using std::isdigit;
-    int64_t tmp = 0;
-    bool is_number = false;
-    while (input_[pos] != 0 && isdigit(input_[pos])) {
-        is_number = true;
-        tmp *= 10;
-        tmp += input_[pos] - '0';
-        pos += 1;
-    }
-    if (is_number) {
-        return new Num(tmp);
-    }
-
-//Get Operation
-    if (input_[pos] == '-' && (pos == 0 || !(isdigit(input_[pos - 1])))) {
-        pos += 1;
-        //Return UMIN
-        return new Oper('_', 5);
-    }
-    if (input_[pos] == '/') {
-        return new Oper(input_[pos++], 4);
-    }
-    if (input_[pos] == '*') {
-        //Return * || /
-        return new Oper(input_[pos++], 3);
-    }
-    //Return + || -
-    if (input_[pos] == '+') {
-        return new Oper(input_[pos++], 1);
-    }
-    
-    if (input_[pos] == '-') {
-        return new Oper(input_[pos++], 2);
-    }
-
-//If not number or operation then error
-    throw lexical_ex;
-}
-
-//EXPR = MUL + MUL | MUL - MUL
-//MUL = MIN * MIN | MIN / MIN
-//MIN = -MIN | {0, ..., MAX_INT}
-void Calculator::lexical_analis(void) {
-    int64_t pos = 0;
-    Lexem* tmp;
-    while ((tmp = get_next_lexem(pos)) != nullptr) {
-        expression_.push_back(tmp);
-    }
-}
-
-
-Expression* Calculator::parse(int64_t left, int64_t right) {
-    if (left == right) {
-        return new Expression(expression_[left]);
-    }
-//If no argument after operation throw
-    if (left > right) {
-        throw lexical_ex;
-    }
-    int64_t min = 10;
-    int64_t pos_min = -1;
-    for (int64_t i = left; i <= right; i++) {
-        if (expression_[i]->get_type() == oper && ((Oper*)expression_[i])->get_priority() < min) {
-            min = ((Oper*)expression_[i])->get_priority();
-            pos_min = i;
-        }
-    }
-    Expression* tmp = new Expression;
-    tmp->val = expression_[pos_min];
-    tmp->right = parse(pos_min + 1, right);
-    if (expression_[pos_min]->get_val() == '_') {
-        tmp->left = nullptr;
-        return tmp;
-    }
-    tmp->left = parse(left, pos_min - 1);
-    return tmp;
-}
-
-
-void Calculator::fill_tree(void) {
-    calc_tree_ = parse(0, expression_.size() - 1);
-}
-
-
-int64_t Calculator::calculate(Expression* calc_tree) const {
-    if (calc_tree->left == nullptr && calc_tree->right == nullptr) {
-        return calc_tree->val->get_val();
-    }
-    switch (calc_tree->val->get_val()) {
-        case '+': {
-            return calculate(calc_tree->left) + calculate(calc_tree->right);
-        }
-        case '-': {
-            return calculate(calc_tree->left) - calculate(calc_tree->right);
-        }
-        case '*': {
-            return calculate(calc_tree->left) * calculate(calc_tree->right);
-        }
-        case '/': {
-            int64_t tmp = calculate(calc_tree->right);
-            if (tmp == 0)
-                throw logic_ex;
-            return calculate(calc_tree->left) / tmp;
-        }
-        case '_': {
-            return (-1) * calculate(calc_tree->right);
-        }
-    }
-}
-
-
-int64_t Calculator::get_ans(void) {
-    return calculate(calc_tree_);
-}
-
-void print_tree_(Expression* tree) {
-    if (tree == nullptr)
-        return;
-    std::cout << tree->val->get_val() << ' ';
-    print_tree_(tree->left);
-    if (tree->right != nullptr)
-        print_tree_(tree->right);
-}
-
-void Calculator::print_tree(void) const {
-    print_tree_(calc_tree_);
-}
 
 int main(int argc, char* argv[]) {
-    vector<Lexem*> expr;
+    Calc acm;
     try {
-        if (argc != 2)
-            throw lexical_ex;
-        Calculator calculator(argv[1]);
-        calculator.lexical_analis();
-        calculator.fill_tree();
-        std::cout << calculator.get_ans() << std::endl;
-        return 0;
-    } catch (std::exception&) {
-        std::cout << "error" << std::endl;
+        std::cout << acm.get_ans(argc, argv[1]) << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "error\n";
         return 1;
     }
     return 0;
+}
+
+
+int64_t Calc::get_ans(int argc, const char* argv) {
+    if (argc != 2) {
+        throw lexical;
+    }
+    return get_expr(1, argv);
+}
+
+//BNF:
+//{expr} = {* | /} + {expr} or {* | /} - {expr} or {* | /} 
+//{* | /} = {num} * {* | /} or {num} / {* | /} or {umin} {* | /} or {num}
+//{num} = [0, 1, 2, ...]
+//-1 -> lexical -2 -> logical
+void skip_spaces(int& pos, const char* argv) {
+    while (argv[pos] == ' ' || argv[pos] == '\t') { pos++; }
+}
+
+int64_t Calc::get_expr(int sign, const char* argv) {
+    int64_t left_operand = get_mul_div('*', 1, argv);
+    skip_spaces(pos, argv);
+    switch (argv[pos]) {
+        case 0: {
+            return sign * left_operand;
+        } case '+': {
+            pos++;
+            return sign * left_operand + get_expr(1, argv);
+        } case '-': {
+            pos++;
+            return sign * left_operand + get_expr(-1, argv);
+        } default: {
+            throw lexical;
+        }
+    }
+}
+
+int64_t Calc::get_mul_div(char sign, int64_t current, const char* argv) {
+    skip_spaces(pos, argv);
+    if (argv[pos] == '-') {
+        pos++;
+        return -1 * get_mul_div(sign, current, argv);
+    }
+    int64_t right_operand = get_num(argv);
+    if (sign == '*') {
+        current *= right_operand;
+    } else {
+        if (right_operand) {
+            current /= right_operand;
+        } else {
+            throw logical;
+        }
+    }
+    skip_spaces(pos, argv);
+    if (argv[pos] == 0 || argv[pos] == '+' || argv[pos] == '-') {
+        return current;
+    } else if (argv[pos] == '*') {
+        pos++;
+        return get_mul_div('*', current, argv);
+    } else if (argv[pos] == '/') {
+        pos++;
+        return get_mul_div('/', current, argv);
+    } else {
+        throw lexical;
+    }
+}
+
+int64_t Calc::get_num(const char* argv) {
+    skip_spaces(pos, argv);
+    int64_t tmp = 0;
+    bool is_number = false;
+    while (std::isdigit(argv[pos])) {
+        is_number = true;
+        tmp = tmp * 10 + argv[pos++] - '0';
+    }
+    if (is_number) {
+        return tmp;
+    } else {
+        throw logical;
+    }
 }
