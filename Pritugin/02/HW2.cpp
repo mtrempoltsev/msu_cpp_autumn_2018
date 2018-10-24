@@ -32,8 +32,8 @@ private:
 				in.putback(c);
 				in >> v;
 				return now = 1;
-        }
-    }
+		}
+	}
 
 	int64_t near(bool flag)
 	{
@@ -53,8 +53,8 @@ private:
 			default:
 				throw std::invalid_argument("Unexpected symbol");
 				return 0;
-        }
-    }
+		}
+	}
 
 	int64_t next(bool flag)
 	{
