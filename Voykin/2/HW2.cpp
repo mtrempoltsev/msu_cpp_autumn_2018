@@ -76,8 +76,8 @@ private:
 };
 void remove_space(char * x, char* c)
 {
-    int i,j=0;
-    for(i = 0; i < strlen(x)+1; i++)
+    int i,j=0,line_lenght = strlen(x)+1;
+    for(i = 0; i < line_lenght; i++)
     {
         if (x[i] != ' ')
         {
