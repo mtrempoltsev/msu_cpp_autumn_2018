@@ -90,7 +90,7 @@ class calculator {
         return pos;
     }
     
-    int64_t summation_and_difference(char last_operation, size_t pos = 0) {
+    int64_t summation_and_difference(char & operation, size_t pos = 0) {
         
         if (pos >= s.size()) {
             return 0;
@@ -98,7 +98,7 @@ class calculator {
         size_t next_pos;
         int64_t sum = stoll(std::string(s.begin() + pos, s.end()), &next_pos, BASE);
         pos += next_pos;
-        if (last_operation == '-') {
+        if (operation == '-') {
             sum = -sum;
         }
         
@@ -106,7 +106,7 @@ class calculator {
             return sum;
         }
         
-        char operation = s[pos++];
+        operation = s[pos++];
         
         if (operation == '*' || operation == '/') {
             pos = division_and_multiplication(sum, operation, pos);
@@ -125,7 +125,8 @@ public:
         correct_syntax = check_correctness();
         if (correct_syntax) {
             removing_spaces();
-            ans = summation_and_difference('+');
+            char operation = '+';
+            ans = summation_and_difference(operation);
         }
     }
     
