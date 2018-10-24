@@ -41,7 +41,8 @@ public:
 
 leksem* deleteLex(leksem *l){
     leksem *lnext = l->next;
-    free(l);
+    l->next = nullptr;
+    delete l;;
     return lnext;
 }
 
@@ -67,7 +68,7 @@ int leksem::normalizeFirst(){
             }
             this->next = l->next;
             if(l != nullptr)
-                free(l);
+                deleteLex(l);
         }
     }
     else{
@@ -84,8 +85,9 @@ void leksem::normalize(){
     leksem *iterLex = this->next;
     int sign = 1;
     while(iterLex != nullptr)
-        if(iterLex->type == SPC)
+        if(iterLex->type == SPC){
             iterLex = deleteLex(iterLex);
+        }
         else
             if(iterLex->type == MIN)
                 if(lastImpLex->type != NUM){
@@ -147,8 +149,7 @@ size_t leksem::isNum(const char* str){
     return n;
 }
 
-leksem::leksem(const char *expr){
-    this->value = 0;
+leksem::leksem(const char *expr):value(0){
     const char *oldexpr = expr;
     int mv = 0;
     if(*expr != '\0')
@@ -233,9 +234,7 @@ leksem* getMaxPriorLeksem(leksem *l){
     return maxl;
 }
 
-CalcTree::CalcTree(leksem *l){
-    left = nullptr;
-    right = nullptr;
+CalcTree::CalcTree(leksem *l):left(nullptr), right(nullptr){
     leksem *leftLex = l;
     leksem *rightLex = getMaxPriorLeksem(l);
     ERROR e;
