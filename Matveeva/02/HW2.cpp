@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
         cout << c.calculation() << endl;
     } catch (exception&){
         cout << "error" << endl;
+        delete[] st_without_space;
         return 1;
     }
     delete[] st_without_space;
