@@ -81,7 +81,6 @@ void remove_space(char * x, char* c)
     {
         if (x[i] != ' ')
         {
-
             c[j] = x[i];
             j++;
         }
