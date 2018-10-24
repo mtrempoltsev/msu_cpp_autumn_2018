@@ -11,13 +11,13 @@ using namespace std;
 class Calculator
 {
 public:
-	 int64_t Res(const string str) {
+	 int64_t Res(string str) {
 		string s = del_spaces(str);
 		istringstream expr(s);
 		return add_sub(expr);
 	}
 private:
-	string del_spaces(const string str) {
+	string del_spaces(string str) {
 		string s;
 		int i = 0;
 		while (i < str.length()) {
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 	}
 	Calculator a;
 	try {
-		cout << a.Res((const string)argv[1]) << endl;
+		cout << a.Res(argv[1]) << endl;
 	}
 	catch (invalid_argument&) {
 		cout << "error" << endl;

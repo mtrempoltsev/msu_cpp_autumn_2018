@@ -7,9 +7,6 @@ template <class T>
 class Calculator
 {
 private:
-    T result = T();
-
-
     T unary_minus(std::istringstream &expr) const
     {
         char minus;
@@ -83,16 +80,14 @@ private:
     }
 
 public:
-    Calculator(const std::string &expr)
+    Calculator()
     {
-        std::istringstream iss(expr);
-
-        result = summation_and_subtraction(iss);
     }
 
-    T get_result() const
+    T get_result(const std::string &expr) const
     {
-        return result;
+        std::istringstream iss(expr);
+        return summation_and_subtraction(iss);
     }
 };
 
@@ -104,7 +99,7 @@ int main(int argc, char *argv[])
     }
 
     try {
-        std::cout << Calculator<int64_t>(argv[1]).get_result() << std::endl;
+        std::cout << Calculator<int64_t>().get_result(argv[1]) << std::endl;
     } catch(const std::invalid_argument &) {
         std::cout << "error" << std::endl;
         return 1;
