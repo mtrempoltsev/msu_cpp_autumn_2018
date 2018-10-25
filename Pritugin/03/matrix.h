@@ -40,10 +40,10 @@ public:
 		throw std::out_of_range("");
 	}
 
-	Matrix & operator *= (int num)
+	Matrix& operator *= (int num)
 	{
-        for (size_t i = 0; i < size; ++i) data[i] *= num;
-        return *this;
+		for (size_t i = 0; i < size; ++i) data[i] *= num;
+		return *this;
 	}
 	
 	bool operator == (const Matrix& other) const
