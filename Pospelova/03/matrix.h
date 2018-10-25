@@ -12,8 +12,8 @@ public:
 		Row(int *dt, size_t size)
 			: data(0)
 			, cols(0) {
-				data = dt;
-				cols = size;
+			data = dt;
+			cols = size;
 			};
 		const int& operator[](size_t index) const {
 			if ((index >= cols) || (index < 0))
