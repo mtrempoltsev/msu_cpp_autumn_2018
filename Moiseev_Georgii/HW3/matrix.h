@@ -1,4 +1,3 @@
-#include <cassert>
 #include <exception>
 #include <cstring>
 
