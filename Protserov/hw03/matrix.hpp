@@ -50,16 +50,16 @@ class Matrix
         Matrix operator*=(int);
         const int* get_rawaddr() const;
         int* get_rawaddr();
-        int get_rows() const;
-        int get_cols() const;
+        int getRows() const;
+        int getColumns() const;
 };
 
-int Matrix::get_rows() const
+int Matrix::getRows() const
 {
     return rows_n;
 }
 
-int Matrix::get_cols() const
+int Matrix::getColumns() const
 {
     return cols_n;
 }
