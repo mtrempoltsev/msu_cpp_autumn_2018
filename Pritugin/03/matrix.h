@@ -49,14 +49,14 @@ public:
         return *this;
 	}
 	
-    bool operator == (const Matrix& other) const
-    {
-        if (rows != other.rows || columns != other.columns)
-            return false;
-        if(memcmp(data, other.data, size) == 0)
+	bool operator == (const Matrix& other) const
+	{
+		if (rows != other.rows || columns != other.columns)
+			return false;
+		if(memcmp(data, other.data, size) == 0)
 			return true;
-        return false;
-    }
+		return false;
+	}
 
 	bool operator != (const Matrix& other) const
 	{
