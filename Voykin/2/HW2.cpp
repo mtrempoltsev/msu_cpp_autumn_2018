@@ -74,14 +74,13 @@ private:
         return number1;
     }
 };
-void delete_probel(char * x, char* c)
+void remove_space(char * x, char* c)
 {
-    int i,j=0;
-    for(i = 0; i < strlen(x)+1; i++)
+    int i,j=0,line_lenght = strlen(x)+1;
+    for(i = 0; i < line_lenght; i++)
     {
         if (x[i] != ' ')
         {
-
             c[j] = x[i];
             j++;
         }
@@ -89,16 +88,18 @@ void delete_probel(char * x, char* c)
 }
 
 int main(int argc, char* argv[])
+
 {
+    if (argc != 2)
+    {
+         cout << "error" <<endl;
+         return 1;
+    }
+    char *c;
+    c = new char[strlen(argv[1])+1];
     try
     {
-        if (argc != 2)
-        {
-             throw invalid_argument("Error in argv");
-        }
-        char *c;
-        c = new char[strlen(argv[1])+1];
-        delete_probel(argv[1],c);
+        remove_space(argv[1],c);
         Calculator a = Calculator(c);
         cout << a.Calculate() << endl;
         delete []c;
@@ -106,7 +107,9 @@ int main(int argc, char* argv[])
     catch (exception&)
     {
         cout << "error" << endl;
+        delete []c;
         return 1;
+
     }
     return 0;
 }

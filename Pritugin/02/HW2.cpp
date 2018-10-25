@@ -21,8 +21,8 @@ private:
 				return now = 0;
 			else 
 				throw std::invalid_argument("Exception");
-        switch (c)
-        {
+		switch (c)
+		{
 			case 0:	return now = 0;
 			case '+': return now = '+';
 			case '-': return now = '-';
@@ -32,14 +32,14 @@ private:
 				in.putback(c);
 				in >> v;
 				return now = 1;
-        }
-    }
+		}
+	}
 
-    int64_t near(bool flag)
-    {
-        if (flag) check();
-        switch (now)
-        {
+	int64_t near(bool flag)
+	{
+		if (flag) check();
+		switch (now)
+		{
 			case '-': 
 				{
 					return -near(true);
@@ -53,10 +53,10 @@ private:
 			default:
 				throw std::invalid_argument("Unexpected symbol");
 				return 0;
-        }
-    }
+		}
+	}
 
-    int64_t next(bool flag)
+	int64_t next(bool flag)
 	{
 		int64_t l = near(flag);
 		while (true)
@@ -75,7 +75,7 @@ private:
 		}
 	}
 
-    int64_t start (bool flag)
+	int64_t start (bool flag)
 	{
 		int64_t l = next(flag);
 		while (true)
@@ -105,7 +105,6 @@ public:
 		}
 		catch (std::exception& e)
 		{
-			std::cout << "error" << std::endl;
 			return false;
 		}
 	}
@@ -144,9 +143,12 @@ int main (int argc, char* argv[])
 		if(calc.setExpression(argv[1]))
 			std::cout << calc.getAnswer() << std::endl;
 		else
+		{
+			std::cout << "error" << std::endl;
 			return 1;
+		}
 		return 0;
 	}
-    std::cout << "error" << std::endl; return 1;
-    return 1;
+	std::cout << "error" << std::endl; return 1;
+	return 1;
 }
