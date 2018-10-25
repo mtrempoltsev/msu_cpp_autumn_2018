@@ -52,12 +52,12 @@ public:
             delete[] data;
     }
 
-    int getRows()
+    size_t getRows()
     {
         return rows;
     }
 
-    int getColumns()
+    size_t getColumns()
     {
         return columns;
     }
