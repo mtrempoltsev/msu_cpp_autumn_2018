@@ -27,16 +27,7 @@ class Matrix
     };
 
 public:
-    Matrix(size_t r, size_t c): rows(r), columns(c)
-    {
-        matrix.resize(r);
-        for(size_t i = 0; i < r; i++)
-        {
-            matrix[i].resize(c);
-            for(size_t j = 0; j < c; j++)
-                matrix[i][j] = 0;
-        }
-    }
+    Matrix(size_t r, size_t c): rows(r), columns(c), matrix(r, std::vector<int>(c, 0)) {}
     bool operator ==(const Matrix& m) const
     {
         if(getColumns() != m.getColumns() || getRows() != m.getRows())
