@@ -58,6 +58,7 @@ class Matrix {
                 data[i][j] *= num;
             }
         }
+        return *this;
     }
 
     bool operator==(const Matrix& m2) const {
