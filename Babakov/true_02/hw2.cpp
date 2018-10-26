@@ -15,7 +15,7 @@ enum Lexem_type {
 enum {
     MAGIC_NUMBER = 7 // Means absolutely nothing
 };
-typedef std::pair<int, Lexem_type> poliz_elem;
+typedef std::pair<int, Lexem_type> lex_vector_elem;
 
 class Analyzer {
     std::string expr;
@@ -24,7 +24,7 @@ class Analyzer {
     Lexem_type lex_type;
     int lex_value;
 
-    std::vector<poliz_elem> poliz;
+    std::vector<lex_vector_elem> lex_vector;
     std::stack<int> value_stack;
 
     Lexem_type getlex() {
@@ -65,73 +65,72 @@ class Analyzer {
         return lex_type;
     }
 
- // S -> A F
- // A -> B + A | B - A | B
- // B -> N * B | N / B | N
- // N -> - '0'..'9' | '0'..'9'
+ // Start_condition -> Sum_condition Finale_condition
+ // Sum_condition -> Mult_condition {+|- Sum_condition}
+ // Mult_condition -> Number {*|/ Mult_condition}
+ // Number -> - '0'..'9' | '0'..'9'
 
-    void F() {
+    void Finale_condition() {
         if (lex_type != FIN) {
             throw std::invalid_argument("Unexpected symbol (end expected)");
         }    
     }
 
-    void N() {
+    void Number() {
         int sign = 1;
         if (lex_type == MINUS){
             sign = -1;
             getlex();
         } 
         if (lex_type == NUM) {
-            poliz.push_back(poliz_elem(sign * lex_value, NUM));
+            lex_vector.push_back(lex_vector_elem(sign * lex_value, NUM));
             getlex();
         } else {
             throw std::invalid_argument("Wrong something in C()");
         }
     }
 
-    void B() {
-        N();
+    void Mult_condition() {
+        Number();
         while (lex_type == DIVIDE || lex_type == MULTIPLY) {
             Lexem_type cur_lex = lex_type;
             getlex();
-            N();
-            poliz.push_back(poliz_elem(MAGIC_NUMBER, cur_lex));
+            Number();
+            lex_vector.push_back(lex_vector_elem(MAGIC_NUMBER, cur_lex));
         } 
     }
 
-    void A() {
-        B();
+    void Sum_condition() {
+        Mult_condition();
         while (lex_type == PLUS || lex_type == MINUS) {
             Lexem_type cur_lex = lex_type;
             getlex();
-            B();
-            poliz.push_back(poliz_elem(MAGIC_NUMBER, cur_lex));
+            Mult_condition();
+            lex_vector.push_back(lex_vector_elem(MAGIC_NUMBER, cur_lex));
         } 
     }
 
-    void S() {
-        A();
-        F();
+    void Start_condition() {
+        Sum_condition();
+        Finale_condition();
     }
 
 public:
-    Analyzer(std::string& init) {
-        expr = init;
-        expr_len = expr.size();
+    Analyzer(const char* init) : expr(std::string(init)), 
+                                 expr_len(expr.size()) {
         getlex();
     }
 
     void start() {
-        S();
+        Start_condition();
     }
 
     int result() {
         int op1 = 0, op2 = 0;
-        for (size_t i = 0; i < poliz.size(); i++) {
-            switch (poliz[i].second) {
+        for (size_t i = 0; i < lex_vector.size(); i++) {
+            switch (lex_vector[i].second) {
                 case NUM:
-                    value_stack.push(poliz[i].first);
+                    value_stack.push(lex_vector[i].first);
                     break;
                 case PLUS:
                     op2 = value_stack.top();
@@ -180,8 +179,7 @@ int main(int argc, char* argv[])
         if (argc != 2) {
             throw std::invalid_argument("Wrong amount of arguments");
         }
-        std::string exp = argv[1];
-        Analyzer analyze(exp);
+        Analyzer analyze(argv[1]);
         analyze.start();
         std::cout << analyze.result() << std::endl;
         return 0;

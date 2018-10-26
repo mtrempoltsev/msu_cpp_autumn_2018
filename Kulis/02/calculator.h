@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "lex.h"
+#include "parser.h"
 
 class Calculator
 {
@@ -8,7 +8,7 @@ public:
     int64_t calculate(const char * str);
 private:
     // takes next lexem
-    Lex getNext();
+    const Lex & getNext();
 
     // recursive descent
     int64_t plusminus();
