@@ -6,139 +6,144 @@
 
 using namespace std;
 
-class Result
-{
-public:
-	int64_t result;
-	string rest;
-	Result(int64_t v, string r)
-	{
-		result = v;
-		rest = r;
-	}
-};
 class Calculator
 {
 	using Int = int64_t;
+	bool error;
+	string expression;
 
 public:
-	Int calculate(string input)
+	Int result;
+	Calculator(const string &input)
+		:error(false),
+		expression(edit(input)),
+		result(0)
 	{
-		input = edit(input);
-		Result result = parse(input);
-		return result.result;
-	};
+		parse();
+		if (error)
+			throw invalid_argument("Invalid input");
+	}
 
 private:
-	string edit(const string s)
+	string edit(const string &input)
 	{
 		string a;
-		for (int i = 0; i<s.length(); i++)
+		for (int i = 0; i<input.length(); i++)
 		{
-			if ((s[i] >= '(') && (s[i] <= '9'))
-				a += s[i];
-			else if (s[i] != ' ')
-				throw invalid_argument("Invalid input");
+			if ((input[i] >= '(') && (input[i] <= '9'))
+				a += input[i];
+			else if (input[i] != ' ')
+			{	
+				error = true;
+				return "";
+			}
 		}
 		return a;
 	};
 
-	Result parse(const string input)
+	void parse(void)
 	{
-		Result current = multiplication(input);
-		Int res = current.result;
-		string next;
-		while (current.rest.length() > 0)
+		if (error)
+			return;
+		multiplication();
+		Int res = result;
+		while (expression.length() > 0)
 		{
-			char _operator = current.rest[0];
-			next = current.rest.substr(1);
-			current = multiplication(next);
+			char _operator = expression[0];
+			expression.erase(0, 1);
+			multiplication();
 			switch (_operator)
 			{
 				case '+':
 				{
-					res += current.result;
+					res += result;
 					break;
 				}
 				case '-':
 				{
-					res -= current.result;
+					res -= result;
 					break;
 				}
 			}
-			current.result = res;
+			result = res;
 		}
-		return current;
 	};
 
-	Result get_digit(string s)
+	void get_digit(void)
 	{
+		if (error)
+			return;
 		Int i = 0;
 		Int sign = 1;
-		Int digit;
 		string a;
-		if (s[0] == '-')
+		if (expression[0] == '-')
 		{
 			sign = -1;
-			s = s.substr(1);
+			expression.erase(0,1);
 		}
-		while (isdigit(s[i]))
+		while (isdigit(expression[i]))
 		{
-			a += s[i];
+			a += expression[i];
 			i++;
 		}
-		if (i==0)
-			throw invalid_argument("Invalid input");
-		digit = sign * atoi(a.c_str());
-		s = s.substr(i);
-		return Result(digit, s);
+		if (i == 0)
+		{
+			error = true;
+			return;
+		}
+		result = sign * atoi(a.c_str());
+		expression.erase(0, i);
 	};
 
-	Result multiplication(const string s)
+	void multiplication(void)
 	{
-		Result current = get_digit(s);
-		Int res = current.result;
-		while (current.rest[0]=='*'|| current.rest[0] == '/')
+		if (error)
+			return;
+		get_digit();
+		Int res = result;
+		while (expression[0] == '*' || expression[0] == '/')
 		{
-			char _operator = current.rest[0];
-			string next = current.rest.substr(1);
-			current = get_digit(next);
+			char _operator = expression[0];
+			expression.erase(0, 1);
+			get_digit();
 			switch (_operator)
 			{
 				case '*':
 				{
-					res *= current.result;
+					res *= result;
 					break;
 				}
 				case '/':
 				{
-					if (current.result==0)
-						throw invalid_argument("Division by zero");
-					res /= current.result;
+					if (result == 0)
+					{
+						error = true;
+						return;
+					}
+					res /= result;
 					break;
 				}
 			}
-			current.result = res;
+			result = res;
 		}
-		return current;
 	};
 
 };
 int main(int argc, char *argv[])
 {
-	if (argc!=2)
+	if (argc != 2)
 	{
 		cerr << "error";
 		return 1;
 	}
-	string s = string(argv[1]);
-	Calculator b;
+	const string s = string(argv[1]);
 	try {
-		cout << b.calculate(s) << endl;	
+		Calculator b(s);
+		cout << b.result << endl;
 	}
 	catch (invalid_argument&) {
 		cerr << "error";
 		return 1;
 	}
-    return 0;
+	return 0;
 }

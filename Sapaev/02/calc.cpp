@@ -177,9 +177,8 @@ class Calculator {
     }
 
 public:
-    Calculator(std::string str)
+    Calculator(const std::string& str): expr(str)
     {
-        expr = str;
         expr_size = str.size();
         cur_index = 0;
         get_lex();
@@ -213,7 +212,7 @@ int main(int argc, char *argv[])
         std::cout << calc.get_result() << std::endl;
         return 0;
     }
-    catch (...) {
+    catch (std::invalid_argument&) {
         std::cout << "error" << std::endl;
         return 1;
     }

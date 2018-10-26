@@ -3,7 +3,7 @@
 #include "numbers.dat"
 
 
-//check number for primary
+// check number for primary
 bool is_prime(int n) {
     if (((n % 2) == 0) && (n != 2)) {
         return false;
@@ -19,10 +19,10 @@ bool is_prime(int n) {
     return true;
 }
 
-//find indexes of left and right borders (or set -1 border value if doesn't exist)
-int find_borders(const int a[], int len, int &left, int &right) {
+// find indexes of left and right borders (or set -1 border value if doesn't exist)
+void find_borders(const int a[], int len, int &left, int &right) {
     int left_i = -1, right_i = -1;
-    for (int i = 0; i < len; i++) { //find first entry of left and last entry of right
+    for (int i = 0; i < len; i++) {  // find first entry of left and last entry of right
         if ((left_i == -1) && (a[i] == left)) {
             left_i = i;
         }
@@ -32,17 +32,16 @@ int find_borders(const int a[], int len, int &left, int &right) {
     }
     left = left_i;
     right = right_i;
-    return 0;
 }
 
-//check for prime numbers in one interval
+// check for prime numbers in one interval
 int interval_count(const int a[], const int len, int left, int right) {
-    find_borders(a, len, left, right); //return 0 in case of invalid borders
+    find_borders(a, len, left, right);  // return 0 in case of invalid borders
     if ((left == -1) || (right == -1)) {
         return 0;
     }
     int counter = 0;
-    for (int i = left; i <= right; i++) { //count prime numbers in existing interval
+    for (int i = left; i <= right; i++) {  // count prime numbers in existing interval
         if (is_prime(a[i])) {
             counter++;
         }
@@ -51,7 +50,7 @@ int interval_count(const int a[], const int len, int left, int right) {
 }
 
 int main(int argc, char* argv[]) {
-    if (((argc % 2) == 0) || (argc == 1)) { //check for invalid command line parameters
+    if (((argc % 2) == 0) || (argc == 1)) {  // check for invalid command line parameters
         return -1;
     }
     int left, right;

@@ -2,7 +2,7 @@
 #include <exception>
 #include "calculator.h"
 
-Lex Calculator::getNext()
+const Lex & Calculator::getNext()
 {
     return cur = parser.getNext();
 }

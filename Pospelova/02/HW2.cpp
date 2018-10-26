@@ -3,11 +3,11 @@
 #include <stdexcept>
 //Calculator -> plus_minus '\0'
 //Plus_minus -> Multiplication_division '+' Plus_minus |
-//				Multiplication_division '-' Plus_minus |
-//				Multiplication_division
+//              Multiplication_division '-' Plus_minus |
+//              Multiplication_division
 //Multiplication_division -> Read_number '*' Multiplication_division |
-//							 Read_number '/' Multiplication_division_no_zero |
-//							 Read_number
+//                           Read_number '/' Multiplication_division_no_zero |
+//                           Read_number
 //Read_number -> space Read_number | '-' Neg_number | Poz_number
 //Neg_number -> space Neg_number | Poz_number
 //Poz_number -> number Poz_number | End_number
@@ -15,62 +15,66 @@
 //space -> ' ' | '\t' | '\n' | '\v' | '\f' | '\r'
 //number -> '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
-class Calculator {
-	private:
-		int64_t answer;
+class Calculator
+{
+private:
+	int64_t answer;
 
-		bool zero_division;
-		bool empty_number;
+	bool zero_division;
+	bool empty_number;
 
-		int64_t summand;
-		int64_t znak_sum;
-		int64_t multiplier;
-		int64_t znak_multi;
+	int64_t summand;
+	int64_t sign_sum;
+	int64_t multiplier;
+	int64_t sign_multi;
 
-		void plus_minus(const char *expression, int64_t &index);
-		void multiplication_division(const char *expression, int64_t &index);
-		void read_number(const char *expression, int64_t &index);
-		void neg_number(const char *expression, int64_t &index);
-		void poz_number(const char *expression, int64_t &index);
-		void end_number(const char *expression, int64_t &index);
-	public:
-		Calculator(const char *expression);
-		int64_t get_answer() const {return answer;}
+	void plus_minus(const char *expression, int64_t &index);
+	void multiplication_division(const char *expression, int64_t &index);
+	void read_number(const char *expression, int64_t &index);
+	void neg_number(const char *expression, int64_t &index);
+	void poz_number(const char *expression, int64_t &index);
+	void end_number(const char *expression, int64_t &index);
+public:
+	Calculator(const char *expression)
+		: answer(0)
+		, zero_division(false)
+		, empty_number(true)
+		, summand(1)
+		, sign_sum(1)
+		, multiplier(0)
+		, sign_multi(1)
+	{
+		int64_t index = 0;
+		plus_minus(expression, index);
+		if ((index != strlen(expression)) || (zero_division) || (empty_number))
+			throw std::invalid_argument("Invalid input expression");
+	}
+	int64_t get_answer() const {return answer;}
 };
 
-Calculator::Calculator(const char *expression) {
-	zero_division = false;
-	empty_number = true;
-	znak_sum = 1;
-	int64_t index = 0;
-	answer = 0;
-	plus_minus(expression, index);
-	if ((index != strlen(expression)) || (zero_division) || (empty_number))
-		throw std::invalid_argument("Invalid input expression");
-}
-
 void Calculator::plus_minus(const char *expression, int64_t &index) {
-	summand = znak_multi = 1;
+	summand = sign_multi = 1;
 	multiplication_division(expression, index);
-	answer += znak_sum * summand;
-	switch (expression[index]) {
+	answer += sign_sum * summand;
+	switch (expression[index])
+	{
 		case '+':
-		    znak_sum = 1;
-		    index++;
+			sign_sum = 1;
+			index++;
 			plus_minus(expression, index);
 			break;
 		case '-':
-		    znak_sum = -1;
-		    index++;
+			sign_sum = -1;
+			index++;
 			plus_minus(expression, index);
 			break;
 	}
 }
 
 void Calculator::multiplication_division(const char *expression, int64_t &index) {
-    multiplier = 0;
+	multiplier = 0;
 	read_number(expression, index);
-	if (znak_multi)
+	if (sign_multi)
 		summand *= multiplier;
 	else {
 		if (!multiplier) {
@@ -79,14 +83,15 @@ void Calculator::multiplication_division(const char *expression, int64_t &index)
 		else
 			summand /= multiplier;
 	}
-	switch (expression[index]) {
+	switch (expression[index])
+	{
 		case '*':
-			znak_multi = 1;
+			sign_multi = 1;
 			index++;
 			multiplication_division(expression, index);
 			break;
 		case '/':
-			znak_multi = 0;
+			sign_multi = 0;
 			index++;
 			multiplication_division(expression, index);
 			break;
@@ -114,12 +119,12 @@ void Calculator::neg_number(const char *expression, int64_t &index) {
 		neg_number(expression, index);
 	}
 	else
-    	poz_number(expression, index);
+		poz_number(expression, index);
 }
 
 void Calculator::poz_number(const char *expression, int64_t &index) {
 	if (isdigit(expression[index])) {
-	    empty_number = false;
+		empty_number = false;
 		multiplier = multiplier * 10 + expression[index] - '0';
 		index++;
 		poz_number(expression, index);
@@ -144,5 +149,5 @@ int main(int argc, char **argv) {
 		std::cerr << "error" << std::endl;
 		return 1;
 	}
-    return 0;
+	return 0;
 }
