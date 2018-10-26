@@ -39,11 +39,15 @@ public:
     }
     bool operator ==(const Matrix& m) const
     {
-        return (*this).matrix == m.matrix;
+        if(getColumns() != m.getColumns() || getRows() != m.getRows())
+            return false;
+        return matrix == m.matrix;
     }
     bool operator !=(const Matrix& m) const
     {
-        return (*this).matrix != m.matrix;
+        if(getColumns() != m.getColumns() || getRows() != m.getRows())
+            return true;
+        return matrix != m.matrix;
     }
     Matrix_support operator[] (size_t i)
     {
@@ -58,7 +62,7 @@ public:
         for(size_t i = 0; i < rows; i++)
             for(size_t j = 0; j < columns; j++)
                 matrix[i][j] *= op;
-        return (*this);
+        return *this;
     }
     int& getElem(size_t i, size_t j)
     {
