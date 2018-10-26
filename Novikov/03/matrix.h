@@ -23,13 +23,8 @@ public:
 		current_cols(cols) { }
 	size_t getRows() const { return current_rows; }
 	size_t getColumns() const { return current_cols; }
-	Proxy operator [](const size_t position) {
-		if (current_rows <= position) 
-				throw std::out_of_range("");
-			return Proxy(content, current_cols, position);
-	}
-	const Proxy operator [](const size_t position) const {
-		if (current_rows <= position) 
+	Proxy operator [](const size_t position) const {
+		if((current_rows <= position) || (position < 0))
 				throw std::out_of_range("");
 			return Proxy(content, current_cols, position);
 	}
