@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 
+using namespace std;
+
 class Matrix {
     class Row {
         int *row;
@@ -9,7 +11,13 @@ class Matrix {
     public:
         explicit Row(int *row, int col_size) : row(row), col_number(col_size) {}
 
-        int &operator[](size_t col) {
+        int operator[](size_t col) const {
+            if (col >= col_number)
+                throw std::out_of_range("");
+            return row[col];
+        }
+
+        int &operator[](size_t col){
             if (col >= col_number)
                 throw std::out_of_range("");
             return row[col];
@@ -29,7 +37,13 @@ public:
         free(data);
     }
 
-    Row operator[](int row) const {
+    const Row operator[](int row) const {
+        if (row >= rows)
+            throw std::out_of_range("");
+        return Row(data + row *  cols, cols);
+    }
+
+    Row operator[](int row){
         if (row >= rows)
             throw std::out_of_range("");
         return Row(data + row *  cols, cols);
