@@ -79,6 +79,6 @@ public:
 
     size_t getColumns() const
     {
-        return  columns;
+        return columns;
     }
 };
