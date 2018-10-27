@@ -36,13 +36,13 @@ public:
 		size_cols(cols)
 	{
 		_data = new int* [size_rows];
-		for (int i = 0; i < size_cols; i++)
+		for (size_t i = 0; i < size_cols; i++)
 			_data[i] = new int[size_cols];
 	}
 	
 	~Matrix()
 	{
-		for (int i = 0; i < size_rows; i++)
+		for (size_t i = 0; i < size_rows; i++)
 			delete []_data[i];
 	}
 	
@@ -74,9 +74,9 @@ public:
 
 	Matrix& operator*=(const int& multiply)
 	{
-		for (int i = 0; i < size_cols; i++)
+		for (size_t i = 0; i < size_cols; i++)
 		{
-			for (int j = 0; j < size_rows; j++)
+			for (size_t j = 0; j < size_rows; j++)
 				_data[j][i] *= multiply;
 		}
 		return *this;
@@ -88,9 +88,9 @@ public:
 			return false;
 		if (size_rows != m.getRows())
 			return false;
-		for (int i = 0; i < size_cols; i++)
+		for (size_t i = 0; i < size_cols; i++)
 		{
-			for (int j = 0; j < size_rows; j++)
+			for (size_t j = 0; j < size_rows; j++)
 			{
 				if (_data[j][i] != m[j][i])
 					return false;
