@@ -47,6 +47,9 @@ public:
         if (this == &other)
             return true;
         
+        if (columns != other.columns || rows != other.rows)
+            return false;
+        
         for (int i = 0; i < columns * rows; ++i)
             if (mass[i] != other.mass[i])
                 return false;
