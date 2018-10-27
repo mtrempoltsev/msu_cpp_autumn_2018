@@ -7,21 +7,21 @@ class Matrix
 	class Row
 	{
 		int* row;
-		size_t size_col;
+		const size_t size_col;
 	public:
-		Row(int* data_row, const size_t& size) 
+		Row(int* data_row, const size_t size) 
 			:row(data_row),
 			size_col(size) 
 		{}
 		
-		const int& operator[](const size_t& num_col) const
+		const int& operator[](const size_t num_col) const
 		{
 			if (num_col >= size_col)
 				throw std::out_of_range("");
 			return row[num_col];
 		}
 
-		int& operator[](const size_t& num_col)
+		int& operator[](const size_t num_col)
 		{
 			if (num_col >= size_col)
 				throw std::out_of_range("");
@@ -31,7 +31,7 @@ class Matrix
 
 public:
 
-	Matrix(const size_t& rows, const size_t& cols)
+	Matrix(const size_t& rows, const size_t cols)
 		:size_rows(rows),
 		size_cols(cols)
 	{
@@ -56,7 +56,7 @@ public:
 		return size_cols;
 	}
 
-	const Row operator[](const size_t& num_row) const
+	const Row operator[](const size_t num_row) const
 	{
 		if (num_row >= size_rows)
 			throw std::out_of_range("");
@@ -64,7 +64,7 @@ public:
 		return row;
 	}
 
-	Row operator[](const size_t& num_row)
+	Row operator[](const size_t num_row)
 	{
 		if (num_row >= size_rows)
 			throw std::out_of_range("");
