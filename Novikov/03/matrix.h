@@ -8,7 +8,12 @@ public:
 		Proxy(int* matrix_content, const size_t cols, const size_t position):
 			p_content(matrix_content + cols * position),
 			current_size(cols) {}
-		int& operator [](const size_t position) const {
+		int& operator [](const size_t position) {
+			if((current_size <= position) || (position < 0))
+				throw std::out_of_range("");
+			return *(p_content + position);
+		}
+		const int& operator [](const size_t position) const {
 			if((current_size <= position) || (position < 0))
 				throw std::out_of_range("");
 			return *(p_content + position);
@@ -23,7 +28,12 @@ public:
 		current_cols(cols) { }
 	size_t getRows() const { return current_rows; }
 	size_t getColumns() const { return current_cols; }
-	Proxy operator [](const size_t position) const {
+	Proxy operator [](const size_t position) {
+		if((current_rows <= position) || (position < 0))
+				throw std::out_of_range("");
+			return Proxy(content, current_cols, position);
+	}
+	const Proxy operator [](const size_t position) const {
 		if((current_rows <= position) || (position < 0))
 				throw std::out_of_range("");
 			return Proxy(content, current_cols, position);

@@ -60,7 +60,7 @@ public:
         return !(this == &other);
     }
 
-    Matrix const &operator*=(const int multiplier) const {
+    Matrix const &operator*=(const int multiplier){
         for (int i = 0; i < rows; ++i)
             for (int j = 0; j < cols; ++j)
                 data[i * cols + j] *= multiplier;
