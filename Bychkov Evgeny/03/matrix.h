@@ -11,24 +11,18 @@ class Matrix
     {
         size_t i;
         Matrix *mat;
-
-    public:
-        Matrix_support(Matrix *m, size_t coord): i(coord), mat(m) {}
-        int& operator[](size_t j)
-        {
-            return (*mat).getElem(i, j);
-        }
-    };
-    class Matrix_support_const
-    {
-        size_t i;
         const Matrix *const_mat;
 
     public:
-        Matrix_support_const(const Matrix *m, size_t coord): i(coord), const_mat(m) {}
+        Matrix_support(Matrix *m, size_t coord): i(coord), mat(m) {}
+        Matrix_support(const Matrix *m, size_t coord): i(coord), const_mat(m) {}
         int operator[](size_t j) const
         {
             return (*const_mat).getElem(i, j);
+        }
+        int& operator[](size_t j)
+        {
+            return (*mat).getElem(i, j);
         }
     };
 public:
@@ -49,11 +43,11 @@ public:
     {
         return Matrix_support(this, i);
     }
-    Matrix_support_const operator[] (size_t i) const
+    const Matrix_support operator[] (size_t i) const
     {
-        return Matrix_support_const(this, i);
+        return Matrix_support(this, i);
     }
-    Matrix& operator *=(int op)
+    const Matrix& operator *=(int op)
     {
         for(size_t i = 0; i < rows; i++)
             for(size_t j = 0; j < columns; j++)
