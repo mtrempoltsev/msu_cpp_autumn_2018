@@ -30,10 +30,36 @@ public:
 
 };
 
+class Proxy2 {
+private:
+    std::vector<int> data_;
+public:
+    Proxy2() {}
+
+    Proxy2(const std::vector<int>& data) {
+        data_ = data;
+    }
+
+    int operator[](int j) const {
+        if (j < 0 || static_cast<size_t>(j) >= data_.size()) {
+            throw std::out_of_range("");
+        }
+        return data_[j];
+    }
+    void print(void) {
+        for (size_t i = 0; i < data_.size(); ++i) {
+            std::cout << data_[i] << '\t';
+        }
+        std::cout << '\n';
+    }
+
+};
+
 class Matrix {
 private:
     int rows_, columns_;
     Proxy obj; 
+    Proxy2 obj2;
     std::vector<std::vector<int>> matrix_;
 
 public:
@@ -77,7 +103,7 @@ public:
         }
         return *this;
     }
-
+    
     
     Proxy& operator[](int i) {
         if (i >= rows_ || i < 0) {
@@ -87,6 +113,12 @@ public:
         return obj;
     }
 
+    const Proxy2 operator[](int i) const {
+        if (i >= rows_ || i < 0) {
+            throw std::out_of_range("");
+        }
+        return Proxy2(matrix_[i]);
+    }
 
     void print(void) const {
         for (int i = 0; i < rows_; ++i) {
@@ -98,12 +130,14 @@ public:
     }
 };
 
-/*
+
 int main(void) {
     Matrix m(5, 3), p(5, 4);
     m[0][0] = 10;
     m.print();
+    const Matrix& m2 = m;
+    std::cout << m2[0][0] << '\n';
     return 0;
 }
 
-*/
+
