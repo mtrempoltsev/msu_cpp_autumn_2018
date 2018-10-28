@@ -40,8 +40,8 @@ public:
     Matrix(size_t rs, size_t cs)
         : rows(rs)
         , cols(cs)
+        , a(new int[rs * cs])
     {
-        a = new int[rs * cs];
     }
     
     ~Matrix()
@@ -58,21 +58,19 @@ public:
         return cols;
     }
     
-    Array& operator[] (size_t index)
+    Array operator[] (size_t index)
     {
         if (rows <= index) {
             throw std::out_of_range("");
         }
-        Array tmp(&a[cols * index], cols);
-        return tmp;
+        return Array(&a[cols * index], cols);
     }
-    const Array& operator[] (size_t index) const
+    const Array operator[] (size_t index) const
     {
         if (rows <= index) {
             throw std::out_of_range("");
         }
-        const Array tmp(&a[cols * index], cols);
-        return tmp;
+        return Array(&a[cols * index], cols);
     }
     
     Matrix& operator *= (int arg)
