@@ -97,16 +97,6 @@ public:
     }
     bool operator != (const Matrix& arg) const
     {
-        if ((this->cols != arg.getColumns()) || (this->rows != arg.getRows())) {
-            return true;
-        }
-        for (size_t i = 0; i < rows; ++i) {
-            for (size_t j = 0; j < cols; ++j) {
-                if (a[cols * i + j] != arg[i][j]) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return !(*this == arg);
     }
 };
