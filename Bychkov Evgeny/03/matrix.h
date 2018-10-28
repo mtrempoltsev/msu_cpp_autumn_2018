@@ -53,7 +53,7 @@ public:
     {
         return Matrix_support_const(this, i);
     }
-    const Matrix& operator *=(int op)
+    Matrix& operator *=(int op)
     {
         for(size_t i = 0; i < rows; i++)
             for(size_t j = 0; j < columns; j++)
