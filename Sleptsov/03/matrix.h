@@ -42,7 +42,7 @@ public:
 
     ~Matrix()
     {
-        delete data;
+        delete[] data;
     }
 
     size_t getRows() const
@@ -55,7 +55,15 @@ public:
         return cols;
     }
 
-    Row operator[](const size_t row_ind) const
+    Row operator[](const size_t row_ind)
+    {
+        if (row_ind >= rows) {
+            throw std::out_of_range("");
+        }
+        return Row(data, row_ind, cols);
+    }    
+
+    const Row operator[](const size_t row_ind) const
     {
         if (row_ind >= rows) {
             throw std::out_of_range("");
