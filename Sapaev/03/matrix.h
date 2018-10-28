@@ -1,43 +1,49 @@
 #include <exception>
-
-class Array {
-    int *a;
-    size_t size;
-public:
-    Array(int* start, size_t sz)
-    {
-        a = start;
-        size = sz;
-    }
-    ~Array() {}
-    
-    int& operator[] (size_t index)
-    {
-        if (size <= index) {
-            throw std::out_of_range("56");
-        }
-        return a[index];
-    }
-    int operator[] (size_t index) const
-    {
-        if (size <= index) {
-            throw std::out_of_range("");
-        }
-        return a[index];
-    }
-};
+#include <iostream>
 
 class Matrix {
-    int *a;
     size_t rows;
     size_t cols;
+    int *a;
+    
+    class Array {
+        size_t size;
+        int *a;
+    public:
+        Array(int* start, size_t sz)
+            : size(sz)
+            , a(start)
+        {
+        }
+        
+        ~Array()
+        {
+        }
+        
+        int& operator[] (size_t index)
+        {
+            if (size <= index) {
+                throw std::out_of_range("56");
+            }
+            return a[index];
+        }
+        int operator[] (size_t index) const
+        {
+            if (size <= index) {
+                throw std::out_of_range("");
+            }
+            return a[index];
+        }
+    };
+    
 public:
     Matrix(size_t rs, size_t cs)
+        : rows(rs)
+        , cols(cs)
     {
-        rows = rs;
-        cols = cs;
         a = new int[rs * cs];
     }
+    
     ~Matrix()
     {
         delete[] a;
