@@ -44,6 +44,8 @@ int main(int argc, const char *argv[]) {
 //    int64_t  result = count(i, argv[1]);
     delete calc;
     std::cout << result;
+    
+    return 0;
 }
 
 void Calculator::skip_spaces() {
