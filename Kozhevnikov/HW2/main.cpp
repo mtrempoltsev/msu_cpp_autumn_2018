@@ -37,10 +37,12 @@ int main(int argc, const char *argv[]) {
     try {
         result = calc->calculate();
     } catch (invalidExpression &e) {
+        delete calc;
         return 1;
     }
 
 //    int64_t  result = count(i, argv[1]);
+    delete calc;
     std::cout << result;
 }
 
