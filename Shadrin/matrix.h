@@ -46,7 +46,7 @@ public:
 
     std::size_t getColumns() const;
 
-    Row operator[](std::size_t i) const;
+    const Row operator[](std::size_t i) const;
 
     Row operator[](std::size_t i);
 
@@ -82,7 +82,7 @@ std::size_t Matrix::getColumns() const {
     return cols;
 }
 
-Matrix::Row Matrix::operator[](std::size_t i) const {
+const Matrix::Row Matrix::operator[](std::size_t i) const {
     if (i < rows) { 
         return Row(this, i * cols);
     }
