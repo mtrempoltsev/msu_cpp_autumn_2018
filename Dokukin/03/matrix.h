@@ -74,8 +74,10 @@ public:
 		return columns;
 	}
 	
-	const Matrix& operator *= (const int num)
+	Matrix& operator *= (const int num)
 	{
+		Matrix tmp(rows, columns);
+		
 		for (size_t i = 0; i < rows; ++i)
 		{
 			for (size_t j = 0; j < columns; ++j)
@@ -83,6 +85,8 @@ public:
 				array[i][j] *= num;
 			}
 		}
+		
+		return *this;
 	}
 	
 	bool operator == (const Matrix& other)
