@@ -45,7 +45,7 @@ public:
             return *(ptr + idx);
         }
     };
-    const Matrix& operator*=(int factor)
+    Matrix& operator*=(int factor)
     {
         for(size_t i = 0; i < rows * cols; ++i) {
             ptr[i] *= factor;
