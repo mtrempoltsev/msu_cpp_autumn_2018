@@ -11,13 +11,7 @@ public:
 		size_t size;
 		int* data;
 	public:
-		Row(){}
-		Row(int* data, size_t size)
-		{
-			Row::data = data;
-			Row::size = size;
-		}
-		
+		Row(int* data, size_t size) : data(data), size(size) {};
 		int& operator [] (size_t j)
 		{
 			if (j >= size)
@@ -38,14 +32,13 @@ public:
 
 	};
 
-	Matrix(size_t rows, size_t columns)
+	Matrix(size_t rows, size_t columns) : rows(rows), columns(columns)
 	{
 		if ((rows < 0) || (columns < 0))
 		{
 			throw std::out_of_range("");
 		}
-		Matrix::rows = rows;
-		Matrix::columns = columns;
+
 		data = new int[rows*columns];
 	}
 
