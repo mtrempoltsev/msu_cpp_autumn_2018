@@ -14,8 +14,8 @@ private:
     public:
 
         Row(int *row, size_t n) : _row(row), _n(n) {}
-
-        int& operator[] (size_t) const;
+        int& operator[](size_t);
+        const int& operator[] (size_t) const;
     };
 public:
 
@@ -27,7 +27,8 @@ public:
     Matrix& operator*= (int);
     bool operator== (const Matrix&) const;
     bool operator!= (const Matrix&) const;
-    Row operator[] (size_t) const;
+    Row operator[] (size_t);
+    const Row operator[] (size_t) const;
 
     ~Matrix();
 };
@@ -88,7 +89,7 @@ bool Matrix::operator!=(const Matrix& rightMatrix) const
     return !(*this == rightMatrix);
 }
 
-Matrix::Row Matrix::operator[](size_t index_r) const
+Matrix::Row Matrix::operator[](size_t index_r)
 {
     if(index_r >= _rows) {
         throw std::out_of_range("");
@@ -96,7 +97,23 @@ Matrix::Row Matrix::operator[](size_t index_r) const
     return Row(_matrix[index_r], _columns);
 }
 
-int& Matrix::Row::operator[](size_t index_c) const
+const Matrix::Row Matrix::operator[](size_t index_r) const
+{
+    if(index_r >= _rows) {
+        throw std::out_of_range("");
+    }
+    return Row(_matrix[index_r], _columns);
+}
+
+int& Matrix::Row::operator[](size_t index_c)
+{
+    if(index_c >= _n) {
+        throw std::out_of_range("");
+    }
+    return _row[index_c];
+}
+
+const int& Matrix::Row::operator[](size_t index_c) const
 {
     if(index_c >= _n) {
         throw std::out_of_range("");

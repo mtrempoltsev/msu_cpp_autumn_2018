@@ -5,7 +5,6 @@
 class Matrix
 {
         int rows_n, cols_n, elms_n;
-        int* m;
         class Row
         {
                 int* offt;
@@ -33,7 +32,7 @@ class Matrix
     public:
         explicit Matrix(int nrows, int ncols):
             rows_n{nrows}, cols_n{ncols}, elms_n{nrows * ncols},
-            m{static_cast<int*>(::operator new[] (sizeof(int) * nrows * ncols))}
+            m{static_cast<int*>(::operator new[] (sizeof(int) * elms_n))}
         {
             for (int i = 0; i < elms_n; ++i) {
                 new (m + i) int{0};
@@ -48,10 +47,9 @@ class Matrix
         bool operator==(const Matrix& that) const;
         bool operator!=(const Matrix& that) const;
         Matrix& operator*=(int);
-        const int* get_rawaddr() const;
-        int* get_rawaddr();
         int getRows() const;
         int getColumns() const;
+        int* m;
 };
 
 int Matrix::getRows() const
@@ -82,23 +80,13 @@ Matrix::Row Matrix::operator[](int row)
     }
 }
 
-const int* Matrix::get_rawaddr() const
-{
-    return const_cast<const int*>(m);
-}
-
-int* Matrix::get_rawaddr()
-{
-    return m;
-}
-
 bool Matrix::operator==(const Matrix& that) const
 {
     if (rows_n != that.rows_n || cols_n != that.cols_n) {
         return false;
     } else {
         for (int i = 0; i < elms_n; ++i) {
-            if (m[i] != that.get_rawaddr()[i]) {
+            if (m[i] != that.m[i]) {
                 return false;
             }
         }

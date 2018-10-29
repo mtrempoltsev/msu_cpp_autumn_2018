@@ -11,9 +11,9 @@ private:
 	std::string s;
 
 public:
-	Calc(std::string &str) {
-		s = str;
-	}
+	Calc(std::string &str)
+		: s(str)
+	{}
 
 	bool count_result() {
 		s.erase(remove_if(s.begin(), s.end(), isspace), s.end());

@@ -16,16 +16,15 @@ class Matrix
     public:
         Matrix_support(Matrix *m, size_t coord): i(coord), mat(m) {}
         Matrix_support(const Matrix *m, size_t coord): i(coord), const_mat(m) {}
-        int& operator[](size_t j)
-        {
-            return (*mat).getElem(i, j);
-        }
         int operator[](size_t j) const
         {
             return (*const_mat).getElem(i, j);
         }
+        int& operator[](size_t j)
+        {
+            return (*mat).getElem(i, j);
+        }
     };
-
 public:
     Matrix(size_t r, size_t c): rows(r), columns(c), matrix(r, std::vector<int>(c, 0)) {}
     bool operator ==(const Matrix& m) const
@@ -44,7 +43,7 @@ public:
     {
         return Matrix_support(this, i);
     }
-    Matrix_support operator[] (size_t i) const
+    const Matrix_support operator[] (size_t i) const
     {
         return Matrix_support(this, i);
     }
