@@ -9,13 +9,13 @@ class Matrix{
         int* line;
     public:
         Row(int* l, size_t n): line(l), len(n){}
-        const int operator[](size_t num_of_col) const 
+        const int operator[](size_t num_of_col) const
         {
             if (num_of_col >= len)
                 throw out_of_range("");
             return line[num_of_col];
         }
-        int& operator[](size_t num_of_col) 
+        int& operator[](size_t num_of_col)
         {
             if (num_of_col >= len)
                 throw out_of_range("");
@@ -30,17 +30,17 @@ public:
     {
         data = new int [num_cols * num_rows];
     }
-    ~Matrix() 
+    ~Matrix()
     {
         delete[] data;
     }
-    const Row operator[](size_t num_of_row) const 
+    const Row operator[](size_t num_of_row) const
     {
         if (num_of_row >= rows)
             throw out_of_range("");
         return Row(data + num_of_row * cols, cols);
     }
-    Row operator[](size_t num_of_row) 
+    Row operator[](size_t num_of_row)
     {
         if (num_of_row >= rows)
             throw out_of_range("");
@@ -77,8 +77,8 @@ public:
         }
         return true;
     }
-	bool operator != (Matrix other)
-	{
+    bool operator != (Matrix other)
+    {
         return !(*this == other);
-	}
+    }
 };
