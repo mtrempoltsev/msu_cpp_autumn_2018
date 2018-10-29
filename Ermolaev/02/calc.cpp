@@ -5,8 +5,6 @@
 
 using namespace std;
 
-#define __DBG__ 0
-
 /*
 S -> S + S | S - S |  T
 T -> T * T | T / T | E
@@ -46,14 +44,12 @@ class Calc
     
         int64_t calc_S(const string& str)
         {
-            if (__DBG__) cout << "calc_S: <<" << str << ">>" << endl;
             int i;
             if ((i = str.rfind('+')) != -1)
                 return calc_S(str.substr(0, i)) + calc_S(str.substr(i+1, str.size()));
             if ((i = str.rfind('-')) != -1){
                 int j = i-1;
                 while ((j>0) && str[j]==' ') j--;
-                if (__DBG__) cout <<str[j] << " " << str.substr(0, j) << endl;
                 if (str[j] == '-')
                     return calc_S(str.substr(0, j)) - (-1)*calc_S(str.substr(i+1, str.size()));
                 else if (str[j] == '+')
@@ -70,7 +66,6 @@ class Calc
 
         int64_t calc_T(const string& str)
         {
-            if (__DBG__) cout << "calc_T: <<" << str << ">>" << endl;
             int i;
             if ((i = str.find('*')) != -1)
                 return calc_T(str.substr(0, i)) * calc_T(str.substr(i+1, str.size()));
@@ -81,7 +76,6 @@ class Calc
 
         int64_t calc_E(const string& str)
         {
-            if (__DBG__) cout << "calc_E: <<" << str << ">>" << endl;
             if (str == "")
                 return 0;
             if (is_number(trim(str)))

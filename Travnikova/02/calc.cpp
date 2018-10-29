@@ -11,13 +11,13 @@ using namespace std;
 class Calculator
 {
 public:
-	 int64_t Res(string str) {
+	 int64_t Res(const string &str) {
 		string s = del_spaces(str);
 		istringstream expr(s);
 		return add_sub(expr);
 	}
 private:
-	string del_spaces(string str) {
+	string del_spaces(const string &str) {
 		string s;
 		int i = 0;
 		while (i < str.length()) {
@@ -35,7 +35,7 @@ private:
 		return s;
 	}
 
-	 int64_t add_sub(istringstream& expr)
+	 int64_t add_sub(istringstream &expr)
 	{
 		int64_t r_num, l_num = div_mul(expr);
 		int64_t res = l_num;
@@ -53,7 +53,7 @@ private:
 		return res;
 	}
 
-	int64_t div_mul(istringstream& expr)
+	int64_t div_mul(istringstream &expr)
 	{
 		int64_t r_num, l_num = number(expr);
 		int64_t res = l_num;
@@ -76,7 +76,7 @@ private:
 		return res;
 	}
 
-	int64_t number(istringstream& expr)
+	int64_t number(istringstream &expr)
 	{
 		char sign;
 		int64_t sign1 = 1;
