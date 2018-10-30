@@ -39,7 +39,7 @@ class Matrix
             num_lines(num_lines),
             num_columns(num_columns)
         {
-            matrix = new int[num_lines*num_columns];
+            matrix = new int[num_lines * num_columns];
         }
         ~Matrix()
         {
@@ -63,8 +63,8 @@ class Matrix
         }
         Matrix& operator*=(int multiplier)
         {
-            size_t Size_matrix = num_lines*num_columns;
-            for(size_t i = 0; i<Size_matrix; i++)
+            size_t Size_matrix = num_lines * num_columns;
+            for(size_t i = 0; i < Size_matrix; i++)
             {
                 matrix[i] *= multiplier;
             }
@@ -83,9 +83,9 @@ class Matrix
             {
                 return false;
             }
-            for(size_t i = 0; i<Size_matrix; i++)
+            for(size_t i = 0; i < Size_matrix; i++)
             {
-                if (A[i/num_columns][i%num_columns] != matrix[i])
+                if (A[i / num_columns][i % num_columns] != matrix[i])
                 {
                     return false;
                 }
