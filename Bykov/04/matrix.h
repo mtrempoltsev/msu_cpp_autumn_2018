@@ -7,7 +7,13 @@ class row{
         el = new int[col];
         size = col;
     }
-    int& operator[](size_t j)const{
+    int& operator[](size_t j){
+        if(j < size){
+            return el[j];
+        }
+        throw std::out_of_range("");
+    }
+    const int& operator[](size_t j)const{
         if(j < size){
             return el[j];
         }
@@ -22,15 +28,19 @@ class Matrix{
     size_t quantRows;
     size_t quantCols;
     row *rows;
-public:
-    
+public:  
     Matrix(size_t numrows, size_t numcols):quantCols(numcols),quantRows(numrows){
         rows = new row[numrows];
         for(int i = 0; i < numrows; i++){
             rows[i].connectRow(numcols);
         }
     }
-    row& operator[](size_t i)const{
+    row& operator[](size_t i){
+        if(i < quantRows)
+            return rows[i];
+        throw std::out_of_range(""); 
+    }
+    const row& operator[](size_t i)const{
         if(i < quantRows)
             return rows[i];
         throw std::out_of_range(""); 
