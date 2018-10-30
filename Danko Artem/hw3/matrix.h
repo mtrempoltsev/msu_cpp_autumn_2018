@@ -5,10 +5,10 @@ class Matrix {
     int *matr;
     int cols, rows;
     class Subclass{
-        int* const cols;
-        const int c_length;
+        int* cols;
+        int c_length;
     public:
-        Subclass(int* cols, const int c_length): cols(cols), c_length(c_length){}
+        Subclass(int* cols, int c_length): cols(cols), c_length(c_length){}
         int& operator[](size_t i) {
             if (i >= c_length)
                 throw std::out_of_range("out");
@@ -45,7 +45,7 @@ public:
             throw std::out_of_range("out");
         return Subclass(matr + cols * i, cols);
     }
-    const Matrix& operator*=(const int& a) {
+    Matrix& operator*=(int a) {
         for (auto i = 0; i < cols * rows; ++i)
             matr[i] = matr[i] * a;
         return *this;
