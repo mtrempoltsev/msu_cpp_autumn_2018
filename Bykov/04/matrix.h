@@ -3,8 +3,8 @@ class row{
     size_t size;
     public:
     row():el(nullptr),size(0){}
-    void connectRow(int *arr,size_t col){
-        el = arr;
+    void connectRow(size_t col){
+        el = new int[col];
         size = col;
     }
     int& operator[](size_t j)const{
@@ -22,18 +22,15 @@ class Matrix{
     size_t quantRows;
     size_t quantCols;
     row *rows;
-    int **matr;
 public:
     
     Matrix(size_t numrows, size_t numcols):quantCols(numcols),quantRows(numrows){
         rows = new row[numrows];
-        matr = new int*[numrows];
         for(int i = 0; i < numrows; i++){
-            matr[i] = new int[numcols];
-            rows[i].connectRow(matr[i], numcols);
+            rows[i].connectRow(numcols);
         }
     }
-    const row& operator[](size_t i)const{
+    row& operator[](size_t i)const{
         if(i < quantRows)
             return rows[i];
         throw std::out_of_range(""); 
@@ -46,29 +43,23 @@ public:
     }
     ~Matrix(){
         delete []rows;
-        delete []matr;
     }
-    void operator *=(int mn){
+    Matrix& operator *=(int mn){
         for(int i = 0; i < quantRows; i++)
             for(int j = 0; j < quantCols; j++)
-                matr[i][j] *= mn;
+                rows[i][j] *= mn;
+	return *this;
     }
     bool operator ==(const Matrix &mat)const{
         if((quantCols != mat.getColumns()) || (quantRows != mat.getRows()))
             return false;
         for(int i = 0; i < quantRows; i++)
             for(int j = 0; j < quantCols; j++)
-                if(matr[i][j] != mat[i][j])
+                if(rows[i][j] != mat[i][j])
                     return false;
         return true;
     }
     bool operator !=(const Matrix &mat)const{
-        if((quantCols != mat.getColumns()) || (quantRows != mat.getRows()))
-            return true;
-        for(int i = 0; i < quantRows; i++)
-            for(int j = 0; j < quantCols; j++)
-                if(matr[i][j] != mat[i][j])
-                    return true;
-        return false;
+        return !(*this == mat);
     }
 };
