@@ -19,16 +19,16 @@ class Calculator
 	
 	bool parse();
 	bool read_number(bool sign = false);
-	char read_probels();
+	char read_spaces();
 	
 public:
 	// calculator: add
 	//        add: mult | add + mult | add - mult
-	//       mult: num  | mult * num | mult / num 
+    	//       mult: num  | mult * num | mult / num 
 	//        num: integer number|- integer number
 	Calculator(const char *arg);
 	bool calculate();
-	void print();
+	int64_t get_result();
 };
 
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	if (argc == 2) {
 		Calculator calc(argv[1]);
 		if (calc.calculate()){
-			calc.print();
+			cout << calc.get_result() << endl;
 		} else {
 			return 1;
 		}
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-Calculator::Calculator(const char *arg): result(0), str(stringstream(arg)), numbers(), operations(){}
+Calculator::Calculator(const char *arg): result(0), str(arg){}
 
 bool Calculator::parse()
 {
@@ -56,7 +56,7 @@ bool Calculator::parse()
 	bool number_f;
 	while (not str.eof()){
 		// read number
-		cur_c = read_probels();
+		cur_c = read_spaces();
 		if (str.eof()) {
 		    return false;
 		}
@@ -72,7 +72,7 @@ bool Calculator::parse()
 			return false;
 		// if not end of line, read operator
 		if (not str.eof()) {
-			cur_c = read_probels();
+			cur_c = read_spaces();
 			if (cur_c == '+' or cur_c == '-' or cur_c == '/' or cur_c == '*') {
 				operations.push(cur_c);
 			} else if (not str.eof()){
@@ -97,7 +97,7 @@ bool Calculator::read_number(bool sign)
 	return true;
 }
 
-char Calculator::read_probels()
+char Calculator::read_spaces()
 {
 	char cur_c;
 	do {
@@ -191,7 +191,7 @@ bool Calculator::mult()
 	return success;
 }
 
-void Calculator::print()
+int64_t Calculator::get_result()
 {
-	cout << result << endl;
+	return result;
 }

@@ -76,12 +76,11 @@ private:
 };
 void remove_space(char * x, char* c)
 {
-    int i,j=0;
-    for(i = 0; i < strlen(x)+1; i++)
+    int i,j=0,line_lenght = strlen(x)+1;
+    for(i = 0; i < line_lenght; i++)
     {
         if (x[i] != ' ')
         {
-
             c[j] = x[i];
             j++;
         }
@@ -89,7 +88,8 @@ void remove_space(char * x, char* c)
 }
 
 int main(int argc, char* argv[])
-{   
+
+{
     if (argc != 2)
     {
          cout << "error" <<endl;
@@ -107,8 +107,9 @@ int main(int argc, char* argv[])
     catch (exception&)
     {
         cout << "error" << endl;
-        return 1;
         delete []c;
+        return 1;
+
     }
     return 0;
 }

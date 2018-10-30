@@ -8,8 +8,8 @@
 
 using namespace std;
 
-void write_in(set<int> &prime_numbers) {
-	for(int number = 2; number <= RANGE; number++) {
+void write_in(set<int> &prime_numbers, size_t range) {
+	for(int number = 2; number <= range; number++) {
 		bool is_allowed = true;
 		for(int i = 2; (i <= sqrt(number)) && is_allowed; i++)
 			if(number % i == 0) is_allowed = false;
@@ -25,7 +25,7 @@ int where_is_present(int number, int start, int stop, int order, const int* Data
 
 int counting(int start, int stop, int Size, const int* Data, set<int> &prime_numbers) {
 	int quantity = 0;
-	if((start + 1) && (stop + 1))
+	if((start != -1) && (stop != -1))
 		for(int i = start; i <= stop; i++)
 			if(prime_numbers.count(Data[i]))
 				quantity++;
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	int left_border, right_border;
 	//Create a set of simple numbers
 	set<int> prime_numbers;
-	write_in(prime_numbers);
+	write_in(prime_numbers, RANGE);
 	//Input validation:
 	if((argc == 1) || (argc % 2 == 0)) return -1;
 	//For each pair of numbers that are read from the command line:

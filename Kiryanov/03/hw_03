@@ -1,0 +1,106 @@
+class Matrix
+{
+	int** _data;
+	const size_t size_rows;
+	const size_t size_cols;
+
+	class Row
+	{
+		int* row;
+		const size_t size_col;
+	public:
+		Row(int* data_row, const size_t size) 
+			:row(data_row),
+			size_col(size) 
+		{}
+		
+		const int& operator[](const size_t num_col) const
+		{
+			if (num_col >= size_col)
+				throw std::out_of_range("");
+			return row[num_col];
+		}
+
+		int& operator[](const size_t num_col)
+		{
+			if (num_col >= size_col)
+				throw std::out_of_range("");
+			return row[num_col];
+		}
+	};
+
+public:
+
+	Matrix(const size_t rows, const size_t cols)
+		:size_rows(rows),
+		size_cols(cols)
+	{
+		_data = new int* [size_rows];
+		for (size_t i = 0; i < size_cols; i++)
+			_data[i] = new int[size_cols];
+	}
+	
+	~Matrix()
+	{
+		for (size_t i = 0; i < size_rows; i++)
+			delete []_data[i];
+		delete[]_data;
+	}
+	
+	int getRows() const
+	{
+		return size_rows;
+	}
+
+	int getColumns() const
+	{
+		return size_cols;
+	}
+
+	const Row operator[](const size_t num_row) const
+	{
+		if (num_row >= size_rows)
+			throw std::out_of_range("");
+		Row row(_data[num_row], size_cols);
+		return row;
+	}
+
+	Row operator[](const size_t num_row)
+	{
+		if (num_row >= size_rows)
+			throw std::out_of_range("");
+		Row row(_data[num_row], size_cols);
+		return row;
+	}
+
+	Matrix& operator*=(const int& multiply)
+	{
+		for (size_t i = 0; i < size_cols; i++)
+		{
+			for (size_t j = 0; j < size_rows; j++)
+				_data[j][i] *= multiply;
+		}
+		return *this;
+	}
+
+	const bool operator==(const Matrix& m)
+	{
+		if (size_cols != m.getColumns())
+			return false;
+		if (size_rows != m.getRows())
+			return false;
+		for (size_t i = 0; i < size_cols; i++)
+		{
+			for (size_t j = 0; j < size_rows; j++)
+			{
+				if (_data[j][i] != m[j][i])
+					return false;
+			}
+		}
+		return true;
+	}
+	const bool operator!=(const Matrix& m)
+	{
+		return !(*this == m);
+	}
+};
