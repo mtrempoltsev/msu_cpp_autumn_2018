@@ -34,66 +34,68 @@ class Matrix
     size_t num_lines;
     size_t num_columns;
     int* matrix;
-    public:
-        Matrix(size_t num_lines, size_t  num_columns):
-            num_lines(num_lines),
-            num_columns(num_columns)
+public:
+    Matrix(size_t num_lines, size_t  num_columns):
+        num_lines(num_lines),
+        num_columns(num_columns)
+    {
+        matrix = new int[num_lines * num_columns];
+    }
+    ~Matrix()
+    {
+        delete []matrix;
+    }
+    line operator[](int line_)
+    {
+        if (line_ >= num_lines)
         {
-            matrix = new int[num_lines * num_columns];
+            throw out_of_range("");
         }
-        ~Matrix()
+        return line(matrix + line_ * num_columns, num_columns);
+    }
+    const line operator[](int line_) const
+    {
+        if (line_ >= num_lines)
         {
-            delete []matrix;
+            throw out_of_range("");
         }
-        line operator[](int line_)
+        return line(matrix + line_ * num_columns, num_columns);
+    }
+    Matrix& operator*=(int multiplier)
+    {
+        size_t Size_matrix = num_lines * num_columns;
+        for(size_t i = 0; i < Size_matrix; i++)
         {
-            if (line_ >= num_lines)
-            {
-                throw out_of_range("");
-            }
-            return line(matrix + line_ * num_columns, num_columns);
+            matrix[i] *= multiplier;
         }
-        const line operator[](int line_) const
+        return *this;
+    }   
+    const int getRows() const 
+    {
+        return num_lines;
+    }
+    const int getColumns() const 
+    {
+        return num_columns;
+    }
+    bool operator==(const Matrix& A) const
+    {
+        size_t Size_matrix = num_lines*num_columns;
+        if ((A.getColumns() != num_columns) || (A.getRows() != num_lines))
         {
-            if (line_ >= num_lines)
-            {
-                throw out_of_range("");
-            }
-            return line(matrix + line_ * num_columns, num_columns);
+            return false;
         }
-        Matrix& operator*=(int multiplier)
+        for(size_t i = 0; i < Size_matrix; i++)
         {
-            size_t Size_matrix = num_lines * num_columns;
-            for(size_t i = 0; i < Size_matrix; i++)
-            {
-                matrix[i] *= multiplier;
-            }
-            return *this;
-        }
-        const int getRows() const {
-            return num_lines;
-        }
-        const int getColumns() const {
-            return num_columns;
-        }
-        bool operator==(const Matrix& A) const
-        {
-            size_t Size_matrix = num_lines*num_columns;
-            if ((A.getColumns() != num_columns) || (A.getRows() != num_lines))
+            if (A[i / num_columns][i % num_columns] != matrix[i])
             {
                 return false;
             }
-            for(size_t i = 0; i < Size_matrix; i++)
-            {
-                if (A[i / num_columns][i % num_columns] != matrix[i])
-                {
-                    return false;
-                }
-            }
-            return true;
         }
-        bool operator!=(const Matrix A) const
-        {
-            return !(*this == A);
-        }
+        return true;
+    }
+    bool operator!=(const Matrix A) const
+    {
+        return !(*this == A);
+    }
 };
