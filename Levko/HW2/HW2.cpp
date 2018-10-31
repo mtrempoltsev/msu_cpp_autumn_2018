@@ -3,10 +3,10 @@
 #include <string>
 #include <assert.h>
 
+
 enum class Operations : char {
     NUMBER, PLUS='+', SUB='-', MUL='*', DIV='/', MINUS = '-'
 };
-
 
 class Calc {
     using Int = int64_t;
@@ -26,8 +26,10 @@ class Calc {
             right = nullptr;
         }
         
-        ~Expression(){}
-            
+        ~Expression(){
+            delete left;
+            delete right;
+        }
         
     };
     
@@ -178,7 +180,7 @@ private:
             expr->right = right;
             expr->operation = op;
             left = expr;
-
+            delete expr;
         }
         return left;
     }
@@ -208,6 +210,7 @@ private:
             expr->right = right;
             expr->operation = op;
             left = expr;
+            delete expr;
         }
         return left;
     }

@@ -41,6 +41,7 @@ public:
 	{
 		for (size_t i = 0; i < size_rows; i++)
 			delete[] matrix[i];
+		delete[] matrix;
 	}
 	int getRows() const
 	{

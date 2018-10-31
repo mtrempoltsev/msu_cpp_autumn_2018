@@ -42,7 +42,7 @@ public:
             throw std::out_of_range("");
         return Proxy(array + el * cols, cols);
     }
-    Proxy operator[](size_t el) const{
+    const Proxy operator[](size_t el) const{
         if(el >= rows)
             throw std::out_of_range("");
         return Proxy(array + el * cols, cols);
