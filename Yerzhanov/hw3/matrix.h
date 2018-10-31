@@ -10,18 +10,13 @@ public:
     Row(void)
         :   num_cols_(0)
         ,   row_(nullptr) {}
+    
     Row(int num_cols)
         :   num_cols_(num_cols)
         ,   row_(nullptr) 
     {
         row_ = new int[num_cols];
     }
-/*    ~Proxy(void) {  delete [] row_; }
-
-    Proxy(const Proxy&) = delete;
-    void operator=(const Proxy&) {
-        
-    }*/
 
     Row& operator*=(int a) {
         for (int i = 0; i < num_cols_; ++i) {
@@ -53,6 +48,8 @@ public:
         return row_[j];
     }
 };
+
+
 class Matrix {
 private:
     int num_rows_, num_cols_;
@@ -67,19 +64,10 @@ public:
         for (int i = 0; i < num_rows_; ++i) {
             matrix_[i] = Row(num_cols_);
         }
-    }/*
+    }
     ~Matrix(void) {
-        for (int i = 0; i < rows_; ++i) {
-            delete [] matrix_[i];
-        }
         delete [] matrix_;
     }
-    
-    //Следущие два метода нужны, чтобы не было коллизий в памяти. То есть если сработает конструтор копирования, то два 
-    // элемента будут иметь указатель на один блок памяти, и при срабатывании конструктора этот блок будет удален дважды.
-    Matrix(const Matrix&) = delete;
-    void operator=(const Matrix&) = delete;
-*/
 
     int getRows(void) const { return num_rows_; }
     int getColumns(void) const { return num_cols_; }
@@ -124,28 +112,3 @@ public:
         return matrix_[i];
     }
 };
-
-void print(const Matrix& m) {
-    for (int i = 0; i < m.getRows(); ++i) {
-        for (int j = 0; j < m.getColumns(); ++j) {
-            std::cout << m[i][j] << ' ';
-        }
-        std::cout << '\n';
-    }
-    std::cout << "_______________________" << '\n';
-}
-/*
-int main(void) {
-    Matrix m(2, 3), m2(2, 3); 
-    
-    for (int i = 0; i < m.getRows(); ++i) {
-        for (int j = 0; j < m.getColumns(); ++j) {
-            m[i][j] = i + j;
-            m2[i][j] = i + j;
-        }
-    }
-    print(m);
-    print(m2);
-    std::cout << (m == m2) << '\n';
-    return 0;
-}*/
