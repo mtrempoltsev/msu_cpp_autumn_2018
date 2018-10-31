@@ -8,9 +8,11 @@ private:
     int* row_;
 public:
     Row(void)
-        :   row_(nullptr) {}
+        :   num_cols_(0)
+        ,   row_(nullptr) {}
     Row(int num_cols)
-        :   row_(nullptr) 
+        :   num_cols_(num_cols)
+        ,   row_(nullptr) 
     {
         row_ = new int[num_cols];
     }
@@ -38,10 +40,16 @@ public:
     }
 
     int& operator[](int j) {
+        if (j < 0 || j >= num_cols_) {
+            throw std::out_of_range("");
+        }
         return row_[j];
     }
 
     int operator[](int j) const {
+        if (j < 0 || j >= num_cols_) {
+            throw std::out_of_range("");
+        }
         return row_[j];
     }
 };
@@ -73,8 +81,8 @@ public:
     void operator=(const Matrix&) = delete;
 */
 
-    int getRows(void) { return num_rows_; }
-    int getColumns(void) { return num_cols_; }
+    int getRows(void) const { return num_rows_; }
+    int getColumns(void) const { return num_cols_; }
 
     Matrix& operator*=(int a) {
         for (int i = 0; i < num_rows_; ++i) {
@@ -116,3 +124,28 @@ public:
         return matrix_[i];
     }
 };
+
+void print(const Matrix& m) {
+    for (int i = 0; i < m.getRows(); ++i) {
+        for (int j = 0; j < m.getColumns(); ++j) {
+            std::cout << m[i][j] << ' ';
+        }
+        std::cout << '\n';
+    }
+    std::cout << "_______________________" << '\n';
+}
+/*
+int main(void) {
+    Matrix m(2, 3), m2(2, 3); 
+    
+    for (int i = 0; i < m.getRows(); ++i) {
+        for (int j = 0; j < m.getColumns(); ++j) {
+            m[i][j] = i + j;
+            m2[i][j] = i + j;
+        }
+    }
+    print(m);
+    print(m2);
+    std::cout << (m == m2) << '\n';
+    return 0;
+}*/
