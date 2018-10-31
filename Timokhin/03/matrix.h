@@ -37,10 +37,7 @@ public:
 
     bool operator!=(const Matrix& m) const
     {
-        bool notEqual = (m.m_colsN != m_colsN || m.m_rowsN != m_rowsN);
-        for (uint64_t i = 0; i < m_rowsN * m_colsN && !notEqual; ++i)
-            notEqual = notEqual || (m_data[i] != m.m_data[i]);
-        return notEqual;
+        return !operator==(m);
     }
 
     class Indexer
@@ -98,3 +95,4 @@ private:
     const uint64_t m_colsN;
     int* m_data;
 };
+
