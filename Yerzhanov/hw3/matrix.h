@@ -1,7 +1,6 @@
 #include <iostream>
 #include <exception>
 
-
 class Row {
 private:
     int num_cols_;
@@ -19,15 +18,18 @@ public:
     }
     
     ~Row(void) {
-        delete row_;
+        delete [] row_;
+    }
+
+    Row& operator=(Row& m) {
+        num_cols_ = m.num_cols_;
+        row_ = new (m.row_) int[num_cols_];
+        m.row_ = nullptr;    // Я честно не знаю на сколько это костыльно
     }
 
     Row& operator=(const Row& m) {
         num_cols_ = m.num_cols_;
-        row_ = new int[num_cols_];
-        for (int i = 0; i < num_cols_; ++i) {
-            row_[i] = m.row_[i];
-        }
+        row_ = new (m.row_) int[num_cols_];
     }
 
     Row& operator*=(int a) {
@@ -73,7 +75,8 @@ public:
     {
         matrix_ = new Row[num_rows_];
         for (int i = 0; i < num_rows_; ++i) {
-            matrix_[i] = Row(num_cols_);
+            Row tmp = Row(num_cols_);
+            matrix_[i] = tmp;
         }
     }
     ~Matrix(void) {
