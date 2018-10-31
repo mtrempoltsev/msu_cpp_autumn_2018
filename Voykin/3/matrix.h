@@ -13,7 +13,7 @@ class Matrix
             number_elements_in_line(number_elements_in_line)
          {}
 
-        const int operator[](size_t number) const
+        int operator[](size_t number) const
         {
             if (number >= number_elements_in_line)
             {
