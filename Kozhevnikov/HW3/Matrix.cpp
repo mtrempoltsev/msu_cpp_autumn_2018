@@ -31,7 +31,7 @@ private:
 
 public:
     Matrix (const size_t rows, const size_t cols)
-        :rows(rows), cols(cols), mx(static_cast<int *>(malloc(rows * cols * sizeof(int))))
+        :rows(rows), cols(cols)
     {
         mx = static_cast<int *>(malloc(rows * cols * sizeof(int)));
     }
