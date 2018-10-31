@@ -1,5 +1,6 @@
 #include <iostream>
 #include <exception>
+#include <new>
 
 class Row {
 private:
