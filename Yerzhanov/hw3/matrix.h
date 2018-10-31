@@ -17,6 +17,18 @@ public:
     {
         row_ = new int[num_cols];
     }
+    
+    ~Row(void) {
+        delete row_;
+    }
+
+    Row& operator=(const Row& m) {
+        num_cols_ = m.num_cols_;
+        row_ = new int[num_cols_];
+        for (int i = 0; i < num_cols_; ++i) {
+            row_[i] = m.row_[i];
+        }
+    }
 
     Row& operator*=(int a) {
         for (int i = 0; i < num_cols_; ++i) {
@@ -58,7 +70,6 @@ public:
     Matrix(int num_rows, int num_cols)
         :   num_rows_(num_rows)
         ,   num_cols_(num_cols) 
-        ,   matrix_(nullptr)            //
     {
         matrix_ = new Row[num_rows_];
         for (int i = 0; i < num_rows_; ++i) {

@@ -1,4 +1,4 @@
-#define elem_t int
+typedef int elem_t;
 
 class Matrix
 {
@@ -70,18 +70,16 @@ public:
 	{
 		return !(*this == other);
 	}
-	friend Matrix & operator *=(Matrix& M1, int coef);
+	Matrix& operator *=(int coef)
+	{
+		for (int i = 0; i < rows*columns; i++) 
+		{
+			matrix[i] *= coef;
+		}
+		return *this;
+	}
 	~Matrix()
 	{
 		delete[] matrix;
 	}
 };
-
-Matrix& operator *=(Matrix& m1, int coef)
-{
-	for (int i = 0; i < m1.rows*m1.columns; i++)
-	{
-		m1.matrix[i] *= coef;
-	}
-	return m1;
-}
