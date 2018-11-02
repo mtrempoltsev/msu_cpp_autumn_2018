@@ -48,20 +48,27 @@ class BigInt {
         size_t s2 = x2.size - 1;
         std::pair<int, int> tmp(0, cf);
         
-        //std::cout << "started\n";
         while (s2 != static_cast<size_t>(-1)) {
             tmp = half_add(x1.num[s1], x2.num[s2], tmp.second);
             bigint.num[s1] = tmp.first;
             --s1;
             --s2;
         }
-        //std::cout << "continueing\n";
         while (s1 != static_cast<size_t>(-1)) {
             tmp = half_add(x1.num[s1], 0, tmp.second);
             bigint.num[s1] = tmp.first;
             --s1;
         }
-        //std::cout << "finished\n";
+        if (tmp.second == 1) {
+            int *tmp_ptr = new int[bigint.size + 1];
+            tmp_ptr[0] = 1;
+            for (size_t i = 0; i < bigint.size; ++i) {
+                tmp_ptr[i + 1] = bigint.num[i];
+            }
+            delete[] bigint.num;
+            bigint.size += 1;
+            bigint.num = tmp_ptr;
+        }
         return bigint;
     }
     static std::pair<int, int> half_sub(int x1, int x2, int cf = 0)
@@ -96,6 +103,19 @@ class BigInt {
             tmp = half_sub(x1.num[s1], 0, tmp.second);
             bigint.num[s1] = tmp.first;
             --s1;
+        }
+        size_t zeros = 0;
+        for (zeros = 0; zeros < bigint.size; ++zeros) {
+            if (bigint.num[zeros] != 0) {
+                break;
+            }
+            int *tmp_ptr = new int[bigint.size - zeros];
+            for (size_t i = 0; i < bigint.size - zeros; ++i) {
+                tmp_ptr[i] = bigint.num[i + zeros];
+            }
+            delete[] bigint.num;
+            bigint.size -= zeros;
+            bigint.num = tmp_ptr;
         }
         return bigint;
     }
@@ -144,8 +164,9 @@ public:
     {
         sign = x.sign;
         size = x.size;
+        int *tmp_ptr = new int[size];
         delete[] num;
-        num = new int[size];
+        num = tmp_ptr;
         for (size_t i = 0; i < size; ++i) {
             num[i] = x.num[i];
         }
@@ -330,29 +351,29 @@ public:
     }
 };
 
-#if !defined tmode
-int main()
-{
-    std::string str, str1;
-    std::cin >> str;
-    std::cin >> str1;
-    while (str != "quit" && str != "q") {
-        BigInt x(str);
-        BigInt y(str1);
-
-        std::cout << "x: " << x << "\n" << "y: " << y << "\n";
-        std::cout << "== " << (x == y) << std::endl;
-        std::cout << "!= " << (x != y) << std::endl;
-        std::cout << "<= " << (x <= y) << std::endl;
-        std::cout << ">= " << (x >= y) << std::endl;
-        std::cout << " < " << (x < y) << std::endl;
-        std::cout << " > " << (x > y) << std::endl;
-
-        //std::cout << "x + y : " << (x + y) << std::endl;
-        //std::cout << "x - y : " << (x - y) << std::endl;
-        std::cin >> str;
-        std::cin >> str1;
-    }
-    return 0;
-}
-#endif
+//#if !defined tmode
+//int main()
+//{
+//    std::string str, str1;
+//    std::cin >> str;
+//    std::cin >> str1;
+//    while (str != "quit" && str != "q") {
+//        BigInt x(str);
+//        BigInt y(str1);
+//
+//        std::cout << "x: " << x << "\n" << "y: " << y << "\n";
+//        std::cout << "== " << (x == y) << std::endl;
+//        std::cout << "!= " << (x != y) << std::endl;
+//        std::cout << "<= " << (x <= y) << std::endl;
+//        std::cout << ">= " << (x >= y) << std::endl;
+//        std::cout << " < " << (x < y) << std::endl;
+//        std::cout << " > " << (x > y) << std::endl;
+//
+//        std::cout << "x + y : " << (x + y) << std::endl;
+//        std::cout << "x - y : " << (x - y) << std::endl;
+//        std::cin >> str;
+//        std::cin >> str1;
+//    }
+//    return 0;
+//}
+//#endif
