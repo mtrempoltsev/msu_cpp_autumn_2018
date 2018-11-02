@@ -81,12 +81,7 @@ public:
 
     bool operator !=(const Matrix& Compared) const
     {
-        if((rows != Compared.rows) || (columns != Compared.columns))
-            return true;
-        for (int i = 0; i < rows * columns; i++)
-            if (Data[i] != Compared.Data[i])
-                return true;
-        return false;
+        return !(*this == Compared);
     }
 
 };

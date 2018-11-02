@@ -7,7 +7,6 @@
 using namespace std;
 
 class Calculator {
-    int64_t calc_res;
     vector <int64_t> numbers;
     vector <char> operations;
 
@@ -70,6 +69,7 @@ class Calculator {
     }
 
 public:
+    int64_t calc_res;
     Calculator(const char* str) {
         int64_t num;
         char op;
@@ -129,10 +129,6 @@ public:
         }
         throw runtime_error("");
     }
-    void print() {
-        cout << calc_res << endl;
-        return;
-    }
 };
 
 int main(int argc, char* argv[])
@@ -145,7 +141,7 @@ int main(int argc, char* argv[])
     try {
 
         Calculator Res(argv[1]);
-    Res.print();
+        cout << Res.calc_res;
         return 0;
     } catch (exception &err) {
         cout << "error"<< endl;
