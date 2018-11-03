@@ -5,7 +5,6 @@
 class Matrix
 {
         int rows_n, cols_n, elms_n;
-        int* m;
         class Row
         {
                 int* offt;
@@ -15,7 +14,7 @@ class Matrix
                     cols{ccols} {};
                 int& operator[](int index)
                 {
-                    if (index < 0 || index > cols) {
+                    if (index < 0 || index >= cols) {
                         throw std::out_of_range("");
                     } else {
                         return offt[index];
@@ -23,7 +22,7 @@ class Matrix
                 }
                 const int& operator[](int index) const
                 {
-                    if (index < 0 || index > cols) {
+                    if (index < 0 || index >= cols) {
                         throw std::out_of_range("");
                     } else {
                         return offt[index];
@@ -33,7 +32,7 @@ class Matrix
     public:
         explicit Matrix(int nrows, int ncols):
             rows_n{nrows}, cols_n{ncols}, elms_n{nrows * ncols},
-            m{static_cast<int*>(::operator new[] (sizeof(int) * nrows * ncols))}
+            m{static_cast<int*>(::operator new[] (sizeof(int) * elms_n))}
         {
             for (int i = 0; i < elms_n; ++i) {
                 new (m + i) int{0};
@@ -47,11 +46,10 @@ class Matrix
         Row operator[](int row);
         bool operator==(const Matrix& that) const;
         bool operator!=(const Matrix& that) const;
-        Matrix operator*=(int);
-        const int* get_rawaddr() const;
-        int* get_rawaddr();
+        Matrix& operator*=(int);
         int getRows() const;
         int getColumns() const;
+        int* m;
 };
 
 int Matrix::getRows() const
@@ -66,7 +64,7 @@ int Matrix::getColumns() const
 
 const Matrix::Row Matrix::operator[](int row) const
 {
-    if (row < 0 || row > rows_n) {
+    if (row < 0 || row >= rows_n) {
         throw std::out_of_range("");
     } else {
         return Matrix::Row{m + cols_n * row, cols_n};
@@ -75,21 +73,11 @@ const Matrix::Row Matrix::operator[](int row) const
 
 Matrix::Row Matrix::operator[](int row)
 {
-    if (row < 0 || row > rows_n) {
+    if (row < 0 || row >= rows_n) {
         throw std::out_of_range("");
     } else {
         return Matrix::Row{m + cols_n * row, cols_n};
     }
-}
-
-const int* Matrix::get_rawaddr() const
-{
-    return const_cast<const int*>(m);
-}
-
-int* Matrix::get_rawaddr()
-{
-    return m;
 }
 
 bool Matrix::operator==(const Matrix& that) const
@@ -98,7 +86,7 @@ bool Matrix::operator==(const Matrix& that) const
         return false;
     } else {
         for (int i = 0; i < elms_n; ++i) {
-            if (m[i] != that.get_rawaddr()[i]) {
+            if (m[i] != that.m[i]) {
                 return false;
             }
         }
@@ -111,7 +99,7 @@ bool Matrix::operator!=(const Matrix& that) const
     return !(Matrix::operator==(that));
 }
 
-Matrix Matrix::operator*=(int mult)
+Matrix& Matrix::operator*=(int mult)
 {
     for (int i = 0; i < elms_n; ++i) {
         m[i] *= mult;

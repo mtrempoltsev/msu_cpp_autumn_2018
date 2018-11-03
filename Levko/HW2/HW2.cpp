@@ -3,10 +3,10 @@
 #include <string>
 #include <assert.h>
 
+
 enum class Operations : char {
     NUMBER, PLUS='+', SUB='-', MUL='*', DIV='/', MINUS = '-'
 };
-
 
 class Calc {
     using Int = int64_t;
@@ -26,8 +26,10 @@ class Calc {
             right = nullptr;
         }
         
-        ~Expression(){}
-            
+        ~Expression(){
+            delete left;
+            delete right;
+        }
         
     };
     
@@ -67,6 +69,7 @@ private:
             case Operations::DIV:
                 if (expr->right->value == 0) {
                     const auto message = "Division by zero";
+                    delete expr;
                     throw std::logic_error(message);
                 }
                 expr->value = expr->left->value / expr->right->value;
@@ -178,7 +181,6 @@ private:
             expr->right = right;
             expr->operation = op;
             left = expr;
-
         }
         return left;
     }
@@ -216,6 +218,7 @@ private:
         Expression *expr = new Expression;
         
         if (!parseNumber(str, expr->value)) {
+            delete expr;
             throw std::invalid_argument("Expected number at: " + str);
         }
         return expr;
@@ -228,6 +231,7 @@ private:
         SkipSpaces(remainingStr);
         
         if (!remainingStr.empty()) {
+            delete pExpr;
             const auto message = "Unexpected symbol at: " + remainingStr;
             throw std::runtime_error(message);
         }
@@ -248,7 +252,7 @@ int main(int argc, char *argv[]) {
         Calc calc;
         std::cout << calc.ans(argv[1]) << std::endl;
         return 0;
-    } catch (...) {
+    } catch (std::exception& e) {
         std::cout << "error" << std::endl;
         return 1;
     }
