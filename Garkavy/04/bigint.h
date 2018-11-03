@@ -129,6 +129,7 @@ public:
             }
         }
     }
+    std::ostream& operator<<(std::ostream& stream, const BigInt& num);
 private:
     friend BigInt add(const BigInt& bigger, const BigInt& smaller, int8_t sign);
     // сумма модулей аргументов, взятая со знаком sign
