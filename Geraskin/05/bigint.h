@@ -216,6 +216,7 @@ public:
                 carry = cur / Base;
             }
         } else if (this->abs() >= other.abs()) {
+            result.Sign = Sign;
             auto longest = std::max(Data.size(), other.Data.size());
             int take = 0;
             for (size_t i = 0; i < longest; ++i) {
@@ -228,7 +229,6 @@ public:
                 }
                 result.Data.push_back(cur);
             }
-            result.Sign = Sign;
         } else {
             return other + *this;
         }
@@ -240,6 +240,7 @@ public:
         }
         return result;
     }
+
     BigInt operator-() const {
         if (*this == 0) {
             return *this;
@@ -253,17 +254,17 @@ public:
         return *this + (-other);
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const BigInt& bi) {
-        if (bi.Data.size() == 0) {
+    friend std::ostream& operator<<(std::ostream& out, const BigInt& obj) {
+        if (obj.Data.size() == 0) {
             out << 0;
             return out;
         }
-        if (bi.Sign == Negative) {
+        if (obj.Sign == Negative) {
             out << '-';
         }
-        out << bi.Data.back();
-        for (size_t i = bi.Data.size() - 1; i > 0; --i) {
-            out << std::setw(9) << std::setfill('0') << bi.Data[i - 1];
+        out << obj.Data.back();
+        for (size_t i = obj.Data.size() - 1; i > 0; --i) {
+            out << std::setw(9) << std::setfill('0') << obj.Data[i - 1];
         }
         return out;
     }
