@@ -31,11 +31,13 @@ public:
         delete[] Data;
     }
 
-    void reserve(size_t size) {
+    void reserve(size_t size, bool copy = true) {
         if (Allocated < size) {
             Allocated = size;
             auto ptr = new int[Allocated];
-            std::copy(begin(), end(), ptr);
+            if (copy) {
+                std::copy(begin(), end(), ptr);
+            }
             delete[] Data;
             Data = ptr;
         }
@@ -51,14 +53,13 @@ public:
     int operator[](size_t idx) const {
         if (idx < Used) {
             return Data[idx];
-        } else {
-            throw std::out_of_range("Bad vector index!");
         }
+        throw std::out_of_range("Bad vector index!");
     }
 
     Vector& operator=(const Vector& other) {
         if (this != &other) {
-            reserve(other.Allocated);
+            reserve(other.Allocated, false);
             Used = other.Used;
             std::copy(other.cbegin(), other.cend(), begin());
         }
@@ -94,6 +95,8 @@ public:
     void pop_back() {
         if (Used > 0) {
             --Used;
+        } else {
+            throw std::length_error("pop_back from empty vector!");
         }
     }
 
@@ -118,7 +121,10 @@ public:
     }
 
     int back() const {
-        return Data[Used - 1];
+        if (Used > 0) {
+            return Data[Used - 1];
+        }
+        throw std::length_error("empty vector!");
     }
 };
 
