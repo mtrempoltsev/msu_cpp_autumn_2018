@@ -5,7 +5,7 @@
 
 
 /* 
- * What i need in MyVector:
+ * What do i need in MyVector:
  * 1) MyVector(...) + test
  * 2) ~MyVector() + test
  * 3) operator = +
@@ -45,7 +45,7 @@ public:
 			std::copy(data, data + size, _data_);
 	}
 	
-	// Empty constuctor
+	// Empty constructor
 	MyVector() : _size_(0), _maxsize_(4)
 	{
 		_data_ =  (T*) calloc(_maxsize_, sizeof(T));
@@ -149,14 +149,13 @@ public:
 	void reserve(size_t count)
 	{
 		_maxsize_ = count + 4;
-		_size_ = count;
 		_data_ = (T*) realloc(_data_, _maxsize_ * sizeof(T));
 	}
 	
 	void resize(size_t count)
 	{
-		_maxsize_ = count + 4 + 1;
-		_size_ = count+1;
+		_maxsize_ = count + 4;
+		_size_ = count;
 		_data_ = (T*) realloc(_data_, _maxsize_ * sizeof(T));
 	}
 	
