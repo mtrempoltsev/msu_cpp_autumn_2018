@@ -43,11 +43,7 @@ public:
 
     void push_back(int value) {
         if (Used == Allocated) {
-            Allocated *= 2;
-            auto ptr = new int[Allocated];
-            std::copy(begin(), end(), ptr);
-            delete[] Data;
-            Data = ptr;
+            reserve(Allocated * 2);
         }
         Data[Used++] = value;
     }
