@@ -265,8 +265,9 @@ public:
             out << '-';
         }
         out << obj.Data.back();
+        out << std::setw(9) << std::setfill('0');
         for (size_t i = obj.Data.size() - 1; i > 0; --i) {
-            out << std::setw(9) << std::setfill('0') << obj.Data[i - 1];
+            out << obj.Data[i - 1];
         }
         return out;
     }
