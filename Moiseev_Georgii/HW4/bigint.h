@@ -38,6 +38,7 @@ private:
     size_t size;
     //BASE must be 10^p, p >= 1
     constexpr static int64_t BASE = 1e18;
+    static size_t start_size;
 
     sign_type sign;
 };
