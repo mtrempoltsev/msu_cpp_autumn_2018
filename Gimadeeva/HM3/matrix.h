@@ -69,7 +69,7 @@ class Matrix {
 
         bool operator==(const Matrix &second) const {
             if ((cols == second.cols) && (rows == second.rows)) {
-                bool equal=true;
+                bool equal = true;
                 for (int i = 0; i < rows; ++i)
                     for (int j = 0; j < cols; ++j) 
                        if (matrix[i][j] != second.matrix[i][j]) {
@@ -81,6 +81,6 @@ class Matrix {
         }
 
         bool operator!=(const Matrix &second) const {
-            return !(this==&second);
+            return !(this == &second);
         }
 };
