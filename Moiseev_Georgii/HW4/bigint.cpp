@@ -1,12 +1,18 @@
 #include "bigint.h"
 
+size_t BigInt::start_size = 0;
+
 BigInt::BigInt(int64_t x)
 {
-    size_t start_size = 0;
-    for (int64_t lim = std::numeric_limits<int64_t>::max(); lim != 0; lim /= BigInt::BASE)
+    if (this->start_size == 0)
+    {
+        for (int64_t lim = std::numeric_limits<int64_t>::max(); lim != 0; lim /= BigInt::BASE)
+            start_size++;
+        //how much we need + 1
         start_size++;
+    }
 
-    this->data_size = start_size + 1;
+    this->data_size = this->start_size;
     this->data = new int64_t[data_size];
 
     this->sign = x >= 0 ? PLUS : MINUS;
