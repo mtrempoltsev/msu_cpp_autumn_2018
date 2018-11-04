@@ -59,7 +59,7 @@ public:
             min_size = other.value_size;
             a = *this;
             b = other;
-        } else{
+        } else {
             res.is_neg = other.is_neg;
             res.value_size = other.value_size;
             min_size = value_size;
@@ -87,7 +87,7 @@ public:
             help[0] = brain + '0';
             delete[] res.value;
             res.value = help;
-        } else{
+        } else {
             delete[] res.value;
             help2 = new char [res.value_size + 1];
             memcpy(help2, help + 1, res.value_size + 1);
@@ -98,17 +98,17 @@ public:
         return res;
     }
     BigInt operator-(const BigInt& other) const{
-        if(is_neg != other.is_neg)
+        if (is_neg != other.is_neg)
             return ((*this) + (-other));
         BigInt a;
         BigInt b;
         BigInt res;
         int max_size = value_size;
-        if ((value_size > other.value_size) || ((strcmp(value, other.value) > 0)&&(value_size == other.value_size))){
+        if ((value_size > other.value_size) || ((strcmp(value, other.value) > 0) && (value_size == other.value_size))){
             a = *this;
             b = other;
             res.is_neg = is_neg;
-        } else if ((value_size < other.value_size) || ((strcmp(value, other.value) < 0)&&(value_size == other.value_size))){
+        } else if ((value_size < other.value_size) || ((strcmp(value, other.value) < 0) && (value_size == other.value_size))){
             b = *this;
             a = other;
             res.is_neg = !other.is_neg;
@@ -152,18 +152,16 @@ public:
         if ((!is_neg) && (strcmp(value, other.value) < 0))
             return true;
         if ((is_neg) && (strcmp(value, other.value) > 0))
-                return true;
-            return false;
+            return true;
+        return false;
     }
     bool operator==(const BigInt& other){
         if((value[0] == other.value[0]) && (value[0] == '0'))
             return true;
-        if ((is_neg != other.is_neg) || (value_size != other.value_size)){
+        if ((is_neg != other.is_neg) || (value_size != other.value_size))
             return false;
-        }
-        if (strcmp(value, other.value) != 0){
+        if (strcmp(value, other.value) != 0)
             return false;
-        }
         return true;
     }
     bool operator>(const BigInt& other){
