@@ -51,8 +51,9 @@ public:
 
 	BigInt& operator=(const BigInt& copied)
 	{
-		if (this == &copied)
+		if (this == &copied) {
 			return *this;
+		}
 		delete[] number;
 		number = new char[copied.size_arr];
 		size_arr = copied.size_arr;
@@ -89,17 +90,19 @@ public:
 				res.size_arr = 2 * size_arr;
 				delete[] res.number;
 				res.number = new char[res.size_arr];
-				for (int i = 0; i < size_arr; ++i)
+				for (int i = 0; i < size_arr; ++i) {
 					res.number[i] = 0;
+				}
 			}
 			int flag = 0;
 			for (int i = 0; i <= size_num; ++i) {
-				if (i < rvalue.size_num && i < size_num)
+				if (i < rvalue.size_num && i < size_num) {
 					res.number[i] = number[i] + rvalue.number[i] + flag;
-				else if (i < size_num)
+				} else if (i < size_num) {
 					res.number[i] = number[i] + flag;
-				else if (flag)
+				} else if (flag) {
 					res.number[i] = 1;
+				}
 				if (res.number[i] > 9) {
 					res.number[i] -= 10;
 					flag = 1;
