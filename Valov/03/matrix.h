@@ -9,7 +9,13 @@ class Matrix
 	public:
 		Matrix_Row(int* a, int b) : Mat_R(a), size_R(b)
 		{}
-		int& operator [] (int index_row) const
+		const int& operator [] (int index_row) const
+		{
+			if (index_row >= size_R)
+				throw std::out_of_range("");
+			return Mat_R[index_row];
+		}
+		int& operator [] (int index_row)
 		{
 			if (index_row >= size_R)
 				throw std::out_of_range("");
