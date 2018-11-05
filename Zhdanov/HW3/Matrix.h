@@ -57,17 +57,17 @@ public:
 		else
 			throw out_of_range("");
 	};
-	int getRows() // возвращает кол-во строк
+	int getRows()
 	{
 		return rows;
 	};
 
-	int getColumns() // возвращает количество столбцов
+	int getColumns()
 	{
 		return columns;
 	};
 
-	bool operator == (const Matrix& matrix) const //оператор ==
+	bool operator == (const Matrix& matrix) const
 	{
 		if (rows == matrix.rows && columns == matrix.columns)
 		{
@@ -77,12 +77,12 @@ public:
 		return false;
 	};
 
-	bool operator != (const Matrix& matrix) const // оператор !=
+	bool operator != (const Matrix& matrix) const
 	{
 		return !(*this == matrix);
 	};
 
-	Matrix& operator *= (int num) //оператор умножения
+	Matrix& operator *= (int num)
 	{
 		for (int i = 0; i < size; ++i)
 		{
