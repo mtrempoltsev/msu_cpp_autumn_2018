@@ -150,7 +150,6 @@ private:
             return 0;
         }
         uint32_t sub = (static_cast<uint32_t>(src) ^ 0x00010000) - num;
-        // попробовать убрать статик каст ^ потом
         src = static_cast<uint16_t>(sub & 0xFFFF);
         return static_cast<uint16_t>(~(sub >> 16) & 1);
     }
@@ -306,17 +305,6 @@ BigInt operator-(const BigInt& a, const BigInt& b)
 
 std::ostream& operator<<(std::ostream& stream, const BigInt& num)
 {
-    // // отладка: вывод hex
-    // stream << "(";
-    // if(num.sign == -1) {
-    //     stream << '-';
-    // }
-    // stream << std::hex << num.data[0];
-    // for(size_t i = 1; i < num.size; ++i) {
-    //     stream << std::setfill('0') << std::setw(4) << std::hex << num.data[i];
-    // }
-    // stream << std::dec << ") ";
-
     // реализация алгоритма double dabble для получения десятичного представления
     size_t n_bits = 16 * num.size;
     size_t scratch_size = n_bits / 3;
