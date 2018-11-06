@@ -9,10 +9,10 @@ using namespace std;
 class Calculator {
     string s;
 
-    int64_t do_mult(string str);
-    int64_t do_add(string str);
+    int64_t do_mult(string str) const;
+    int64_t do_add(string str) const;
     void del_spaces();
-    bool check();
+    bool check() const;
 
     public:
         Calculator(char* argv): s(string(argv)) {    
@@ -24,7 +24,7 @@ void Calculator:: del_spaces() {
     s.erase (remove (s.begin(), s.end(), ' '), s.end());
 } 
 
-bool Calculator::check() {
+bool Calculator::check() const{
     for (int64_t i = 0; i < s.size(); ++i) {
         if (!((s[i] == '+') || (s[i] == '-') || (s[i] == '*') || (s[i] == '/') || ((s[i] >= '0') && (s[i] <= '9')))) {
             return false;
@@ -47,7 +47,7 @@ bool Calculator::check() {
     return true;
 }
 
-int64_t Calculator::do_mult(string str) {
+int64_t Calculator::do_mult(string str) const{
     bool op_exist = false;
     bool minus = false;
     char op;
@@ -96,7 +96,7 @@ int64_t Calculator::do_mult(string str) {
     }
 }    
 
-int64_t Calculator::do_add(string str) {
+int64_t Calculator::do_add(string str) const{
     bool op_exist = false;
     char op;
     string s1 = "", s2 = "";
