@@ -97,6 +97,10 @@ public:
     }
 
     BigInt& operator=(const BigInt &other) {
+        if (this == &other) {
+            return *this;
+        }
+        
         sign = other.sign;
 
         if (data != nullptr) {
