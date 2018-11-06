@@ -19,6 +19,9 @@ public:
         push_back(a);
     }
     List& operator=(const List& x){
+        if(this == &x){
+            return *this;
+        }
         while(size != 0)
             pop_front();
         for(auto tmp = x.head; tmp; tmp = tmp->next){
@@ -156,6 +159,9 @@ public:
         }
     }
     BigInt& operator=(const BigInt& x){
+        if(this == &x){
+            return *this;
+        }
         num = x.num;
         sign = x.sign;
         return *this;
