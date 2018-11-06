@@ -48,7 +48,7 @@ class Matrix {
             return cols;
         }
 
-        Row operator[](int num) const {
+        const Row operator[](int num) const {
             if (num >= rows) 
                 throw std::out_of_range("");
             return Row(matrix[num], cols);
