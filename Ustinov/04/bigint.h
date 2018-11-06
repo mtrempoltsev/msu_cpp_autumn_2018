@@ -113,6 +113,7 @@ class BigInt {
           max_num = other.number;
       }
       tmp.len = max_len + 1;
+      delete[] tmp.number;
       tmp.number = new int[max_len+1];
       tmp.sign = sign;
       for (int i=0; i < tmp.len; ++i) {
@@ -198,6 +199,7 @@ class BigInt {
           }
       }
       tmp.len = max_len;
+      delete[] tmp.number;
       tmp.number = new int[max_len];
 
       for (int i=0; i < tmp.len; ++i) {
