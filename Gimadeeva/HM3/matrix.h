@@ -5,7 +5,7 @@ class Row {
     int len;
 
     public:
-        Row(int *row, int len) : row(row),len(len) {}
+        Row(int *row, int len) : row(row), len(len) {}
 
         int operator[] (size_t num) const {
             if (num >= len) 
@@ -29,12 +29,12 @@ class Matrix {
         Matrix(int rows1, int cols1) :rows(rows1), cols(cols1) {
             matrix = new int *[rows];
             for (int i = 0; i < rows; ++i) {
-                matrix[i]=new int [cols];
+                matrix[i] = new int [cols];
             }
         }
 
         ~Matrix() {
-            for (int i=0; i< rows; ++i) {
+            for (int i = 0; i < rows; ++i) {
                 delete[] matrix[i];
             }
             delete[] matrix;
