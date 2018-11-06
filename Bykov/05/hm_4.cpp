@@ -1,10 +1,10 @@
 #include <iostream>
 void itoa(int64_t val, char *str){
     while(val > 0){
-        *str = val % 10 + '0';
-        str++;
-        val /= 10;
-    }
+            *str = val % 10 + '0';
+            str++;
+            val /= 10;
+        }
 }
 int max(int a, int b){
     if(a > b)
@@ -41,20 +41,20 @@ public:
         return val > *this;
     }
     bool operator !=(const BigInt& val)const{
-    if((size == 1) && (val.size == 1) && (num[0] == '0') && (val.num[0] == '0'))
-        return 0;
-    if(sign != val.sign)
-        return 1;
-    if(size != val.size)
-        return 1;
-    int i = 0;
-    while(i < size)
-        if(num[size - i - 1] != val.num[size - i - 1]){
+        if((size == 1) && (val.size == 1) && (num[0] == '0') && (val.num[0] == '0'))
+            return 0;
+        if(sign != val.sign)
             return 1;
-        }
-        else
-            i++;
-    return 0;
+        if(size != val.size)
+            return 1;
+        int i = 0;
+        while(i < size)
+            if(num[size - i - 1] != val.num[size - i - 1]){
+                    return 1;
+                }
+            else
+                i++;
+        return 0;
     }
     bool operator ==(const BigInt& val)const{
         return !(*this != val);
@@ -77,21 +77,21 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const BigInt& bi){
-        bool fl = (bi.sign == -1);
-        if((bi.size == 1) && (bi.num[0] == '0')){
+    bool fl = (bi.sign == -1);
+    if((bi.size == 1) && (bi.num[0] == '0')){
             os << "0\0";
             return os;
         }
-        char *out = new char[bi.size + fl + 1];
-        out[bi.size + fl] = '\0';
-        if(fl)
-            out[0] = '-';
-        for(int i = 0; i < bi.size; i++)
-            out[i + fl] = bi.num[bi.size - i -1];
-        os << out;
-        delete []out;
-        //return os;
-    }
+    char *out = new char[bi.size + fl + 1];
+    out[bi.size + fl] = '\0';
+    if(fl)
+        out[0] = '-';
+    for(int i = 0; i < bi.size; i++)
+        out[i + fl] = bi.num[bi.size - i -1];
+    os << out;
+    delete []out;
+    //return os;
+}
 
 
 bool BigInt::operator >(const BigInt& val)const{
@@ -105,8 +105,8 @@ bool BigInt::operator >(const BigInt& val)const{
     int i = 0;
     while(i < size)
         if(num[size - i - 1] != val.num[size - i - 1]){
-            return (num[size - i - 1] > val.num[size - i - 1]) != (sig == -1);
-        }
+                return (num[size - i - 1] > val.num[size - i - 1]) != (sig == -1);
+            }
         else
             i++;
     return 0;
@@ -114,46 +114,46 @@ bool BigInt::operator >(const BigInt& val)const{
 
 
 BigInt BigInt::operator +(const BigInt &val)const{
-        if(sign == val.sign){
+    if(sign == val.sign){
             int s;
             char *str = new char[s = max(size, val.size) + 1];
-            bool car  = 0;
-            int i = 0;
-            for(; i < size || i < val.size; i++){
-                int sum = (i < size ? num[i] : '0') + (i < val.size ? val.num[i] : '0') + car - 2 * '0';
-                car =  sum / 10;
-                str[i] = sum % 10 + '0';
-            }
+                    bool car  = 0;
+                    int i = 0;
+                    for(; i < size || i < val.size; i++){
+                    int sum = (i < size ? num[i] : '0') + (i < val.size ? val.num[i] : '0') + car - 2 * '0';
+                    car =  sum / 10;
+                    str[i] = sum % 10 + '0';
+                }
             if(car != 0)
-                str[i] = '0' + car;
+            str[i] = '0' + car;
             else
-                s--;
+            s--;
             char *str2 = new char[s];
             for(int i = 0; i < s; i++)
                 str2[i] = str[i];
             delete []str;
             return BigInt(s, str2, sign);
         }
-        else{
+    else{
             int s;
             char *str = new char[s = max(size, val.size)];
-            bool car  = 0, b, b1 = false;
-            int i = 0, grs, lss;
-            char *gr, *ls;
-            b = (sign < 0);
-            if(BigInt(size, num, 1, 0) >= BigInt(val.size, val.num, 1, 0)){
-                gr = num;
-                grs = size;
-                ls = val.num;
-                lss = val.size;
-                b1 = true;
-            }
+                    bool car  = 0, b, b1 = false;
+                    int i = 0, grs, lss;
+                    char *gr, *ls;
+                    b = (sign < 0);
+                    if(BigInt(size, num, 1, 0) >= BigInt(val.size, val.num, 1, 0)){
+                    gr = num;
+                    grs = size;
+                    ls = val.num;
+                    lss = val.size;
+                    b1 = true;
+                }
             else{
-                gr = val.num;
-                ls = num;
-                lss = size;
-                grs = val.size;
-            }
+            gr = val.num;
+            ls = num;
+            lss = size;
+            grs = val.size;
+        }
             for(; i < grs; i++){
                 int sum = gr[i]  - (i < lss ? ls[i]  : '0') - car;
                 car =  sum < 0;
@@ -196,22 +196,22 @@ BigInt::BigInt(const BigInt &val){
 
 BigInt::BigInt(int64_t val){
     if(val < 0){
-        sign = -1;
-        val *= -1;
-    }
+            sign = -1;
+            val *= -1;
+        }
     else
         sign = 1;
     if(val == 0){
-        size = 1;
-        num = new char('0');
-        return;
-    }
+            size = 1;
+            num = new char('0');
+            return;
+        }
     size = 0;
-    int nnum = val;
+    int64_t nnum = val;
     while(nnum > 0){
-        size++;
-        nnum /= 10;
-    }
+            size++;
+            nnum /= 10;
+        }
     num = new char[size];
     itoa(val, num);
 }
