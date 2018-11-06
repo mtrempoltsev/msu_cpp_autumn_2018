@@ -193,6 +193,7 @@ class BigInt {
           if (equal == 1) {
               tmp.len = 1;
               tmp.sign = 1;
+              delete[] tmp.number;
               tmp.number = new int[1];
               tmp.number[0] = 0;
               return tmp;
