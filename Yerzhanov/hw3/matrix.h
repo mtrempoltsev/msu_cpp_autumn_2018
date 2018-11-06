@@ -1,84 +1,109 @@
 #include <iostream>
-#include <vector>
 #include <exception>
+#include <new>
 
-
-class Proxy {
+class Row {
 private:
-    std::vector<int>* data_;
+    int num_cols_;
+    int* row_;
 public:
-    Proxy() {
-        data_ = nullptr;
+    Row(void)
+        :   num_cols_(0)
+        ,   row_(nullptr) {}
+    
+    Row(int num_cols)
+        :   num_cols_(num_cols)
+        ,   row_(nullptr) 
+    {
+        row_ = new int[num_cols];
+    }
+    
+    ~Row(void) {
+        delete [] row_;
     }
 
-    Proxy(std::vector<int>& data) {
-        data_ = &data;
+    Row& operator=(Row& m) {
+        num_cols_ = m.num_cols_;
+        row_ = new (m.row_) int[num_cols_];
+        m.row_ = nullptr;    // Я честно не знаю на сколько это костыльно
+    }
+
+    Row& operator=(const Row& m) {
+        num_cols_ = m.num_cols_;
+        row_ = new (m.row_) int[num_cols_];
+    }
+
+    Row& operator*=(int a) {
+        for (int i = 0; i < num_cols_; ++i) {
+            row_[i] *= a;
+        }
+        return *this;
+    }
+
+    bool operator==(const Row& r) {
+        for (int i = 0; i < num_cols_; ++i) {
+            if (row_[i] != r.row_[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     int& operator[](int j) {
-        if (j < 0 || static_cast<size_t>(j) >= (*data_).size()) {
+        if (j < 0 || j >= num_cols_) {
             throw std::out_of_range("");
         }
-        return (*data_)[j];
-    }
-    void print(void) {
-        for (size_t i = 0; i < (*data_).size(); ++i) {
-            std::cout << (*data_)[i] << '\t';
-        }
-        std::cout << '\n';
-    }
-
-};
-
-class Proxy2 {
-private:
-    std::vector<int> data_;
-public:
-    Proxy2() {}
-
-    Proxy2(const std::vector<int>& data) {
-        data_ = data;
+        return row_[j];
     }
 
     int operator[](int j) const {
-        if (j < 0 || static_cast<size_t>(j) >= data_.size()) {
+        if (j < 0 || j >= num_cols_) {
             throw std::out_of_range("");
         }
-        return data_[j];
+        return row_[j];
     }
 };
 
+
 class Matrix {
 private:
-    int rows_, columns_;
-    Proxy obj; 
-    Proxy2 obj2;
-    std::vector<std::vector<int>> matrix_;
-
+    int num_rows_, num_cols_;
+    Row *matrix_;
 public:
-    Matrix(int a, int b) {
-        rows_ = a;
-        columns_ = b;
-        std::vector<int> tmp(b, 1);
-        std::vector<std::vector<int>> matrix(a, tmp);
-        matrix_ = matrix;
+    Matrix(int num_rows, int num_cols)
+        :   num_rows_(num_rows)
+        ,   num_cols_(num_cols) 
+    {
+        matrix_ = new Row[num_rows_];
+        for (int i = 0; i < num_rows_; ++i) {
+            Row tmp = Row(num_cols_);
+            matrix_[i] = tmp;
+        }
+    }
+    ~Matrix(void) {
+        delete [] matrix_;
     }
 
-    int getRows(void) const { return rows_; }
-    int getColumns(void) const { return columns_; }
+    int getRows(void) const { return num_rows_; }
+    int getColumns(void) const { return num_cols_; }
+
+    Matrix& operator*=(int a) {
+        for (int i = 0; i < num_rows_; ++i) {
+            matrix_[i] *= a;
+        }
+        return *this;
+    }
 
     bool operator==(const Matrix& m) const {
-        if (this == &m) {
+        if (&m == this) {
             return true;
         }
-        if (rows_ != m.rows_ || columns_ != m.columns_) {
+        if (num_rows_ != m.num_rows_ || num_cols_ != m.num_cols_) {
             return false;
         }
-        for (int i = 0; i < rows_; ++i) {
-            for (int j = 0; j < columns_; ++j) {
-                if (matrix_[i][j] != m.matrix_[i][j]) {
-                    return false;
-                }
+        for (int i = 0; i < num_rows_; ++i) {
+            if (!(matrix_[i] == m.matrix_[i])) {
+                return false;
             }
         }
         return true;
@@ -88,28 +113,17 @@ public:
         return !(*this == m);
     }
 
-    Matrix& operator*=(int a) {
-        for (int i = 0; i < rows_; ++i) {
-            for (int j = 0; j < columns_; ++j) {
-                matrix_[i][j] *= a;
-            }
-        }
-        return *this;
-    }
-    
-    
-    Proxy& operator[](int i) {
-        if (i >= rows_ || i < 0) {
+    Row& operator[](int i) {
+        if (i < 0 || i >= num_rows_) {
             throw std::out_of_range("");
         }
-        obj = Proxy(matrix_[i]);
-        return obj;
+        return matrix_[i];
     }
 
-    const Proxy2 operator[](int i) const {
-        if (i >= rows_ || i < 0) {
+    const Row& operator[] (int i) const {
+        if (i < 0 || i >= num_rows_) {
             throw std::out_of_range("");
         }
-        return Proxy2(matrix_[i]);
+        return matrix_[i];
     }
 };
