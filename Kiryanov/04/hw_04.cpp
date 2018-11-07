@@ -9,14 +9,14 @@ using namespace std;
 
 class BigInt
 {
-	
+
 	int get_extra_dozen(int64_t& num) const
 	{
 		int res;
-		if (num >= 1000000000000000000)
+		if (num >= pow(10, available_orders))
 		{
-			res = num / 1000000000000000000;
-			num = num % 1000000000000000000;
+			res = num / pow(10, available_orders);
+			num = num % int64_t(pow(10, available_orders));
 		}
 		else
 			res = 0;
@@ -34,7 +34,7 @@ class BigInt
 		}
 	}
 
-	void new_order(BigInt& num,const int extra_dozen) const
+	void new_order(BigInt& num, const int extra_dozen) const
 	{
 		if (extra_dozen != 0)
 		{
@@ -55,7 +55,7 @@ class BigInt
 			num.value[i] += extra_dozen;
 			if (num.sign != sign_)
 			{
-				num.value[i] = 1000000000000000000 + num.sign*num.value[i];
+				num.value[i] = pow(10, available_orders) + num.sign*num.value[i];
 				extra_dozen = -num.sign;
 			}
 			else
@@ -65,7 +65,7 @@ class BigInt
 			num.value[i] = abs(num.value[i]);
 		delete_zeros(num);
 	}
-	
+	const int64_t available_orders = 18;
 	size_t size_;
 	int sign;
 	int64_t* value;
@@ -74,16 +74,16 @@ public:
 	BigInt() :size_(1), sign(1), value(new int64_t[1]) { value[0] = 0; }
 
 	BigInt(const int64_t& x)
-		:size_((x < 1000000000000000000) ? 1 : 2),
-		sign((x>0)?1:-1),
-		value(new int64_t[size_])
+		:size_((x < pow(10, available_orders)) ? 1 : 2),
+			sign((x>0) ? 1 : -1),
+			value(new int64_t[size_])
 	{
-		if(size_==1)
-				value[0] = sign * x;
+		if (size_ == 1)
+			value[0] = sign * x;
 		else
 		{
-			value[0] = (x % 1000000000000000000)*sign;
-			value[1] = (x / 1000000000000000000)*sign;
+			value[0] = (x % int64_t(pow(10, available_orders)))*sign;
+			value[1] = (x / pow(10, available_orders))*sign;
 		}
 	}
 
@@ -96,7 +96,7 @@ public:
 	}
 
 	BigInt(const char* input)
-		:size_(strlen(input) % 18 == 0 ? strlen(input) / 18 : strlen(input) / 18 + 1),
+		:size_(strlen(input) % available_orders == 0 ? strlen(input) / available_orders : strlen(input) / available_orders + 1),
 		sign(1),
 		value(new int64_t[size_])
 	{
@@ -104,14 +104,14 @@ public:
 		if (input[0] == '-')
 		{
 			sign = -1;
-			s=s.substr(1);
-			if (s.length() % 18 == 0)
+			s = s.substr(1);
+			if (s.length() % available_orders == 0)
 				size_ -= 1;
 		}
 		size_t i = 0;
-		for (i; i < size_-1; i++)
-			value[i] = atoi(s.substr(s.length()-(i+1)* 18,18).c_str());
-		value[size_ - 1]= atoi(s.substr(0, s.length() - i * 18).c_str());
+		for (i; i < size_ - 1; i++)
+			value[i] = atoi(s.substr(s.length() - (i + 1)* available_orders, available_orders).c_str());
+		value[size_ - 1] = atoi(s.substr(0, s.length() - i * available_orders).c_str());
 	}
 
 	BigInt(const BigInt& copied)
@@ -137,7 +137,7 @@ public:
 	}
 
 	BigInt& operator=(const int64_t& num)
-	{	
+	{
 		BigInt tmp(num);
 		*this = tmp;
 		return *this;
@@ -153,7 +153,7 @@ public:
 	BigInt operator+(const BigInt& other) const
 	{
 
-		int extra_dozen=0;
+		int extra_dozen = 0;
 		BigInt res;
 		if (other.size_ > size_)
 		{
@@ -190,16 +190,16 @@ public:
 					break;
 			}
 		}
-		new_order(res, extra_dozen);	
+		new_order(res, extra_dozen);
 		delete_zeros(res);
 		edit(res);
 		return res;
 	}
-	
+
 	BigInt operator-() const
 	{
 		BigInt res = *this;
-		if(!(size_ ==1 && value[0] == 0))
+		if (!(size_ == 1 && value[0] == 0))
 			res.sign *= -1;
 		return res;
 	}
@@ -286,7 +286,7 @@ ostream& operator << (ostream& out, const BigInt& num)
 	{
 		for (int j = 17; j > 0; j--)
 		{
-			if (num.value[i] / int(pow(10, j)) == 0)
+			if (num.value[i] / int64_t(pow(10, j)) == 0)
 				out << 0;
 			else
 				break;

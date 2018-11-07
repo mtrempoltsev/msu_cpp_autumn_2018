@@ -29,61 +29,6 @@ public:
 		negative = false;
 	}
 	
-	explicit BigInt(const string& str)
-	{
-		size_t begin = 0;
-		if (str[0] == '-')
-			begin = 1;
-			
-		if (str.length() == 0)
-			negative = false;
-		else 
-		{
-			if (str[0] == '-')
-				negative = true;
-			else
-				negative = false;
-
-			for (long long i = str.length(); i > begin; i -= 9) 
-			{
-				if (i < 9)
-					_data_.push_back((int64_t)atoi(str.substr(0, i).c_str()));
-				else
-					_data_.push_back((int64_t)atoi(str.substr(i - 9, 9).c_str()));
-			}
-
-			del_zeros();
-		}
-	}
-	
-	BigInt(const char* c)
-	{
-		size_t begin = 0;
-		std::string str(c);
-		if (str[0] == '-')
-			begin = 1;
-		if (str.length() == 0)
-			negative = false;
-		else 
-		{
-			if (str[0] == '-') 
-				negative = true;
-			else 
-				negative = false;
-
-			for (long long i = str.length(); i > begin; i -= 9)
-			{
-				if (i < 9)
-					_data_.push_back(atoi(str.substr(0, i).c_str()));
-				else
-					_data_.push_back(atoi(str.substr(i - 9, 9).c_str()));
-			}
-
-			del_zeros();
-		}
-	}
-	
-
 	BigInt(int64_t i)
 	{
 		if (i < 0)
@@ -95,8 +40,6 @@ public:
 		i /= BASE;
 		if (i != 0) _data_.push_back(abs(i));
 	}
-	
-	BigInt(int i) : BigInt((int64_t)i) {}
 
 
 	friend ostream& operator <<(ostream& os, const BigInt& bi)

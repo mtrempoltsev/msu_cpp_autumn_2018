@@ -87,7 +87,6 @@ public:
 
     BigInt (BigInt &&other) : data(other.data), size(other.size), 
                                    alloc(other.alloc), sign(other.sign) {
-        this->clear();
         other.data = nullptr;
     }
 
@@ -98,6 +97,10 @@ public:
     }
 
     BigInt& operator=(const BigInt &other) {
+        if (this == &other) {
+            return *this;
+        }
+        
         sign = other.sign;
 
         if (data != nullptr) {
@@ -304,4 +307,3 @@ std::ostream& operator<<(std::ostream& out, const BigInt& value)
     }
     return out;
 }
-

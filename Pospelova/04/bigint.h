@@ -84,9 +84,7 @@ public:
 			delete[] number;
 		size = other.size;
 		sign = other.sign;
-		number = new char[size + 1];
-		memcpy(number, other.number, size + 1);
-		delete[] other.number;
+		number = other.number;
 		other.number = nullptr; 
 		return *this;
 	}	
