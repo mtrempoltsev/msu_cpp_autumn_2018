@@ -9,7 +9,7 @@ using namespace std;
 class Calculator {
     vector <int64_t> numbers;
     vector <char> operations;
-
+    int64_t calc_res;
     int64_t calc(int l, int r) {
         if (l == r) {
             switch (operations[l]) {
@@ -69,7 +69,6 @@ class Calculator {
     }
 
 public:
-    int64_t calc_res;
     Calculator(const char* str) {
         int64_t num;
         char op;
@@ -129,6 +128,10 @@ public:
         }
         throw runtime_error("");
     }
+    int64_t get_res()
+    {
+        return calc_res;
+    }
 };
 
 int main(int argc, char* argv[])
@@ -141,7 +144,7 @@ int main(int argc, char* argv[])
     try {
 
         Calculator Res(argv[1]);
-        cout << Res.calc_res;
+        cout << Res.get_res();
         return 0;
     } catch (exception &err) {
         cout << "error"<< endl;
