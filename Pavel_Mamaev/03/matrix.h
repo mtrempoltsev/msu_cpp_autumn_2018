@@ -17,7 +17,13 @@ class Matrix {
     public:
         Roww(int *cols, int size): cols(cols), col_size(size) {
         }
-        int &operator[](size_t i) const {
+        int &operator[](size_t i) {
+            if (i >= col_size) {
+                throw std::out_of_range("out");
+            }
+            return cols[i];
+        }
+        int operator[](size_t i) const {
             if (i >= col_size) {
                 throw std::out_of_range("out");
             }
@@ -39,6 +45,12 @@ public:
     }
     int getRows() const {
         return rows;
+    }
+    Roww operator[](size_t i) {
+        if (i >= rows) {
+            throw std::out_of_range("out");
+        }
+        return Roww(m_ + cols * i, cols);
     }
     const Roww operator[](size_t i) const {
         if (i >= rows) {

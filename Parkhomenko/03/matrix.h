@@ -89,17 +89,7 @@ public:
     }
 
     bool operator!=(const Matrix& other) {
-        if ((rows != other.rows) || (cols != other.cols)) {
-            return true;
-        }
-        for (size_t i = 0; i < rows; ++i) {
-            for (size_t j = 0; j < cols; ++j) {
-                if (data[i][j] != other.data[i][j]) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return !(*this == other);
     }
 
     ~Matrix() {
