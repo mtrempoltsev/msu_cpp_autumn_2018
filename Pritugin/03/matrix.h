@@ -15,7 +15,14 @@ public:
 	public:
 		Row(int* data, size_t size) : data(data), size(size) {};
 		
-		int& operator [] (size_t pos) const
+		const int operator [] (size_t pos) const
+		{
+			if (pos < size)
+				return data[pos];
+			throw std::out_of_range("");
+		}
+		
+		int& operator [] (size_t pos)
 		{
 			if (pos < size)
 				return data[pos];
@@ -33,7 +40,14 @@ public:
 		delete[] data;
 	}
 	
-	Row operator [] (size_t pos) const
+	const Row operator [] (size_t pos) const
+	{
+		if (pos < rows)
+			return Row(&(data[pos * columns]), columns);
+		throw std::out_of_range("");
+	}
+	
+	Row operator [] (size_t pos)
 	{
 		if (pos < rows)
 			return Row(&(data[pos * columns]), columns);
@@ -59,7 +73,7 @@ public:
 	{
 		return !(*this == other);
 	}
-	size_t getRows () 
+	size_t getRows ()
 	{ 
 		return rows; 
 	}
