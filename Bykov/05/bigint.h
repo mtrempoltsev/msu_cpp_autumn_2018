@@ -189,7 +189,7 @@ BigInt BigInt::operator +(const BigInt &val)const
     }
 }
 
-BigInt BigInt::operator=(const BigInt &val)
+BigInt BigInt::operator =(const BigInt &val)
 {
     if(this == &val)
         return *this;
