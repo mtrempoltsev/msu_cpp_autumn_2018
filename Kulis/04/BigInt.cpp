@@ -3,11 +3,12 @@
 
 const size_t BigInt::START_SIZE;
 
-BigInt::BigInt(int value)
+BigInt::BigInt(int64_t value)
     : capacity(START_SIZE)
+    , sign((value > 0) - (value < 0))
 {
     data = new char[capacity]{0};
-    sign = (value >= 0) - (value < 0);
+
     if (value < 0) {
         value = -value;
     } else if (value == 0){
@@ -55,7 +56,7 @@ BigInt::~BigInt()
     delete[] data;
 }
 
-const BigInt & BigInt::operator=(const BigInt & src)
+BigInt & BigInt::operator=(const BigInt & src)
 {
     if (this == &src) {
         return *this;
@@ -71,7 +72,7 @@ const BigInt & BigInt::operator=(const BigInt & src)
     return *this;
 }
 
-const BigInt & BigInt::operator=(BigInt && src)
+BigInt & BigInt::operator=(BigInt && src)
 {
     capacity = src.capacity;
     size = src.size;
@@ -79,77 +80,73 @@ const BigInt & BigInt::operator=(BigInt && src)
     delete[] data;
     data = src.data;
     src.data = nullptr;
+    return *this;
 }
 
 BigInt BigInt::operator+(const BigInt & right) const
 {
-    // std::cout << size << " " << right.size << std::endl;
-    if (this->sign == right.sign) {
-        BigInt result = *this;
-        sum(result, right);
-        return std::move(result);
+    if (this->sign == 0) {
+        return right;
+    } else if (right.sign == 0) {
+        return *this;
+    } else if (this->sign == right.sign) {
+        return abssum(*this, right);
     } else {
         int cmp = abscmp(*this, right);
-        if (cmp >= 0 && this->sign == 1 || cmp < 0 && this->sign == -1) {
-            BigInt result = *this;
-            sub(result, right);
-            return std::move(result);
-        } else if (cmp == 0) {
+        if (cmp == 0) {
             return BigInt(0);
+        } else if (cmp > 0) {
+            return abssub(*this, right);
         } else {
-            BigInt result = right;
-            sub(result, *this);
-            return std::move(result);
+            return abssub(right, *this);
         }
     }
 }
 
 BigInt BigInt::operator-(const BigInt & right) const
 {
-    if (sign != right.sign) {
-        BigInt result = *this;
-        sum(result, right);
-        return std::move(result);
+    if (this->sign == 0) {
+        return BigInt(right.size, right.capacity,
+            -right.sign, right.data);
+    } else if (right.sign == 0) {
+        return *this;
+    } else if (sign != right.sign) {
+        return abssum(*this, right);
     } else {
         int cmp = abscmp(*this, right);
         if (cmp == 0) {
             return BigInt(0);
-        } else if (cmp > 0 && this->sign == 1 || cmp < 0 && this->sign == -1) {
-            BigInt result = *this;
-            sub(result, right);
-            return std::move(result);
+        } else if (cmp > 0) {
+            return abssub(*this, right);
         } else {
-            BigInt result = right;
+            BigInt result = abssub(right, *this);
             result.sign = -result.sign;
-            sub(result, *this);
-            return std::move(result);
+            return result;
         }
     }
 }
 
 BigInt BigInt::operator-() const
 {
-    if (*this != 0)
-        return BigInt(size, capacity, -sign, data);
-    return *this;
+    return BigInt(size, capacity, -sign, data);
 }
 
 bool BigInt::operator<(const BigInt & right) const
 {
-    if (sign == right.sign) {
+    if (sign == right.sign){
         int cmp = abscmp(*this, right);
-        return (cmp < 0) && (sign == 1) || (cmp > 0) && (sign == -1);
+        return (cmp < 0) && (sign >= 0) || (cmp > 0) && (sign == -1);
     }
-    return sign == -1;
+    return sign < right.sign;
 }
 
 bool BigInt::operator<=(const BigInt & right) const
 {
     if (sign == right.sign) {
         int cmp = abscmp(*this, right);
-        return (cmp <= 0) && (sign == 1) || (cmp >= 0) && (sign == -1);
+        return (cmp <= 0) && (sign >= 0) || (cmp >= 0) && (sign == -1);
     }
-    return sign == -1;
+    return sign < right.sign;
 }
 
 bool BigInt::operator==(const BigInt & right) const
@@ -175,60 +172,57 @@ bool BigInt::operator!=(const BigInt & right) const
     return !(*this == right);
 }
 
-void BigInt::sum(BigInt & left, const BigInt & right) const
+BigInt BigInt::abssum(const BigInt & left, const BigInt & right) const
 {
-    char * ldata = left.data;
+    BigInt answer = left;
+    char * ansdata = answer.data;
     const char * rdata = right.data;
     char additive = 0;
     int i;
 
     for (i = 0; i < right.size; ++i) {
-        if (i >= left.capacity)
-            left.moreMemory();
-        char s = ldata[i] + rdata[i] + additive;
-        ldata[i] = s % 10;
+        if (i >= answer.capacity)
+            answer.moreMemory();
+        char s = ansdata[i] + rdata[i] + additive;
+        ansdata[i] = s % 10;
         additive = s / 10;
     }
 
     while (additive) {
-        if (i == left.capacity)
-            left.moreMemory();
-        char s = ldata[i] + additive;
-        ldata[i] = s % 10;
+        if (i == answer.capacity)
+            answer.moreMemory();
+        char s = ansdata[i] + additive;
+        ansdata[i] = s % 10;
         additive = s / 10;
         i++;
     }
-    left.size = std::max((size_t)i, left.size);
+    answer.size = std::max((size_t)i, answer.size);
+    return answer;
 }
 
-void BigInt::sub(BigInt & left, const BigInt & right) const
+BigInt BigInt::abssub(const BigInt & left, const BigInt & right) const
 {
-    char * ldata = left.data;
+    BigInt answer = left;
+    char * ansdata = answer.data;
     const char * rdata = right.data;
     char additive = 0;
     int i;
 
-    for (i = 0; i < std::min(left.size, right.size); ++i) {
-        char s = ldata[i] - rdata[i] + additive;
-        ldata[i] = (s + 10) % 10;
+    for (i = 0; i < right.size; ++i) {
+        char s = ansdata[i] - rdata[i] + additive;
+        ansdata[i] = (s + 10) % 10;
         additive = (s - 9) / 10;
     }
 
     while (additive) {
-        if (i == left.capacity)
-            left.moreMemory();
-        char s = ldata[i] + additive;
-        ldata[i] = (s + 10) % 10;
+        char s = ansdata[i] + additive;
+        ansdata[i] = (s + 10) % 10;
         additive = (s - 9) / 10;
         i++;
     }
-    for (i = left.size - 1; i >= 0 && ldata[i] == 0; --i);
-    // while (--i >= 0 && ldata[i] == 0);
-    if (i < 0) {
-        left.size = 1;
-    } else {
-        left.size = i + 1;
-    }
+
+    for (; ansdata[answer.size - 1] == 0; answer.size--);
+    return answer;
 }
 
 int BigInt::abscmp(const BigInt & left, const BigInt & right) const
