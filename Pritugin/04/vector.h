@@ -98,14 +98,14 @@ public:
 	
 	const T front() const
 	{
-		if(_size_)
+		if(_size_ != 0)
 			return _data_[0];
 		throw std::out_of_range("Vector is empty");
 	}
 	
 	const T back() const
 	{
-		if(_size_)
+		if(_size_ != 0)
 			return _data_[_size_ - 1];
 		throw std::out_of_range("Vector is empty");
 	}

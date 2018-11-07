@@ -5,7 +5,7 @@ class Row {
     int len;
 
     public:
-        Row(int *row, int len) : row(row),len(len) {}
+        Row(int *row, int len) : row(row), len(len) {}
 
         int operator[] (size_t num) const {
             if (num >= len) 
@@ -29,12 +29,12 @@ class Matrix {
         Matrix(int rows1, int cols1) :rows(rows1), cols(cols1) {
             matrix = new int *[rows];
             for (int i = 0; i < rows; ++i) {
-                matrix[i]=new int [cols];
+                matrix[i] = new int [cols];
             }
         }
 
         ~Matrix() {
-            for (int i=0; i< rows; ++i) {
+            for (int i = 0; i < rows; ++i) {
                 delete[] matrix[i];
             }
             delete[] matrix;
@@ -48,7 +48,7 @@ class Matrix {
             return cols;
         }
 
-        Row operator[](int num) const {
+        const Row operator[](int num) const {
             if (num >= rows) 
                 throw std::out_of_range("");
             return Row(matrix[num], cols);
@@ -69,7 +69,6 @@ class Matrix {
 
         bool operator==(const Matrix &second) const {
             if ((cols == second.cols) && (rows == second.rows)) {
-                bool equal = true;
                 for (int i = 0; i < rows; ++i)
                     for (int j = 0; j < cols; ++j) 
                        if (matrix[i][j] != second.matrix[i][j]) {
