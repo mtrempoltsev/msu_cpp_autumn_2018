@@ -19,6 +19,9 @@ public:
         push_back(a);
     }
     List& operator=(const List& x){
+        if(this == &x){
+            return *this;
+        }
         while(size != 0)
             pop_front();
         for(auto tmp = x.head; tmp; tmp = tmp->next){
@@ -44,14 +47,14 @@ public:
             tmp1 = tmp1->next;
             tmp2 = tmp2->next;
         }
-        if(tmp1){
-            tmp.push_back(tmp1->elem + digit);
-            digit = 0;
+        while(tmp1){
+            tmp.push_back((tmp1->elem + digit) % 10);
+            digit = (tmp1->elem + digit) / 10;
             tmp1 = tmp1->next;
         }
-        if(tmp2){
-            tmp.push_back(tmp2->elem + digit);
-            digit = 0;
+        while(tmp2){
+            tmp.push_back((tmp2->elem + digit) % 10);
+            digit = (tmp2->elem + digit) / 10;
             tmp2 = tmp2->next;
         }
         if(digit) tmp.push_back(digit);
@@ -126,7 +129,6 @@ public:
 
 class BigInt{
     List num;
-    bool sign;
     bool abs(const BigInt &x) const{
         if(this->num.size != x.num.size)
             return this->num.size > x.num.size;
@@ -142,6 +144,7 @@ class BigInt{
         return false;
     }
 public:
+    bool sign;
     BigInt() : num(0), sign(true){}
     BigInt(const BigInt &tmp) : num(tmp.num), sign(tmp.sign){}
     BigInt(int64_t x) : num(), sign(x>=0){
@@ -156,6 +159,9 @@ public:
         }
     }
     BigInt& operator=(const BigInt& x){
+        if(this == &x){
+            return *this;
+        }
         num = x.num;
         sign = x.sign;
         return *this;
@@ -168,7 +174,7 @@ public:
                 return BigInt(x.num - num, x.sign);
             }
         }
-        return BigInt(num + x.num, x.sign);
+        return BigInt(num+x.num, sign);
     }
     BigInt operator+(int64_t x) const{
         BigInt buf(x);
@@ -192,10 +198,10 @@ public:
         return !buf;
     }
     bool operator==(const BigInt &x) const{
-        if(this->num.size != x.num.size)
-            return false;
         List tmp1 = this->num.inverse();
         List tmp2 = x.num.inverse();
+        if(tmp1.size != tmp2.size)
+            return false;
         for(auto ptr1 = tmp1.begin(),
             ptr2 = tmp2.begin();
             ptr1;
