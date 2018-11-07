@@ -1,11 +1,9 @@
 #pragma once
-#include <vector>
 #include <string>
 #include <cmath>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
-#include <memory>
 #include <exception>
 
 template <typename T>
@@ -13,6 +11,8 @@ class MyVector {
 private:
     size_t size;
     size_t capacity;
+    static const size_t default_capacity = 10;
+    static const size_t capacity_resize_order = 2;
     T* data;
 private:
     bool is_valid_idx(size_t i) const;
@@ -26,6 +26,7 @@ public:
     void push_back(const T& elem);
     void pop_back();
     T& back();
+    const T& back() const;
     MyVector (const MyVector<T>& copied);
     MyVector<T>& operator=(const MyVector<T>& copied);
     MyVector (MyVector<T>&& moved);
@@ -74,8 +75,12 @@ size_t MyVector<T>::get_size() const {
 
 template <typename T>
 void MyVector<T>::push_back(const T& elem) {
-    if (size > capacity) {
-        capacity *= 2;
+    if (size >= capacity) {
+        if (capacity != 0) {
+            capacity *= capacity_resize_order;
+        } else {
+            capacity = default_capacity;
+        }
         T * new_data = new T[capacity];
         std::copy(data, data + size, new_data);
         delete [] data;
@@ -96,12 +101,17 @@ T& MyVector<T>::back() {
 }
 
 template<typename T>
+const T& MyVector<T>::back() const {
+    return data[size - 1];
+}
+
+template<typename T>
 bool MyVector<T>::operator==(const MyVector<T>& rhs) {
     if (this->size != rhs.size) {
         return false;
     }
     for (size_t i = 0; i < rhs.size; i++) {
-        if (data[i] != rhs.data[i])
+        if (data[i] != rhs[i])
             return false;
     }
     return true;
@@ -121,7 +131,7 @@ template<typename T>
 MyVector<T>& MyVector<T>::operator=(const MyVector<T>& copied) {
     if (this == &copied)
         return *this;
-    char* new_data = new T[copied.capacity];
+    T* new_data = new T[copied.capacity];
     delete[] data;
     data = new_data;
     size = copied.size;
@@ -156,15 +166,16 @@ MyVector<T>::~MyVector() {
     delete[] data;
 }
 
+
 class BigInt {
 private:
     static const size_t order = 9;
     static const size_t base = static_cast<size_t>(pow(10, order));
     bool is_negative;
-    std::vector<int> data;
+    MyVector<int> data;
 private:
-    static void suppress_zeros(std::vector<int>& v);
-    BigInt(const std::vector<int>& array);
+    static void suppress_zeros(MyVector<int>& v);
+    BigInt(const MyVector<int>& array);
     static BigInt add_abs_values(const BigInt& lhs, const BigInt& rhs);
     static BigInt subtract_abs_values(const BigInt& lhs, const BigInt& rhs);
     static bool less_abs_value(const BigInt& lhs, const BigInt& rhs);
@@ -222,16 +233,17 @@ BigInt::BigInt() : is_negative(false) {
     data.push_back(0);
 }
 
-BigInt::BigInt(const std::vector<int>& array) {
+BigInt::BigInt(const MyVector<int>& array) {
     data = array;
     is_negative = data.back() < 0;
     data.back() = abs(data.back());
 }
 
 bool BigInt::less_abs_value(const BigInt& lhs, const BigInt& rhs) {
-    if (lhs.data.size() != rhs.data.size())
-        return lhs.data.size() < rhs.data.size();
-    for (size_t i = lhs.data.size() - 1; i >= 0; i--) {
+    if (lhs.data.get_size() != rhs.data.get_size()) {
+        return lhs.data.get_size() < rhs.data.get_size();
+    }
+    for (int i = lhs.data.get_size() - 1; i >= 0; i--) {
         if (lhs.data[i] != rhs.data[i]) {
             return lhs.data[i] < rhs.data[i];
         }
@@ -240,13 +252,13 @@ bool BigInt::less_abs_value(const BigInt& lhs, const BigInt& rhs) {
 }
 
 BigInt BigInt::add_abs_values(const BigInt& lhs, const BigInt& rhs) {
-    size_t max_size = std::max(lhs.data.size(), rhs.data.size());
-    std::vector<int> res_array (max_size, 0);
+    size_t max_size = std::max(lhs.data.get_size(), rhs.data.get_size());
+    MyVector<int> res_array (max_size, 0);
     int carry = 0;
     for (size_t i = 0; i < max_size || carry; i++) {
-        if (i == res_array.size())
+        if (i == res_array.get_size())
             res_array.push_back (0);
-        res_array[i] = lhs.data[i] + carry + (i < rhs.data.size() ? rhs.data[i] : 0);
+        res_array[i] = lhs.data[i] + carry + (i < rhs.data.get_size() ? rhs.data[i] : 0);
         carry = res_array[i] >= static_cast<int>(base);
         if (carry) res_array[i] -= base;
     }
@@ -255,10 +267,10 @@ BigInt BigInt::add_abs_values(const BigInt& lhs, const BigInt& rhs) {
 
 BigInt BigInt::subtract_abs_values(const BigInt& lhs, const BigInt& rhs) {
     int carry = 0;
-    size_t max_size = std::max(lhs.data.size(), rhs.data.size());
-    std::vector<int> res_array (max_size, 0);
+    size_t max_size = std::max(lhs.data.get_size(), rhs.data.get_size());
+    MyVector<int> res_array (max_size, 0);
     for (size_t i = 0; i< max_size || carry; i++) {
-        res_array[i] = lhs.data[i] - (carry + (i < rhs.data.size() ? rhs.data[i] : 0));
+        res_array[i] = lhs.data[i] - (carry + (i < rhs.data.get_size() ? rhs.data[i] : 0));
         carry = res_array[i] < 0;
         if (carry) res_array[i] += base;
     }
@@ -278,8 +290,8 @@ void BigInt::set_negative(bool negative) {
     }
 }
 
-void BigInt::suppress_zeros(std::vector<int>& v) {
-    while (v.size() > 1 && v.back() == 0)
+void BigInt::suppress_zeros(MyVector<int>& v) {
+    while (v.get_size() > 1 && v.back() == 0)
         v.pop_back();
 }
 
@@ -294,6 +306,7 @@ BigInt operator+(const BigInt& lhs, const BigInt& rhs) {
             result = BigInt::subtract_abs_values(rhs, lhs);
             result.set_negative(rhs.is_negative);
         } else {
+
             result = BigInt::subtract_abs_values(lhs, rhs);
             result.set_negative(lhs.is_negative);
         }
@@ -317,9 +330,9 @@ BigInt BigInt::operator-() const {
 }
 
 bool operator==(const BigInt& lhs, const BigInt& rhs) {
-    if (rhs.data.size() != lhs.data.size()) return false;
+    if (rhs.data.get_size() != lhs.data.get_size()) return false;
     if (lhs.is_negative ^ rhs.is_negative) return false;
-    for (size_t i = 0; i < lhs.data.size(); i++) {
+    for (size_t i = 0; i < lhs.data.get_size(); i++) {
         if (lhs.data[i] != rhs.data[i]) return false;
     }
     return true;
@@ -356,7 +369,7 @@ bool operator<=(const BigInt& lhs, const BigInt& rhs) {
 std::ostream& operator<<(std::ostream& out, const BigInt& value) {
     if (value.is_negative) out << "-";
     out << value.data.back();
-    for (int i = value.data.size() - 2; i >= 0; i--) {
+    for (int i = value.data.get_size() - 2; i >= 0; i--) {
         out << std::setfill ('0') << std::setw(BigInt::order);
         out << value.data[i];
     }
