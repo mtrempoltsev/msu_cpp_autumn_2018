@@ -17,7 +17,6 @@ private:
 private:
     bool is_valid_idx(size_t i) const;
 public:
-    using iterator = T*;
     MyVector();
     MyVector(size_t size, const T& default_elem);
     const T& operator[] (size_t i) const;
