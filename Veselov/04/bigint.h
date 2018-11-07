@@ -13,7 +13,7 @@ public:
 		: capacity(1)
 		, length(1)
 	{
-		data = static_cast<size_t *>(std::calloc(1, sizeof(uint64_t)));
+		data = static_cast<int64_t *>(std::calloc(1, sizeof(int64_t)));
 		//TODO:
 		//case num = 1 234 234 234
 
@@ -26,8 +26,20 @@ public:
 		}
 	}
 
-	~BigInt()
+	BigInt(const BigInt& other)
+		: capacity(other.capacity)
+		, length(other.length)
+		, is_positive(other.is_positive)
 	{
+		data = static_cast<int64_t *>(std::calloc(length, sizeof(int64_t)));
+		for (size_t i = 0; i < length; i++) {
+			data[i] = other.data[i];
+		}
+	}
+
+	~BigInt()
+	{	
+		//std::cout <<"call destructor for " << *this << "\n";
 		std::free(data);
 	}
 
@@ -38,13 +50,18 @@ public:
 		}
 
 		length = other.length;
-		capacity = other.capacity;
+		capacity = length;
 		is_positive = other.is_positive;
 
-		free(data);
-		data = static_cast<size_t *>(std::calloc(capacity, sizeof(size_t)));
+		//std::cout << "element before: " << *this << "\n";
+		data = static_cast<int64_t *>(std::calloc(length, sizeof(int64_t)));
 
-		memcpy(data, other.data, length * sizeof(size_t));
+		for (size_t i = 0; i < length; i++) {
+			data[i] = other.data[i];
+		}
+		//memcpy(data, other.data, length * sizeof(int64_t));
+		//std::cout << "element after: " << *this << "\n";
+
 		return *this;
 	}
 
@@ -56,7 +73,7 @@ public:
 
 		return (is_positive == other.is_positive &&
 				length == other.length &&
-				memcmp(data, other.data, length * sizeof(uint64_t)) == 0);
+				memcmp(data, other.data, length * sizeof(int64_t)) == 0);
 	}
 
 	bool operator!=(const BigInt& other) const
@@ -66,18 +83,14 @@ public:
 
 	BigInt operator+(const BigInt& other) const
     {
-    	std::cout << *this << " + " << other << "\n";
     	if (!is_positive && other.is_positive) {
-        	return (other - *this);
+        	return (other - -*this);
         }
         if (is_positive && !other.is_positive) {
-        	return (*this - other);
+        	return (*this - -other);
         }
 
         BigInt tmp;
-
-    	std::cout << *this << " + " << other << "\n";
-
 
         if (!is_positive && !other.is_positive) {
         	tmp.is_positive = false;
@@ -86,7 +99,7 @@ public:
         if (length > other.length) {
         	tmp.capacity = capacity;
         	tmp.length = length;
-        	tmp.data = static_cast<size_t *>(realloc(tmp.data, tmp.capacity));
+        	tmp.data = static_cast<int64_t *>(realloc(tmp.data, tmp.capacity * sizeof(int64_t)));
 
         	for (size_t i = 0; i < length; i++) {
         		tmp.data[i] = data[i];
@@ -104,7 +117,7 @@ public:
         	if (tmp.data[tmp.length - 1] / BASE != 0) {
         		tmp.capacity *= 2;
         		tmp.length += 1;
-        		tmp.data = static_cast<size_t *>(realloc(tmp.data, capacity));
+        		tmp.data = static_cast<int64_t *>(realloc(tmp.data, capacity * sizeof(int64_t)));
         		tmp.data[tmp.length - 1] = tmp.data[tmp.length - 2] / BASE;
         		tmp.data[tmp.length - 2] %= BASE;
         	}
@@ -112,7 +125,7 @@ public:
         	//other.length >= length
         	tmp.capacity = other.capacity;
         	tmp.length = other.length;
-        	tmp.data = static_cast<size_t *>(realloc(tmp.data, tmp.capacity));
+        	tmp.data = static_cast<int64_t *>(realloc(tmp.data, tmp.capacity * sizeof(int64_t)));
 
         	for (size_t i = 0; i < other.length; i++) {
         		tmp.data[i] = other.data[i];
@@ -130,14 +143,11 @@ public:
         	if (tmp.data[tmp.length - 1] / BASE != 0) {
         		tmp.capacity *= 2;
         		tmp.length += 1;
-        		tmp.data = static_cast<size_t *>(realloc(tmp.data, tmp.capacity));
+        		tmp.data = static_cast<int64_t *>(realloc(tmp.data, tmp.capacity * sizeof(int64_t)));
         		tmp.data[tmp.length - 1] = tmp.data[tmp.length - 2] / BASE;
         		tmp.data[tmp.length - 2] %= BASE;
         	}
-        }   
-
-            	std::cout << "tmp " << tmp << "\n";
-
+        }
 
         return tmp;
     }
@@ -209,51 +219,56 @@ public:
 		return !(*this < other);
 	}
 
-	BigInt operator-()
+	BigInt operator-() const
 	{
 		BigInt res;
 		res = *this;
-		res.is_positive = !this->is_positive;
+		if (*this != 0) {
+			res.is_positive = !this->is_positive;
+		}
 
 		return res;
 	}
 
 	BigInt operator-(const BigInt& other) const
 	{
-		BigInt tmp;
-		std::cout << "tmp " << tmp << "\n";
-
-
-		if (!other.is_positive) {
-			BigInt pos_other = other;
-			pos_other.is_positive = true;
-			BigInt tmp = (*this + pos_other);
-
-			std::cout << "this " << *this << "\n";
-			std::cout << "pos_other " << pos_other << "\n";
-			std::cout << "tmp " << tmp << "\n";
-
-			return tmp;
+		if (*this == other) {
+			return 0;
 		}
 
+		if (!other.is_positive) {
+			return (*this + (-other));
+		}
+
+		BigInt tmp;
+
+
 		if (!is_positive) {
-			BigInt pos_this = *this;
-			pos_this.is_positive = true;
-			tmp = pos_this + other;
+			tmp = -*this + other;
 			tmp.is_positive = false;
 			return tmp;
 		}
 
-		if (*this == other) {
-			return tmp;
-		}
-
 		if (*this < other) {
-			return other - *this;
+			return -(other - *this);
 		}
 
+		tmp = *this;
+		for (size_t i = 0; i < other.length; i++) {
+			tmp.data[i] -= other.data[i];
+		}
 
+		for (size_t i = 0; i < other.length; i++) {
+			if (tmp.data[i] < 0) {
+				tmp.data[i + 1]--;
+				tmp.data[i] += BASE;
+			}
+		}
 
+		if (tmp.data[length - 1] == 0) {
+			tmp.length--;
+		}
+		return tmp;
 	}
 
 	friend std::ostream& operator <<(std::ostream &os, const BigInt& c);
@@ -262,7 +277,7 @@ private:
 	bool is_positive;
 	size_t capacity;
 	size_t length;
-	uint64_t *data;
+	int64_t *data;
 };
 
 
@@ -278,7 +293,7 @@ std::ostream& operator <<(std::ostream &os, const BigInt& c)
 	for (int i = c.length - 2; i >= 0; i--) {
 		len = std::to_string(c.data[i]).length();
 		while (len < 9) { //9 or 10
-			os << '0';
+			os << 0;
 			len++;
 		}
 
@@ -288,14 +303,21 @@ std::ostream& operator <<(std::ostream &os, const BigInt& c)
     return os;
 }
 
-int main()
-{
-	BigInt x(1);
-	BigInt y(9);
-	BigInt z = -y;
+// int main()
+// {
+// 	BigInt x(10);
+// 	BigInt x1(-10);
+
+// 	BigInt y(9);
+
+// 	BigInt a(999999999);
+// 	BigInt b(999999999);
+
+// 	BigInt z = a + b;
 
 
-	std::cout << x - z << "\n";
+// 	//std::cout << z << "\n";
+// 	std::cout << x1 + x << "\n";
 
-	return 0;
-}
+// 	return 0;
+// }
