@@ -94,7 +94,6 @@ public:
             res.value = help2;
             delete[] help;
         }
-        i = 0;
         return res;
     }
     BigInt operator-(const BigInt& other) const{
