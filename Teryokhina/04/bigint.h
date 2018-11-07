@@ -154,7 +154,7 @@ BigInt BigInt::operator+(const BigInt& other) const{
     return other - abs();
 }
 
-int64_t BigInt::sub_cells(const int64_t& a, const int64_t &b, int *carry) const{
+int64_t BigInt::sub_cells(const int64_t& a, const int64_t &b, int &carry) const{
     int64_t tmp = a - b - (int64_t)(*carry);
     if(tmp >= 0)
         *carry = 0;
