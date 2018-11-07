@@ -1,4 +1,5 @@
 #include <iostream>
+
 void itoa(int64_t val, char *str)
 {
     while(val > 0)
@@ -8,23 +9,24 @@ void itoa(int64_t val, char *str)
         val /= 10;
     }
 }
+
 int max(int a, int b)
 {
     if(a > b)
         return a;
     return b;
 }
+
 class BigInt
 {
     int sign;
     int size = 0;
     char *num = NULL;
-    //int del = 1;
 public:
     BigInt()
     {
         size = 1;
-        sign = 0;
+        sign = 1;
         num = new char('0');
     }
     BigInt(int64_t val);
@@ -41,38 +43,38 @@ public:
         }
         sign = signs;
     }
-    BigInt operator =(const BigInt& val);
+    BigInt operator=(const BigInt& val);
     BigInt(const BigInt &val);
-    BigInt operator -()const
+    BigInt operator-()const
     {
         BigInt b = *this;
         b.sign *= -1;
         return b;
     }
-    bool operator >(const BigInt& val)const;
-    bool operator <(const BigInt& val)const
+    bool operator>(const BigInt& val)const;
+    bool operator<(const BigInt& val)const
     {
         return val > *this;
     }
-    bool operator !=(const BigInt& val)const
+    bool operator!=(const BigInt& val)const
     {
         return *this > val || val > *this;
     }
-    bool operator ==(const BigInt& val)const
+    bool operator==(const BigInt& val)const
     {
         return !(*this != val);
     }
-    bool operator >=(const BigInt& val)const
+    bool operator>=(const BigInt& val)const
     {
         return !(*this < val);
     }
-    bool operator <=(const BigInt& val)const
+    bool operator<=(const BigInt& val)const
     {
         return !(*this > val);
     }
     friend std::ostream& operator<<(std::ostream& os, const BigInt& bi);
-    BigInt operator +(const BigInt &val)const;
-    BigInt operator -(const BigInt &val)const
+    BigInt operator+(const BigInt &val)const;
+    BigInt operator-(const BigInt &val)const
     {
         return *this + BigInt(val.size, val.num, -val.sign, 0);
     }
@@ -82,7 +84,7 @@ public:
     }
 };
 
-std::ostream& operator <<(std::ostream& os, const BigInt& bi)
+std::ostream& operator<<(std::ostream& os, const BigInt& bi)
 {
     bool fl = (bi.sign == -1);
     if((bi.size == 1) && (bi.num[0] == '0'))
@@ -100,8 +102,7 @@ std::ostream& operator <<(std::ostream& os, const BigInt& bi)
     delete []out;
 }
 
-
-bool BigInt::operator >(const BigInt& val)const
+bool BigInt::operator>(const BigInt& val)const
 {
     if((size == 1) && (val.size == 1) && (num[0] == '0') && (val.num[0] == '0'))
         return 0;
@@ -121,8 +122,7 @@ bool BigInt::operator >(const BigInt& val)const
     return 0;
 }
 
-
-BigInt BigInt::operator +(const BigInt &val)const
+BigInt BigInt::operator+(const BigInt &val)const
 {
     if(sign == val.sign)
     {
@@ -189,7 +189,7 @@ BigInt BigInt::operator +(const BigInt &val)const
     }
 }
 
-BigInt BigInt::operator =(const BigInt &val)
+BigInt BigInt::operator=(const BigInt &val)
 {
     if(this == &val)
         return *this;
