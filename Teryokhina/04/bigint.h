@@ -13,7 +13,7 @@ class BigInt{
     int64_t add_cells(const int64_t& a, const int64_t &b, int &carry) const;
 
     BigInt sub_abs_values(const BigInt& a, const BigInt& b) const;
-    int64_t sub_cells(const int64_t& a, const int64_t &b, int *carry) const;
+    int64_t sub_cells(const int64_t& a, const int64_t &b, int &carry) const;
 
     bool compare_abs_values_on_less(const BigInt& a, const BigInt& b) const;
 
@@ -155,11 +155,11 @@ BigInt BigInt::operator+(const BigInt& other) const{
 }
 
 int64_t BigInt::sub_cells(const int64_t& a, const int64_t &b, int &carry) const{
-    int64_t tmp = a - b - (int64_t)(*carry);
+    int64_t tmp = a - b - (int64_t)carry;
     if(tmp >= 0)
-        *carry = 0;
+        carry = 0;
     else{
-        *carry = 1;
+        carry = 1;
         tmp += this->cell_max;
     }
     return tmp;
@@ -175,12 +175,12 @@ BigInt BigInt::sub_abs_values(const BigInt& a, const BigInt& b) const{
     int cur_pos_a = a.size - 1, cur_pos_b = b.size - 1;
 
     while(cur_pos_b != -1){
-        result.data[cur_pos_a] = sub_cells(a.data[cur_pos_a], b.data[cur_pos_b], &carry);
+        result.data[cur_pos_a] = sub_cells(a.data[cur_pos_a], b.data[cur_pos_b], carry);
         --cur_pos_a; --cur_pos_b;
     }
 
     while(cur_pos_a != -1){
-        result.data[cur_pos_a] = sub_cells(a.data[cur_pos_a], (int64_t)0, &carry);
+        result.data[cur_pos_a] = sub_cells(a.data[cur_pos_a], (int64_t)0, carry);
         --cur_pos_a;
     }
     // delete zeros
