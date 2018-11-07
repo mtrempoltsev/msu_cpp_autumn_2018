@@ -14,19 +14,24 @@ private:
     size_t size;
     size_t capacity;
     T* data;
+private:
+    bool is_valid_idx(size_t i) const;
 public:
-    typedef T * iterator;
+    using iterator = T*;
     MyVector();
     MyVector(size_t size, const T& default_elem);
     const T& operator[] (size_t i) const;
     T& operator[] (size_t i);
     size_t get_size() const;
-    void push_back(T elem);
+    void push_back(const T& elem);
     void pop_back();
+    T& back();
     MyVector (const MyVector<T>& copied);
-    MyVector& operator=(const MyVector<T>& copied);
+    MyVector<T>& operator=(const MyVector<T>& copied);
     MyVector (MyVector<T>&& moved);
-    MyVector& operator=(MyVector<T>&& moved);
+    MyVector<T>& operator=(MyVector<T>&& moved);
+    bool operator==(const MyVector<T>& rhs);
+    bool operator!=(const MyVector<T>& rhs);
     ~MyVector();
 };
 
@@ -34,8 +39,121 @@ template <typename T>
 MyVector<T>::MyVector() : size(0), capacity(0), data(nullptr) {}
 
 template <typename T>
-MyVector<T>::MyVector(size_t size, const T& default_elem) {
-    
+MyVector<T>::MyVector(size_t size_, const T& default_elem) {
+    size = size_;
+    capacity = size;
+    data = new T[size];
+    for (size_t i = 0; i < size; i++) {
+        data[i] = default_elem;
+    }
+}
+
+template <typename T>
+bool MyVector<T>::is_valid_idx(size_t i) const {
+    return i < size;
+}
+
+template <typename T>
+const T& MyVector<T>::operator[] (size_t i) const {
+    if (!is_valid_idx(i))
+        throw std::out_of_range("");
+    return data[i];
+}
+
+template <typename T>
+T& MyVector<T>::operator[] (size_t i) {
+    if (!is_valid_idx(i))
+        throw std::out_of_range("");
+    return data[i];
+}
+
+template <typename T>
+size_t MyVector<T>::get_size() const {
+    return size;
+}
+
+template <typename T>
+void MyVector<T>::push_back(const T& elem) {
+    if (size > capacity) {
+        capacity *= 2;
+        T * new_data = new T[capacity];
+        std::copy(data, data + size, new_data);
+        delete [] data;
+        data = new_data;
+    }
+    data[size] = elem;
+    size++;
+}
+
+template<typename T>
+void MyVector<T>::pop_back() {
+    size--;
+}
+
+template<typename T>
+T& MyVector<T>::back() {
+    return data[size - 1];
+}
+
+template<typename T>
+bool MyVector<T>::operator==(const MyVector<T>& rhs) {
+    if (this->size != rhs.size) {
+        return false;
+    }
+    for (size_t i = 0; i < rhs.size; i++) {
+        if (data[i] != rhs.data[i])
+            return false;
+    }
+    return true;
+}
+
+template<typename T>
+bool MyVector<T>::operator!=(const MyVector<T>& rhs) {
+    return !(*this == rhs); 
+}
+
+template<typename T>
+MyVector<T>::MyVector(const MyVector<T>& copied) : size(copied.size), capacity(copied.capacity), data(new T[copied.capacity]) {
+    std::copy(copied.data, copied.data + capacity, data);
+}
+
+template<typename T>
+MyVector<T>& MyVector<T>::operator=(const MyVector<T>& copied) {
+    if (this == &copied)
+        return *this;
+    char* new_data = new T[copied.capacity];
+    delete[] data;
+    data = new_data;
+    size = copied.size;
+    capacity = copied.capacity;
+    std::copy(copied.data, copied.data + capacity, data);
+    return *this;
+}
+
+template<typename T>
+MyVector<T>::MyVector (MyVector<T>&& moved) : size(moved.size), capacity(moved.capacity), data(moved.data) {
+    moved.data = nullptr;
+    moved.size = 0;
+    moved.capacity = 0;
+}
+
+template<typename T>
+MyVector<T>& MyVector<T>::operator=(MyVector<T>&& moved) {
+    if (this == &moved)
+        return *this;
+    delete[] data;
+    data = moved.data;
+    size = moved.size;
+    capacity = moved.capacity;
+    moved.data = nullptr;
+    moved.size = 0;
+    moved.capacity = 0;
+    return *this;
+}
+
+template<typename T>
+MyVector<T>::~MyVector() {
+    delete[] data;
 }
 
 class BigInt {
@@ -238,9 +356,9 @@ bool operator<=(const BigInt& lhs, const BigInt& rhs) {
 std::ostream& operator<<(std::ostream& out, const BigInt& value) {
     if (value.is_negative) out << "-";
     out << value.data.back();
-    for (auto it = ++value.data.rbegin(); it != value.data.rend(); it++) {
+    for (int i = value.data.size() - 2; i >= 0; i--) {
         out << std::setfill ('0') << std::setw(BigInt::order);
-        out << *it;
+        out << value.data[i];
     }
     return out;
 }
