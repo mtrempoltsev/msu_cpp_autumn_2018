@@ -112,7 +112,7 @@ class Deserializer {
         if (_gen_process(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
-        return process(args...);
+        return process(std::forward<Args>(args)...);
     }
 
 public:
