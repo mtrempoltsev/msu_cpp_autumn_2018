@@ -34,7 +34,7 @@ public:
     }
 
     BigInt(const int64_t init) {
-        length = sizeof(int64_t);
+        length = 20; //чтоб влезал максимальный инт
         data = new char[length];
         if (init < 0)
             sign = -1;
