@@ -9,7 +9,7 @@ enum class Error
 class Serializer
 {
 	std::ostream& out_;
-    static constexpr char Separator = ' ';
+	static constexpr char Separator = ' ';
 
 public:
     explicit Serializer(std::ostream& out) : out_(out) {}
