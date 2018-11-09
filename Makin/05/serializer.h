@@ -13,7 +13,6 @@ class Serializer
 
 public:
     explicit Serializer(std::ostream& out) : out_(out) {}
-
     template <class T>
     Error save(T& object)
     {
@@ -28,17 +27,17 @@ public:
 
 private:
 	template <class T, class... ArgsT>
-    Error process(T&& value, ArgsT&&... args) 
+	Error process(T&& value, ArgsT&&... args) 
     {
         if (process(value) == Error::CorruptedArchive)
-		{
-			return Error::CorruptedArchive;
-		}
-		else
-		{
-			return process(std::forward<ArgsT&>(args)...);
-		}
-	}
+        {
+        	return Error::CorruptedArchive;
+        }
+        else
+        {
+        	return process(std::forward<ArgsT&>(args)...);
+        }
+    }
 
     Error process(bool& value)
     {
@@ -49,20 +48,20 @@ private:
 		catch(...)
 		{
 			return Error::CorruptedArchive;
-		}	
+		}
 		return Error::NoError;
     }
     Error process(uint64_t& value)
     {
-        try
-        {
-        	out_ << value << Separator;
-        }
-        catch(...)
-		{
-			return Error::CorruptedArchive;
-		}	
-		return Error::NoError;
+    	try
+    	{
+    		out_ << value << Separator;
+    	}
+    	catch(...)
+    	{
+    		return Error::CorruptedArchive;
+    	}
+    	return Error::NoError;
     }
 };
 
@@ -72,7 +71,6 @@ class Deserializer
     static constexpr char Separator = ' ';
 public:
     explicit Deserializer(std::istream& in) : in_(in) {}
-
     template <class T>
     Error load(T& object) 
     {
@@ -90,13 +88,13 @@ private:
     Error process(T& value, ArgsT&... args) 
     {
         if (process(value) == Error::CorruptedArchive)
-		{
-			return Error::CorruptedArchive;
-		}
-		else
-		{
-			return process(std::forward<ArgsT&>(args)...);
-		}	
+        {
+        	return Error::CorruptedArchive;
+        }
+        else
+        {
+        	return process(std::forward<ArgsT&>(args)...);
+        }
     }
 
     Error process(bool& value)
@@ -124,16 +122,16 @@ private:
         	return Error::CorruptedArchive;
         }
         else
-		{
-			for (auto s : str) 
-			{
-				if (!isdigit(s)) 
-				{
-					return Error::CorruptedArchive;
+        {
+        	for (auto s : str)
+        	{
+        		if (!isdigit(s))
+        		{
+        			return Error::CorruptedArchive;
         		}
-    		}
-    		value = std::stoull(str);
-			return Error::NoError;
-		}
+        	}
+        	value = std::stoull(str);
+        	return Error::NoError;
+        }
     }
 };
