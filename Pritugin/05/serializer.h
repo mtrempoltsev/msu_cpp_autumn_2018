@@ -71,7 +71,7 @@ public:
 	template <class T>
 	Error load(T& object)
 	{
-		return object.deserialize(*this);
+		return object.serialize(*this);
 	}
 
 	template <class... ArgsT>
