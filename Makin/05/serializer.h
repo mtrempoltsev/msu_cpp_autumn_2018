@@ -66,8 +66,6 @@ private:
     }
 };
 
-
-
 class Deserializer
 {
     std::istream& in_;
