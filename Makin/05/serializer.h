@@ -120,10 +120,10 @@ private:
         std::string str;
         in_>> str;
         if (str == "")
-		{
-			return Error::CorruptedArchive;
-		}
-		else
+        {
+        	return Error::CorruptedArchive;
+        }
+        else
 		{
 			for (auto s : str) 
 			{
