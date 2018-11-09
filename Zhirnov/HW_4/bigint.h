@@ -1,6 +1,3 @@
-#include <iostream>
-#include <cstdint>
-
 class BigInt
 {
     int Size;
