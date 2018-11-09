@@ -1,7 +1,7 @@
 class BigInt
 {
     int Size;
-	bool sign;
+    bool sign;
     char *innerData;
     
     BigInt addZero(int value) const
