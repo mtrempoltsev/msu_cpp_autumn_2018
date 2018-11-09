@@ -215,6 +215,9 @@ public:
 
 	bool operator> (const BigInt &rvalue) const
 	{
+		if (rvalue == *this){
+			return 0;
+		}
 		return (rvalue < *this);
 	}
 

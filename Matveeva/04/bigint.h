@@ -94,7 +94,6 @@ public:
             res.value = help2;
             delete[] help;
         }
-        i = 0;
         return res;
     }
     BigInt operator-(const BigInt& other) const{
@@ -176,19 +175,25 @@ public:
     bool operator!=(const BigInt& other){
         return !(*this == other);
     }
-     BigInt(BigInt&& other) {
-        value = other.value;
-        is_neg = other.is_neg;
-        value_size = other.value_size;
-        other.value = nullptr;
+    BigInt(BigInt&& moved)
+        : value(moved.value)
+        , value_size(moved.value_size)
+        , is_neg(moved.is_neg)
+    {
+        moved.value = nullptr;
+        moved.value_size = 0;
     }
-    BigInt& operator=(BigInt&& other) {
-        if (this == &other)
+
+    BigInt& operator=(BigInt&& moved)
+    {
+        if (this == &moved)
             return *this;
-        value = other.value;
-        is_neg = other.is_neg;
-        value_size = other.value_size;
-        other.value = nullptr;
+        delete[] value;
+        value = moved.value;
+        value_size = moved.value_size;
+        is_neg = moved.is_neg;
+        moved.value = nullptr;
+        moved.value_size = 0;
         return *this;
     }
     friend ostream& operator<<(ostream& out, const BigInt& x);
