@@ -196,28 +196,3 @@ std::ostream& operator<<(std::ostream& out, const BigInt& obj) {
     out << obj.data_;
     return out;
 }
-void check(int64_t x, int64_t y)
-{
-    const BigInt bigX = x;
-    const BigInt bigY = y;
-
-    if (bigX + bigY != BigInt(x + y))
-    {
-        std::cout << x << " + " << y << " != " << x + y << " got " << bigX + bigY << '\n';
-    }
-
-    if (bigX - bigY != BigInt(x - y))
-    {
-        std::cout << x << " - " << y << " != " << x - y << " got " << bigX - bigY << '\n';
-    }
-}
-
-int main(void) {
-    check(1930566104, 9);
-    //std::cout << 2104100136 << '\t' << 39 << '\n';
-    //std::cout << BigInt(2104100136) - BigInt(39) << '\n';
-  //  int64_t a, b;
-  //  std::cin >> a >> b;
-  //  std::cout << BigInt(a) - BigInt(b) << '\n';
-    return 0;
-}
