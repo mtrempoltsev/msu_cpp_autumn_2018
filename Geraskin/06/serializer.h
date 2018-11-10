@@ -25,7 +25,7 @@ private:
     }
 
     template <class T, class... Args>
-    Error process(T val, Args&&... args) {
+    Error process(T&& val, Args&&... args) {
         if (process(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
@@ -44,8 +44,8 @@ public:
     }
 
     template <class... Args>
-    Error operator()(Args... args) {
-        return process(args...);
+    Error operator()(Args&&... args) {
+        return process(std::forward<Args>(args)...);
     }
 };
 
@@ -87,7 +87,7 @@ private:
     }
 
     template <class T, class... Args>
-    Error process(T& val, Args&&... args) {
+    Error process(T&& val, Args&&... args) {
         if (process(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
@@ -105,7 +105,7 @@ public:
     }
 
     template <class... Args>
-    Error operator()(Args&... args) {
-        return process(args...);
+    Error operator()(Args&&... args) {
+        return process(std::forward<Args>(args)...);
     }
 };
