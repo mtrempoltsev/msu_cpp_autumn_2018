@@ -2,20 +2,14 @@
 #include <vector>
 #include <cstring>
 #include <cstdlib>
+#include <stdexcept>
 
 using namespace std;
 
-class Result {
-public:
-    bool error = 0;
-    int64_t res = 0;
-};
-
 class Calculator {
-    Result Calc_res;
     vector <int64_t> numbers;
     vector <char> operations;
-
+    int64_t calc_res;
     int64_t calc(int l, int r) {
         if (l == r) {
             switch (operations[l]) {
@@ -25,8 +19,7 @@ class Calculator {
                 return numbers[l] * numbers[l + 1];
             case '/':
                 if (numbers[l + 1] == 0) {
-                    Calc_res.error = 1;
-                    throw Calc_res;
+                    throw runtime_error("");
                 }
                 return numbers[l] / numbers[l + 1];
             }
@@ -56,8 +49,7 @@ class Calculator {
                 break;
             case '/':
                 if (numbers[i + 1] == 0) {
-                    Calc_res.error = 1;
-                    throw Calc_res;
+                    throw runtime_error("");
                 }
                 res /= numbers[i + 1];
                 break;
@@ -67,16 +59,21 @@ class Calculator {
         return res;
     }
 
+    void skip_space(const char* &pos) {
+        while (*pos == ' ')
+            pos++;
+    }
     void skip_space(char* &pos) {
         while (*pos == ' ')
             pos++;
     }
 
 public:
-    Calculator(char* str) {
+    Calculator(const char* str) {
         int64_t num;
         char op;
-        char *pos, *left_pos;
+        char *pos;
+        const char *left_pos;
         left_pos = str;
         skip_space(left_pos);
 
@@ -84,8 +81,7 @@ public:
             left_pos++;
             num = strtoll(left_pos, &pos, 10);
             if (left_pos == pos || num <= 0) {
-                Calc_res.error = 1;
-                throw Calc_res;
+                throw runtime_error("");
             }
 
             num = - num;
@@ -105,14 +101,12 @@ public:
                             numbers[i + 1] = - numbers[i + 1];
                         }
                 }
-                Calc_res.error = 0;
-                Calc_res.res = calc(0, operations.size() - 1);
-                throw Calc_res;
+                calc_res = calc(0, operations.size() - 1);
+                return;
             }
 
             if (op != '+' && op != '-' && op != '*' && op != '/'){
-                Calc_res.error = 1;
-                throw Calc_res;
+                throw runtime_error("");
             }
 
             operations.push_back(op);
@@ -124,8 +118,7 @@ public:
                 left_pos++;
                 num = strtoll(left_pos, &pos, 10);
                 if (left_pos == pos || num <= 0) {
-                    Calc_res.error = 1;
-                throw Calc_res;
+                    throw runtime_error("");
                 }
 
                 num = - num;
@@ -133,8 +126,11 @@ public:
             else
                 num = strtoll(left_pos, &pos, 10);
         }
-        Calc_res.error = 1;
-        throw Calc_res;
+        throw runtime_error("");
+    }
+    int64_t get_res()
+    {
+        return calc_res;
     }
 };
 
@@ -148,15 +144,11 @@ int main(int argc, char* argv[])
     try {
 
         Calculator Res(argv[1]);
-        //Calculator Res("+ 1");
-    } catch (Result &Res) {
-        if (Res.error) {
-            cout << "error" << endl;
-            return 1;
-        } else {
-            cout << Res.res << endl;
-            return 0;
-        }
+        cout << Res.get_res();
+        return 0;
+    } catch (exception &err) {
+        cout << "error"<< endl;
+        return 1;
     }
     return 0;
 }
