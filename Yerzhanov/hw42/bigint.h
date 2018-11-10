@@ -23,7 +23,7 @@ public:
         std::string tmp = std::to_string(val);
         size_ = tmp.size();
         data_ = new char[size_ + 1];
-        std::strcpy(data_, tmp.c_str());  //Здесь можеть вылезти ошибка, так как не ставлю ноль в конце
+        std::strcpy(data_, tmp.c_str());
     }
 
     BigInt(const BigInt& s)
