@@ -10,7 +10,7 @@ enum class Error {
 };
 
 class Serializer {
-    using Int = uint64_t;
+    using UInt = uint64_t;
 
     static constexpr char Separator = ' ';
     std::ostream& out_;
@@ -37,7 +37,7 @@ class Serializer {
         return Error::CorruptedArchive;
     }
 
-    Error process(Int value) {
+    Error process(UInt value) {
         if (out_ << value << Separator)
             return Error::NoError;
 
@@ -62,7 +62,7 @@ public:
 
 
 class Deserializer {
-    using Int = uint64_t;
+    using UInt = uint64_t;
 
     std::istream& in_;
 
@@ -93,7 +93,7 @@ class Deserializer {
         return Error::NoError;
     }
 
-    Error process(Int& value) {
+    Error process(UInt& value) {
         std::string text;
         in_ >> text;
 
