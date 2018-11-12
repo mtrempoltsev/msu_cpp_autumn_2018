@@ -1,5 +1,6 @@
+#pragma once
+
 #include <iostream>
-#include <sstream>
 
 enum class Error {
     NoError,
@@ -60,7 +61,7 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args) {
+    Error operator()(ArgsT&... args) {
         return process(args...);
     }
 
