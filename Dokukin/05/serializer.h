@@ -26,34 +26,20 @@ class Serializer
 	
 	Error process (uint64_t& value)
 	{
-		try
-		{
-			out_ << value << Separator;
-		}
-		catch(...)
-		{
-			return Error::CorruptedArchive;
-		}	
+		out_ << value << Separator;
 		return Error::NoError;
 	}
 	
 	Error process (bool& value)
 	{
-		try
+		if (value)
 		{
-			if (value)
-			{
-				out_ << "true" << Separator;
-			}
-			else
-			{
-				out_ << "false" << Separator;
-			}
+			out_ << "true" << Separator;
 		}
-		catch(...)
+		else
 		{
-			return Error::CorruptedArchive;
-		}	
+			out_ << "false" << Separator;
+		}
 		return Error::NoError;
 	}
     
