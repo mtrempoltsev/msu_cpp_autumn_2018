@@ -55,8 +55,8 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args) {
-        return process(args...);
+    Error operator()(ArgsT&&... args) {
+        return process(std::forward<ArgsT>(args)...);
     }
 };
 
