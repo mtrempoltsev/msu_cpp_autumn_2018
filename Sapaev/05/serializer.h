@@ -35,17 +35,12 @@ public:
 private:
     std::ostream& out_;
     // process использует variadic templates
-    template <class... ArgsT>
-    Error process(uint64_t Head, ArgsT&&... Tail)
+    template <class T, class... ArgsT>
+    Error process(T&& Head, ArgsT&&...Tail)
     {
-        out_ << Head << Separator;
-        return process(std::forward<ArgsT>(Tail)...);
-    }
-    
-    template <class... ArgsT>
-    Error process(bool Head, ArgsT&&... Tail)
-    {
-        out_ << (Head ? "true" : "false")  << Separator;
+        if (process(Head) != Error::NoError) {
+            return Error::CorruptedArchive;
+        }
         return process(std::forward<ArgsT>(Tail)...);
     }
     
@@ -61,14 +56,8 @@ private:
         return Error::NoError;
     }
     
-    template <class T, class... ArgsT>
-    Error process(T, ArgsT&&...)
-    {
-        return Error::CorruptedArchive;
-    }
-    
     template <class T>
-    Error process(T)
+    Error process(T&&)
     {
         return Error::CorruptedArchive;
     }
@@ -97,30 +86,10 @@ public:
 private:
     std::istream& in_;
     
-    template <class... ArgsT>
-    Error process(uint64_t& Head, ArgsT&&... Tail)
+    template <class T, class... ArgsT>
+    Error process(T&& Head, ArgsT&&... Tail)
     {
-        std::string tmp;
-        in_ >> tmp;
-        
-        if (!isdigit(tmp[0])) {
-            return Error::CorruptedArchive;
-        }
-        Head = std::stoull(tmp);
-        return process(std::forward<ArgsT>(Tail)...);
-    }
-    
-    template <class... ArgsT>
-    Error process(bool& Head, ArgsT&&... Tail)
-    {
-        std::string tmp;
-        in_ >> tmp;
-        
-        if (tmp == "true") {
-            Head = true;
-        } else if (tmp == "false") {
-            Head = false;
-        } else {
+        if (process(Head) != Error::NoError) {
             return Error::CorruptedArchive;
         }
         return process(std::forward<ArgsT>(Tail)...);
