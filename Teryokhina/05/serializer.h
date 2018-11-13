@@ -11,25 +11,6 @@ enum class Error
 class Serializer
 {
     static constexpr char Separator = ' ';
-public:
-    explicit Serializer(std::ostream& out)
-        : out_(out)
-    {
-    }
-
-    template <class T>
-    Error save(T& object)
-    {
-        return object.serialize(*this);
-    }
-
-    template <class... ArgsT>
-    Error operator()(ArgsT... args)
-    {
-        return process(args...);
-    }
-    
-private:
     std::ostream& out_;
 
     template <class T, class... Args>
@@ -45,7 +26,7 @@ private:
         return Error::NoError;
     }
 
-    Error process(bool& value)
+    Error process(bool value)
     {
         if(value)
             out_ << "true" << Separator;
@@ -54,35 +35,33 @@ private:
         return Error::NoError;
     }
 
-    Error process(uint64_t& value)
+    Error process(uint64_t value)
     {
         out_ << value << Separator;
         return Error::NoError;
     }
-};
 
-class Deserializer
-{
-    static constexpr char Separator = ' ';
 public:
-    explicit Deserializer(std::istream& in)
-        : in_(in)
+    explicit Serializer(std::ostream& out)
+        : out_(out)
     {
     }
 
     template <class T>
-    Error load(T& object)
+    Error save(T& object)
     {
         return object.serialize(*this);
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT&... args)
+    Error operator()(ArgsT... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
-    
-private:
+};
+
+class Deserializer
+{
     std::istream& in_;
 
     template <class T, class... Args>
@@ -129,4 +108,23 @@ private:
         }
         return Error::NoError;
     }
+
+public:
+    explicit Deserializer(std::istream& in)
+        : in_(in)
+    {
+    }
+
+    template <class T>
+    Error load(T& object)
+    {
+        return object.serialize(*this);
+    }
+
+    template <class... ArgsT>
+    Error operator()(ArgsT&&... args)
+    {
+        return process(std::forward<ArgsT>(args)...);
+    }
+      
 };
