@@ -20,7 +20,7 @@ public:
     }
 
     template <class T>
-    Error save(T& object)
+    Error save(T&& object)
     {
         return object.serialize(*this);
     }
@@ -30,33 +30,41 @@ public:
         return Error::NoError;
     }
 
+    Error save(bool&& val) {
+        return save(std::forward<bool&>(val));
+    }
+
     Error save(uint64_t& val) {
         out_ << val;
         return Error::NoError;
     }
 
+    Error save(uint64_t&& val) {
+        return save(std::forward<uint64_t&>(val));
+    }
+
     template <class... ArgsT>
-    Error operator()(ArgsT&... args)
+    Error operator()(ArgsT&&... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT&&>(args)...);
     }
     
 private:
     std::ostream& out_;
 
     template <class T, class... ArgsT>
-    Error process(T& val, ArgsT&... args) {
-        Error err = save(val);
+    Error process(T&& val, ArgsT&&... args) {
+        Error err = save(std::forward<T&&>(val));
         if (err != Error::NoError) {
             return err;
         }
         out_ << Separator;
-        return process(std::forward<ArgsT&>(args)...);
+        return process(std::forward<ArgsT&&>(args)...);
     }
 
     template <class T>
-    Error process(T& val) {
-        return save(val);
+    Error process(T&& val) {
+        return save(std::forward<T&&>(val));
     }
 };
 
@@ -112,7 +120,7 @@ public:
     template <class... ArgsT>
     Error operator()(ArgsT&... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT&>(args)...);
     }
     
 private:
@@ -120,7 +128,7 @@ private:
 
     template <class T, class... ArgsT>
     Error process(T& val, ArgsT&... args) {
-        Error err = load(val);
+        Error err = load(std::forward<T&>(val));
         if (err != Error::NoError) {
             return err;
         }
@@ -129,6 +137,7 @@ private:
 
     template <class T>
     Error process(T& val) {
-        return load(val);
+        return load(std::forward<T&>(val));
     }
 };
+
