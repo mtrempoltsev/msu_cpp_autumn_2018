@@ -24,24 +24,29 @@ public:
     }
 
 private:
-    Error process(uint64_t& a) {
+    Error c_out(uint64_t a) {
         out_ << a;
         return Error::NoError;
     }
 
-    Error process(bool& b) {
+    Error c_out(bool b) {
         out_ << (b ? "true" : "false");
         return Error::NoError;
     }
 
     template <class T>
-    Error process(T&& var) {
+    Error c_out(T var) {
         return Error::CorruptedArchive;
     }
 
+    template <class T>
+    Error process(T var) {
+        return c_out(var);
+    }
+
     template<class T, class... ArgsT>
-    Error process(T&& var, ArgsT&&... args) {
-        if (process(var) == Error::NoError) {
+    Error process(T var, ArgsT&&... args) {
+        if (c_out(var) == Error::NoError) {
             out_ << Separator;
             return process(std::forward<ArgsT>(args)...);
         }
@@ -61,12 +66,12 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT&... args) {
+    Error operator()(ArgsT&&... args) {
         return process(args...);
     }
 
 private:
-    Error process(bool& b) {
+    Error c_in(bool& b) {
         std::string s;
         in_ >> s;
         if (s == "true")
@@ -78,7 +83,7 @@ private:
         return Error::NoError;
     }
 
-    Error process(uint64_t& a) {
+    Error c_in(uint64_t& a) {
         std::string s;
         in_ >> s;
         if (s[0] == '-') {
@@ -93,12 +98,17 @@ private:
     }
 
     template<class T>
-    Error process(T& var) {
+    Error c_in(T& var) {
         return Error::CorruptedArchive;
     }
 
+    template<class T>
+    Error process(T& var) {
+        return c_in(var);
+    }
+
     template<class T, class... ArgsT>
-    Error process(T&& var, ArgsT&&... args) {
+    Error process(T& var, ArgsT&&... args) {
         if (process(var) == Error::NoError) {
             return process(std::forward<ArgsT>(args)...);
         }
