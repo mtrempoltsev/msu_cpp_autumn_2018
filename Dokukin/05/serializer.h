@@ -51,13 +51,13 @@ public:
     }
 
     template <class T>
-    Error save(T& object)
+    Error save(T&& object)
     {
         return object.serialize(*this);
     }
 
     template <class... Args>
-    Error operator()(Args... args)
+    Error operator()(Args&&... args)
     {
         return process(args...);
     }
@@ -78,6 +78,30 @@ class Deserializer
 		{
 			return process(std::forward<Args>(args)...);
 		}	
+	}
+
+	Error process(uint64_t& value)
+	{
+		std::string text;
+		in_ >> text;
+		
+		if (text == "")
+		{
+			return Error::CorruptedArchive;
+		}
+		else
+		{
+			for (auto c: text)
+			{
+				if ((c > 57) || (c < 48))
+				{
+					return Error::CorruptedArchive;
+				}
+			}
+			value = std::stoull(text);
+			
+			return Error::NoError; 		
+		}
 	}
 
 	Error process(bool& value)
@@ -103,30 +127,6 @@ class Deserializer
 		return Error::NoError;
 	}
 	
-	Error process(uint64_t& value)
-	{
-		std::string text;
-		in_ >> text;
-		
-		if (text == "")
-		{
-			return Error::CorruptedArchive;
-		}
-		else
-		{
-			for (auto c: text)
-			{
-				if ((c > 57) || (c < 48))
-				{
-					return Error::CorruptedArchive;
-				}
-			}
-			value = std::stoull(text);
-			
-			return Error::NoError; 		
-		}
-	}
-	
 public:
     explicit Deserializer(std::istream& in)
         : in_(in)
@@ -134,13 +134,13 @@ public:
     }
     
     template <class T>
-    Error load(T& object)
+    Error load(T&& object)
     {
 		return object.serialize(*this);
     }
 
     template <class... Args>
-    Error operator()(Args&... args)
+    Error operator()(Args&&... args)
     {
         return process(args...);
     }
