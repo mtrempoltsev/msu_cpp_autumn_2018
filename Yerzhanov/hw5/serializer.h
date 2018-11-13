@@ -23,31 +23,31 @@ public:
     }
 
     template <class... Args>
-    Error operator()(Args... args) {
+    Error operator()(const Args&... args) {
         return serialize(args...);
     }
 private:
     template <class T, class... Args>
-    Error serialize(T& item, Args&... args) {
-        if (serialize(item) == Error::NoError) {
-            return serialize(args...);
+    Error serialize(T&& item, Args&&... args) {
+        if (serialize(std::forward<T>(item)) == Error::NoError) {
+            return serialize(std::forward<Args>(args)...);
         } else {
             return Error::CorruptedArchive;
         }
     }
 
-    Error serialize(bool item) {
+    Error serialize(const bool& item) {
         out_ << (item ? "true" : "false") << sep;
         return Error::NoError;
     }
 
-    Error serialize(uint64_t item) {
+    Error serialize(const uint64_t& item) {
         out_ << item << sep;
         return Error::NoError;
     }
 
     template <class T>
-    Error serialize(T& item) {
+    Error serialize(const T& item) {
         return Error::CorruptedArchive;
     }
 };
@@ -70,9 +70,9 @@ public:
     }
 private:
     template<class T, class... Args>
-    Error deserialize(T& item, Args&... args) {
-        if (deserialize(item) == Error::NoError) {
-            return deserialize(args...);
+    Error deserialize(T&& item, Args&&... args) {
+        if (deserialize(std::forward<T>(item)) == Error::NoError) {
+            return deserialize(std::forward<Args>(args)...);
         } else {
             return Error::CorruptedArchive;
         }
@@ -101,5 +101,10 @@ private:
             }
         }
         return Error::NoError;
+    }
+
+    template<class T>
+    Error deserialize(T&) {
+        return Error::CorruptedArchive;
     }
 };
