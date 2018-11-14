@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 
-
 enum class Error {
     NoError,
     CorruptedArchive
@@ -23,8 +22,8 @@ public:
     }
 
     template <class... Args>
-    Error operator()(const Args&... args) {
-        return serialize(args...);
+    Error operator()(Args&&... args) {
+        return serialize(std::forward<Args>(args)...);
     }
 private:
     template <class T, class... Args>
@@ -36,18 +35,18 @@ private:
         }
     }
 
-    Error serialize(const bool& item) {
+    Error serialize(bool& item) {
         out_ << (item ? "true" : "false") << sep;
         return Error::NoError;
     }
 
-    Error serialize(const uint64_t& item) {
+    Error serialize(uint64_t& item) {
         out_ << item << sep;
         return Error::NoError;
     }
 
     template <class T>
-    Error serialize(const T& item) {
+    Error serialize(T& item) {
         return Error::CorruptedArchive;
     }
 };
@@ -65,8 +64,8 @@ public:
     }
 
     template<class... Args>
-    Error operator()(Args&... args) {
-        return deserialize(args...);
+    Error operator()(Args&&... args) {
+        return deserialize(std::forward<Args>(args)...);
     }
 private:
     template<class T, class... Args>
