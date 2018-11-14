@@ -1,6 +1,4 @@
 #include <iostream>
-#include <sstream>
-#include <cstring>
 
 #pragma once
 
@@ -100,24 +98,5 @@ private:
         if (load(val) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         return process(std::forward<Args>(args)...);
-    }
-};
-
-#include <iostream>
-#include <sstream>
-
-#define checkEqual(x, y) do { if ((x) != (y)) { std::cout << "at line " << __LINE__ << ": " << (x) << " != " << (y) << '\n'; }; } while(0)
-#define checkTrue(cond) do { if (!(cond)) std::cout << "at line " << __LINE__ << ": " << #cond << '\n'; } while(0)
-
-struct Data
-{
-    uint64_t a;
-    bool b;
-    uint64_t c;
-
-    template <class Serializer>
-    Error serialize(Serializer& serializer)
-    {
-        return serializer(a, b, c);
     }
 };
