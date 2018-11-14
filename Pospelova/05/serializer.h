@@ -17,7 +17,7 @@ public:
 	template <class T>
 	Error save(T& object) {return object.serialize(*this);}
 	template <class... ArgsT>
-	Error operator()(ArgsT... args) {return process(args...);}
+	Error operator()(ArgsT&&... args) {return process(forward<ArgsT>(args)...);}
 private:
 	static constexpr char Separator = ' ';
 	ostream& out_;
@@ -47,7 +47,7 @@ public:
 	template <class T>
 	Error load(T& object) {return object.serialize(*this);}
 	template <class... ArgsT>
-	Error operator()(ArgsT&&... args) {return process(args...);}
+	Error operator()(ArgsT&&... args) {return process(forward<ArgsT>(args)...);}
 private:
 	istream& in_;
 	template <class T, class... ArgsT>
