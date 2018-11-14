@@ -21,13 +21,13 @@ class Serializer
         return process(forward<Args>(args)...);
     }
 
-    Error process(uint64_t& val)
+    Error process(uint64_t val)
     {
         out_ << val << Separator;
         return Error::NoError;
     }
 
-    Error process(bool& val)
+    Error process(bool val)
     {
         if (val)
             out_ << "true" << Separator;
@@ -36,10 +36,9 @@ class Serializer
         return Error::NoError;
     }
 
-    template <class T>
-    Error process(T& val)
+    Error process()
     {
-        return Error::CorruptedArchive;
+        return Error::NoError;
     }
 public:
     explicit Serializer(ostream& out)
@@ -56,7 +55,7 @@ public:
     template <class... ArgsT>
     Error operator()(ArgsT... args)
     {
-        return process(args...);
+        return process(forward<Args>(args)...);
     }
 };
 
@@ -104,10 +103,9 @@ class Deserializer
         return Error::NoError;
     }
 
-    template <class T>
-    Error process(T& val)
+    Error process()
     {
-        return Error::CorruptedArchive;
+        return Error::NoError;
     }
 
 public:
@@ -122,9 +120,9 @@ public:
         return object.serialize(*this);
     }
 
-    template <class... ArgsT>
-    Error operator()(ArgsT&&... args)
+    template <class... Args>
+    Error operator()(Args&&... args)
     {
-        return process(forward<ArgsT>(args)...);
+        return process(forward<Args>(args)...);
     }
 };
