@@ -17,101 +17,101 @@ class BigInt {
     
 private:
     
-    int size_arr;
-    int size_num;
-    bool sign;
-    char *number;
+    int vec_size_;
+    int num_size_;
+    bool sign_;
+    char *number_;
     
 public:
     
     BigInt(long long a = 0) {
-        sign = 0;
+        sign_ = 0;
         if (a < 0) {
             a = -a;
-            sign = 1;
+            sign_ = 1;
         }
-        size_arr = 32;
-        number = new char[size_arr];
+        vec_size_ = 32;
+        number_ = new char[vec_size_];
         if (a == 0)
-            number[0] = 0;
+            number_[0] = 0;
         int i = 0;
         while (a > 0) {
-            number[i++] = a % 10;
+            number_[i++] = a % 10;
             a /= 10;
         }
-        size_num = (i == 0) ? 1 : i;
-        for (int i = size_num; i < size_arr; ++i)
-            number[i] = 0;
+        num_size_ = (i == 0) ? 1 : i;
+        for (int i = num_size_; i < vec_size_; ++i)
+            number_[i] = 0;
     }
     
     ~BigInt() {
-        delete[] number;
+        delete[] number_;
     }
     
     BigInt(const BigInt &copied) {
-        size_arr = copied.size_arr;
-        size_num = copied.size_num;
-        sign = copied.sign;
-        number = new char[size_arr];
-        for (int i = 0; i < size_arr; i++) {
-            number[i] = copied.number[i];
+        vec_size_ = copied.vec_size_;
+        num_size_ = copied.num_size_;
+        sign_ = copied.sign_;
+        number_ = new char[vec_size_];
+        for (int i = 0; i < vec_size_; i++) {
+            number_[i] = copied.number_[i];
         }
     }
     
     BigInt& operator= (const BigInt& copied) {
         if (this == &copied)
             return *this;
-        delete[] number;
-        number = new char[copied.size_arr];
-        size_arr = copied.size_arr;
-        size_num = copied.size_num;
-        sign = copied.sign;
-        for (int i = 0; i < size_arr; i++)
-            number[i] = copied.number[i];
+        delete[] number_;
+        number_ = new char[copied.vec_size_];
+        vec_size_ = copied.vec_size_;
+        num_size_ = copied.num_size_;
+        sign_ = copied.sign_;
+        for (int i = 0; i < vec_size_; i++)
+            number_[i] = copied.number_[i];
         return *this;
     }
     
     BigInt operator- () const {
         BigInt tmp = *this;
         if (*this != 0)
-            tmp.sign = (sign == 1) ? 0 : 1;
+            tmp.sign_ = (sign_ == 1) ? 0 : 1;
         return tmp;
     }
     
     BigInt operator+ (const BigInt &rvalue) const {
         if (rvalue == 0)
             return *this;
-        if (sign == rvalue.sign) {
-            if (size_num < rvalue.size_num)
+        if (sign_ == rvalue.sign_) {
+            if (num_size_ < rvalue.num_size_)
                 return (rvalue + *this);
             BigInt res;
-            res.sign = sign;
-            res.size_arr = size_arr;
-            if (size_num + 1 > size_arr) {
-                res.size_arr = 2 * size_arr;
-                delete[] res.number;
-                res.number = new char[res.size_arr];
-                for (int i = 0; i < size_arr; ++i)
-                    res.number[i] = 0;
+            res.sign_ = sign_;
+            res.vec_size_ = vec_size_;
+            if (num_size_ + 1 > vec_size_) {
+                res.vec_size_ = 2 * vec_size_;
+                delete[] res.number_;
+                res.number_ = new char[res.vec_size_];
+                for (int i = 0; i < vec_size_; ++i)
+                    res.number_[i] = 0;
             }
             int flag = 0;
-            for (int i = 0; i <= size_num; ++i) {
-                if (i < rvalue.size_num && i < size_num)
-                    res.number[i] = number[i] + rvalue.number[i] + flag;
-                else if (i < size_num)
-                    res.number[i] = number[i] + flag;
+            for (int i = 0; i <= num_size_; ++i) {
+                if (i < rvalue.num_size_ && i < num_size_)
+                    res.number_[i] = number_[i] + rvalue.number_[i] + flag;
+                else if (i < num_size_)
+                    res.number_[i] = number_[i] + flag;
                 else if (flag)
-                    res.number[i] = 1;
-                if (res.number[i] > 9) {
-                    res.number[i] -= 10;
+                    res.number_[i] = 1;
+                if (res.number_[i] > 9) {
+                    res.number_[i] -= 10;
                     flag = 1;
                 } else
                     flag = 0;
             }
-            if (res.number[size_num] > 0)
-                res.size_num = size_num + 1;
+            if (res.number_[num_size_] > 0)
+                res.num_size_ = num_size_ + 1;
             else
-                res.size_num = size_num;
+                res.num_size_ = num_size_;
             return res;
         } else
             return (*this - (-rvalue));
@@ -120,35 +120,35 @@ public:
     BigInt operator- (const BigInt &rvalue) const {
         if (rvalue == 0)
             return *this;
-        if (sign == rvalue.sign) {
+        if (sign_ == rvalue.sign_) {
             if (*this == rvalue)
                 return 0;
-            if ((!sign) && (*this < rvalue))
+            if ((!sign_) && (*this < rvalue))
                 return -(rvalue - *this);
-            if ((sign) && (*this > rvalue))
+            if ((sign_) && (*this > rvalue))
                 return -(rvalue - *this);
             BigInt res;
-            res.sign = sign;
-            res.size_arr = size_arr;
-            res.size_num = size_num;
-            delete[] res.number;
-            res.number = new char[res.size_arr];
-            for (int i = 0; i < size_arr; ++i)
-                res.number[i] = 0;
+            res.sign_ = sign_;
+            res.vec_size_ = vec_size_;
+            res.num_size_ = num_size_;
+            delete[] res.number_;
+            res.number_ = new char[res.vec_size_];
+            for (int i = 0; i < vec_size_; ++i)
+                res.number_[i] = 0;
             int flag = 0;
-            for (int i = 0; i < size_num; ++i) {
-                if (i < rvalue.size_num)
-                    res.number[i] = number[i] - rvalue.number[i] + flag;
+            for (int i = 0; i < num_size_; ++i) {
+                if (i < rvalue.num_size_)
+                    res.number_[i] = number_[i] - rvalue.number_[i] + flag;
                 else
-                    res.number[i] = number[i] + flag;
-                if (res.number[i] < 0) {
-                    res.number[i] += 10;
+                    res.number_[i] = number_[i] + flag;
+                if (res.number_[i] < 0) {
+                    res.number_[i] += 10;
                     flag = -1;
                 } else
                     flag = 0;
             }
-            while (res.number[res.size_num - 1] == 0 && res.size_num != 1)
-                res.size_num--;
+            while (res.number_[res.num_size_ - 1] == 0 && res.num_size_ != 1)
+                res.num_size_--;
             return res;
         } else
             return (*this + (-rvalue));
@@ -158,10 +158,10 @@ public:
         if (this == &rvalue)
             return 1;
         else {
-            if ((sign != rvalue.sign) || (size_num != rvalue.size_num))
+            if ((sign_ != rvalue.sign_) || (num_size_ != rvalue.num_size_))
                 return 0;
-            for (int i = 0; i < size_num; i++)
-                if (number[i] != rvalue.number[i])
+            for (int i = 0; i < num_size_; i++)
+                if (number_[i] != rvalue.number_[i])
                     return 0;
         }
         return 1;
@@ -170,19 +170,19 @@ public:
     bool operator< (const BigInt &rvalue) const {
         if (*this == rvalue)
             return 0;
-        if (sign > rvalue.sign)
+        if (sign_ > rvalue.sign_)
             return 1;
-        if (sign < rvalue.sign)
+        if (sign_ < rvalue.sign_)
             return 0;
-        if (size_num > rvalue.size_num)
-            return (sign == 0) ? 0 : 1;
-        if (size_num < rvalue.size_num)
-            return (sign == 0) ? 1 : 0;
-        for (int i = size_num - 1; i >= 0; --i) {
-            if (number[i] > rvalue.number[i])
-                return (sign == 0) ? 0 : 1;
-            if (number[i] < rvalue.number[i])
-                return (sign == 0) ? 1 : 0;
+        if (num_size_ > rvalue.num_size_)
+            return (sign_ == 0) ? 0 : 1;
+        if (num_size_ < rvalue.num_size_)
+            return (sign_ == 0) ? 1 : 0;
+        for (int i = num_size_ - 1; i >= 0; --i) {
+            if (number_[i] > rvalue.number_[i])
+                return (sign_ == 0) ? 0 : 1;
+            if (number_[i] < rvalue.number_[i])
+                return (sign_ == 0) ? 1 : 0;
         }
         return 0;
     }
@@ -208,10 +208,10 @@ public:
 };
 
 ostream &operator<< (ostream &out, const BigInt &obj) {
-    if (obj.sign == 1)
+    if (obj.sign_ == 1)
         out << '-';
-    for (int i = obj.size_num - 1; i >= 0; --i)
-        out << obj.number[i] - 0;
+    for (int i = obj.num_size_ - 1; i >= 0; --i)
+        out << obj.number_[i] - 0;
     return out;
 }
 
