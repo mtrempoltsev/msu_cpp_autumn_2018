@@ -49,13 +49,13 @@ private:
     }
 
     template <class T>
-    Error process(T& value)
+    Error process(T value)
     {
         return Error::CorruptedArchive;
     }
 
     template <class T, class... ArgsT>
-    Error process(T& value, ArgsT&... args)
+    Error process(T value, ArgsT... args)
     {
         if (process(value) == Error::NoError) {
 		return process(args...);
