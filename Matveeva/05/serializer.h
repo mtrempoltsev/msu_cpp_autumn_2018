@@ -52,8 +52,8 @@ public:
         return object.serialize(*this);
     }
 
-    template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    template <class... Args>
+    Error operator()(Args... args)
     {
         return process(forward<Args>(args)...);
     }
