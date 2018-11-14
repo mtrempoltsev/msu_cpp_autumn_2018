@@ -79,5 +79,5 @@ private:
 		return Error::NoError;
 	}
 	template <class T>
-	Error process(T& data) {return Error::CorruptedArchive;}
+	Error process() {return Error::CorruptedArchive;}
 };
