@@ -32,7 +32,7 @@ private:
     std::ostream& out_;
 
     template <class T, class... ArgsT>
-    Error process(T val, ArgsT&&... args)
+    Error process(T&& val, ArgsT&&... args)
     {
         Error er = process(val);
         if(er == Error::NoError)
@@ -95,13 +95,17 @@ private:
     {
         std::string strVal;
         in_ >> strVal;
-        if(isdigit(strVal[0]))
+        try
         {
-            std::stringstream tmp(strVal);
-            tmp >> val;
-            return Error::NoError;
+            if(strVal[0] == '-')
+                throw std::invalid_argument("Negative number");
+            val = std::stoull(strVal);
         }
-        return Error::CorruptedArchive;
+        catch(std::exception& ex)
+        {
+            return Error::CorruptedArchive;
+        }
+        return Error::NoError;
     }
 
     Error process(bool& val)
