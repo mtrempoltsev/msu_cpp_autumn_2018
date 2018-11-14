@@ -23,7 +23,7 @@ public:
 
     template <class... Args>
     Error operator()(Args&&... args) {
-        return serialize(std::forward<Args>(args)...);
+        return serialize(args...);
     }
 private:
     template <class T, class... Args>
@@ -65,7 +65,7 @@ public:
 
     template<class... Args>
     Error operator()(Args&&... args) {
-        return deserialize(std::forward<Args>(args)...);
+        return deserialize(args...);
     }
 private:
     template<class T, class... Args>
