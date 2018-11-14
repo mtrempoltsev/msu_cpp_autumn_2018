@@ -86,12 +86,12 @@ private:
     Error c_in(uint64_t& a) {
         std::string s;
         in_ >> s;
-        if (s[0] == '-') {
-            return Error::CorruptedArchive;
-        }
         try {
+            if (s[0] == '-') {
+                throw std::invalid_argument("");
+            }
             a = std::stoull(s.c_str());
-        } catch (std::invalid_argument) {
+        } catch (std::exception& exc) {
             return Error::CorruptedArchive;
         }
         return Error::NoError;
