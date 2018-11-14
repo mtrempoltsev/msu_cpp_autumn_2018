@@ -21,18 +21,12 @@ public:
     Error save(T& object) { return object.serialize(*this); }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args) { return process(args...); }
+    Error operator()(ArgsT&&... args) { return process(args...); }
 
 
 private:
     
-    template <class T>
-    Error process(T&& pos)
-    {
-        return Error::CorruptedArchive;
-    }
-    
-    Error process(bool& pos)
+    Error process(bool pos)
     {
         if (pos)
             out_ << "true" << Separator;
@@ -42,7 +36,7 @@ private:
         return Error::NoError;
     }
     
-    Error process(uint64_t& pos)
+    Error process(uint64_t pos)
     {
         out_ << pos << Separator;
 
@@ -78,16 +72,9 @@ public:
     Error load(T& object) { return object.serialize(*this); }
 
     template <class... ArgsT>
-    Error operator()(ArgsT&... args) { return process(args...); }
-    //необходимо передавать аргумент по ссылке 
+    Error operator()(ArgsT&&... args) { return process(args...); }
 
 private:
-    
-    template <class T>
-    Error process(T&& pos)
-    {
-        return Error::CorruptedArchive;
-    }
 
     Error process(bool& value)
     {
@@ -127,7 +114,7 @@ private:
     Error process(T&& pos, Args&&... args)
     {
         if (process(pos) == Error::NoError)
-            return process(std::forward<Args>(args)...);
+            return process(std::forward<Args&&>(args)...);
         else
             return Error::CorruptedArchive;
     }
