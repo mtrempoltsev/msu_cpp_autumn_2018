@@ -24,13 +24,13 @@ class Serializer
 		}
 	}
 	
-	Error process (uint64_t& value)
+	Error process (uint64_t value)
 	{
 		out_ << value << Separator;
 		return Error::NoError;
 	}
 	
-	Error process (bool& value)
+	Error process (bool value)
 	{
 		if (value)
 		{
@@ -59,7 +59,7 @@ public:
     template <class... Args>
     Error operator()(Args&&... args)
     {
-        return process(args...);
+        return process(std::forward<Args>(args)...);
     }
 };
 
@@ -134,7 +134,7 @@ public:
     }
     
     template <class T>
-    Error load(T&& object)
+    Error load(T& object)
     {
 		return object.serialize(*this);
     }
@@ -142,6 +142,6 @@ public:
     template <class... Args>
     Error operator()(Args&&... args)
     {
-        return process(args...);
+        return process(std::forward<Args>(args)...);
     }
 };
