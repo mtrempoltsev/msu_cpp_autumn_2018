@@ -19,7 +19,7 @@ public:
     template <class... ArgsT>
     Error operator()(ArgsT... args)
     {
-        return process(args...);
+        return process(forward<ArgsT>(args)...);
     }
 private:
     static constexpr char Separator = ' ';
