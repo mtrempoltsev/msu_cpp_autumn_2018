@@ -24,13 +24,13 @@ class Serializer
 		}
 	}
 	
-	Error process (uint64_t& value)
+	Error process (uint64_t value)
 	{
 		out_ << value << Separator;
 		return Error::NoError;
 	}
 	
-	Error process (bool& value)
+	Error process (bool value)
 	{
 		if (value)
 		{
