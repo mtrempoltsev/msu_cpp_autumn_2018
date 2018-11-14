@@ -175,6 +175,27 @@ public:
     bool operator!=(const BigInt& other){
         return !(*this == other);
     }
+    BigInt(BigInt&& moved)
+        : value(moved.value)
+        , value_size(moved.value_size)
+        , is_neg(moved.is_neg)
+    {
+        moved.value = nullptr;
+        moved.value_size = 0;
+    }
+
+    BigInt& operator=(BigInt&& moved)
+    {
+        if (this == &moved)
+            return *this;
+        delete[] value;
+        value = moved.value;
+        value_size = moved.value_size;
+        is_neg = moved.is_neg;
+        moved.value = nullptr;
+        moved.value_size = 0;
+        return *this;
+    }
     friend ostream& operator<<(ostream& out, const BigInt& x);
 };
 

@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
         int64_t res = calc.calculate();
         cout << res << endl;
     }
-    catch(invalid_argument ex) {
+    catch(invalid_argument& ex) {
         cout << "error" << endl;
         return 1;
     }
