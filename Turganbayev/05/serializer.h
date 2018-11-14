@@ -37,7 +37,7 @@ private:
         return process(std::forward<ArgsT>(args)...);
     }
 
-    Error process(bool& value) {
+    Error process(bool value) {
         if (value) {
             out_ << "true" << Separator;
         } else {
@@ -46,13 +46,13 @@ private:
         return Error::NoError;
     }
 
-    Error process(uint64_t& value) {
+    Error process(uint64_t value) {
         out_ << value << Separator;
         return Error::NoError;
     }
 
     template <class T>
-    Error process(T& value) {
+    Error process(T&& value) {
         return Error::CorruptedArchive;
     }
 
@@ -118,7 +118,7 @@ private:
     }
 
     template <class T>
-    Error process(T& value) {
+    Error process(T&& value) {
         return Error::CorruptedArchive;
     }
 };
