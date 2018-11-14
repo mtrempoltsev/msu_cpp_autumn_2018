@@ -62,7 +62,6 @@ public:
 
 class Deserializer
 {
-    static constexpr char Separator = ' ';
     istream& in_;
 
     template <class T, class... Args>
