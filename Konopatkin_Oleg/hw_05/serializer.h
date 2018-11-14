@@ -36,7 +36,7 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    Error operator()(ArgsT&&... args)
     {
         return process(std::forward<ArgsT>(args)...);
     }
@@ -45,7 +45,7 @@ private:
     std::ostream& out_;
 
     template <class T, class... ArgsT>
-    Error process(T val, ArgsT... args) {
+    Error process(T&& val, ArgsT&&... args) {
         Error err = save(std::forward<T>(val));
         if (err != Error::NoError) {
             return err;
@@ -55,7 +55,7 @@ private:
     }
 
     template <class T>
-    Error process(T val) {
+    Error process(T&& val) {
         return save(std::forward<T>(val));
     }
 };
