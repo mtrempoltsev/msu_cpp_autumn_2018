@@ -2,6 +2,7 @@
 #include <limits>
 #include <cstring>
 
+//length - without \0
 
 class BigInt {
 public:
@@ -9,9 +10,7 @@ public:
     signed char sign = 1;
     size_t length;
 
-    BigInt(char *d, char s, size_t l) : sign(s), length(l) {
-        data = static_cast<char *>(malloc(length + 1));
-        strcpy(data, d);
+    BigInt(char *d, char s, size_t l) : data(d), sign(s), length(l) {
         if (data[0] == '0')//потому что at line 280: -0 != 0.
             sign = 1;
     }
@@ -29,13 +28,13 @@ public:
         delete[] data;
     }
 
-    BigInt() : sign(1), length(2) {
-        data = new char[length];
+    BigInt() : sign(1), length(1) {
+        data = new char[length+1];
         sprintf(data, "%i", 0);
     }
 
     BigInt(const int64_t init) {
-        length = sizeof(int64_t);
+        length = 20; //чтоб влезал максимальный инт
         data = new char[length];
         if (init < 0)
             sign = -1;
@@ -46,7 +45,8 @@ public:
 
     BigInt(const BigInt &bi) {
         length = bi.length;
-        data = bi.data;
+        data = new char [length+1];
+        strcpy(data, bi.data);
         sign = bi.sign;
     }
 
@@ -61,7 +61,7 @@ public:
     BigInt &operator=(const BigInt &copied) {
         if (this == &copied)
             return *this;
-        char *ptr = new char[copied.length];
+        char *ptr = new char[copied.length + 1];
         delete[] data;
         strcpy(ptr, copied.data);
         data = ptr;
@@ -140,7 +140,10 @@ public:
         for (size_t i = tmp_len - 1; sub2_last + 1 > 0; --i, --sub1_last, --sub2_last) {
             int sub = this->data[sub1_last] - sub2.data[sub2_last] - shift;
             if (sub < 0) {
-                if (i == 0) { return -(sub2 - *this); }
+                if (i == 0) {
+                    delete[] tmp_data;
+                    return -(sub2 - *this);
+                }
                 sub += 10;
                 shift = 1;
             } else
@@ -163,19 +166,20 @@ public:
     }
 
     BigInt operator-() const {
-        return BigInt(data, -sign, length);
+        char * tmp_data = new char[length+1];
+        strcpy(tmp_data, data);
+        return BigInt(tmp_data, -sign, length);
     }
 
     BigInt operator+() const {
-        return BigInt(data, sign, length);
+        char * tmp_data = new char[length+1];
+        strcpy(tmp_data, data);
+        return BigInt(tmp_data, sign, length);
     }
 
     bool operator==(const BigInt &cmp2) const {
         BigInt tmp = *this - cmp2;
-        for (size_t i = 0; i < tmp.length; ++i)
-            if (tmp.data[i] != '0')
-                return false;
-        return true;
+        return strcmp(tmp.data, "0") == 0;
     }
 
     bool operator!=(const BigInt &cmp2) const {
