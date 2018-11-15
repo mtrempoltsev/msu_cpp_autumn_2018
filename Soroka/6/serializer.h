@@ -42,7 +42,7 @@ private:
     template <class T, class... Args>
     Error process(T&& val, Args&&... args)
     {
-        if (process(val) == Error::CorruptedArchive) {
+        if (process(std::forward<T>(val)) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
         out_ << Separator;
@@ -110,7 +110,7 @@ private:
     template <class T, class... Args>
     Error process(T&& val, Args&&... args)
     {
-        if (process(val) == Error::CorruptedArchive) {
+        if (process(std::forward<T>(val)) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
         return process(std::forward<Args>(args)...);
