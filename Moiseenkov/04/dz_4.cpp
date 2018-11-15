@@ -95,8 +95,7 @@ public:
 
     BigInt(const BigInt& copied): size(copied.size), capacity(copied.capacity), sign(copied.sign)
     {
-        if (data != nullptr)
-            delete[] data;
+
         data = new char[capacity];
         
         std::memcpy(data, copied.data, capacity * sizeof(char));
