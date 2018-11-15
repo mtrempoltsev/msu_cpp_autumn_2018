@@ -14,7 +14,7 @@ std::string argtostr(T&& arg)
 template<class... ArgsT>
 std::vector<std::string> argtostrvec(ArgsT&& ... args)
 {
-    return std::vector<std::string> {{argtostr(args)...}};
+    return std::vector<std::string> {{argtostr(std::forward<ArgsT>(args))...}};
 }
 
 template<class... ArgsT>
