@@ -94,4 +94,3 @@ private:
         return Error::CorruptedArchive;
     }
 };
-

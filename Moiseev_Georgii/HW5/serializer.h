@@ -36,50 +36,35 @@ public:
 private:
     std::ostream& out_;
 
-    template <class... ArgsT>
-    Error process(uint64_t x, ArgsT&&... args)
-    {
-        out_ << x << Separator;
-        return process(std::forward<ArgsT>(args)...);
-    }
-
-    template <class... ArgsT>
-    Error process(bool x, ArgsT&&... args)
-    {
-        if (x == true)
-            out_ << "true" << Separator;
-        else
-            out_ << "false" << Separator;
-        return process(std::forward<ArgsT>(args)...);
-    }
-
     template <class T, class... ArgsT>
     Error process(T x, ArgsT&&... args)
     {
-        return Error::CorruptedArchive;
-    }
-
-    Error process(uint64_t x)
-    {
-        out_ << x;
-        return Error::NoError;
-    }
-
-    Error process(bool x)
-    {
-        if (x == true)
-            out_ << "true";
-        else
-            out_ << "false";
-        return Error::NoError;
+        write(x);
+        out_ << Separator;
+        return process(std::forward<ArgsT>(args)...);
     }
 
     template <class T>
     Error process(T x)
     {
-        return Error::CorruptedArchive;
+        write(x);
+        return Error::NoError;
+    }
+
+    void write(bool x)
+    {
+        if (x == true)
+            out_ << "true";
+        else
+            out_ << "false";
+    }
+
+    void write(uint64_t x)
+    {
+        out_ << x;
     }
 };
+
 
 class Deserializer
 {
@@ -104,8 +89,44 @@ public:
 private:
     std::istream& in_;
 
-    template <class... ArgsT>
-    Error process(uint64_t& x, ArgsT&&... args)
+    template <class T, class... ArgsT>
+    Error process(T& x, ArgsT&&... args)
+    {
+        if (read(x) == false)
+            return Error::CorruptedArchive;
+
+        return process(std::forward<ArgsT>(args)...);
+    }
+
+    template <class T>
+    Error process(T& x)
+    {
+        if (read(x) == false)
+            return Error::CorruptedArchive;
+
+        return Error::NoError;
+    }
+
+    bool read(bool& x)
+    {
+        std::string term;
+        in_ >> term;
+
+        if (term == "true")
+        {
+            x = true;
+            return true;
+        }
+        else if (term == "false")
+        {
+            x = false;
+            return true;
+        }
+        else
+            return false;
+    }
+
+    bool read(uint64_t& x)
     {
         static_assert(sizeof(unsigned long long) == sizeof(uint64_t), "ull not large enough");
 
@@ -115,66 +136,15 @@ private:
         try
         {
             if (term[0] == '-')
-                return Error::CorruptedArchive;
+                return false;
 
             x = std::stoull(term);
         }
         catch (std::exception& e)
         {
-            return Error::CorruptedArchive;
+            return false;
         }
 
-        return process(std::forward<ArgsT>(args)...);
-    }
-
-    template <class... ArgsT>
-    Error process(bool& x, ArgsT&&... args)
-    {
-        std::string term;
-        in_ >> term;
-
-        if (term == "true")
-            x = true;
-        else if (term == "false")
-            x = false;
-        else
-            return Error::CorruptedArchive;
-        return process(std::forward<ArgsT>(args)...);
-    }
-
-    Error process(uint64_t& x)
-    {
-        static_assert(sizeof(unsigned long long) == sizeof(uint64_t), "ull not large enough");
-
-        std::string term;
-        in_ >> term;
-
-        try
-        {
-            if (term[0] == '-')
-                return Error::CorruptedArchive;
-
-            x = std::stoull(term);
-        }
-        catch (std::exception& e)
-        {
-            return Error::CorruptedArchive;
-        }
-
-        return Error::NoError;
-    }
-
-    Error process(bool& x)
-    {
-        std::string term;
-        in_ >> term;
-
-        if (term == "true")
-            x = true;
-        else if (term == "false")
-            x = false;
-        else
-            return Error::CorruptedArchive;
-        return Error::NoError;
+        return true;
     }
 };

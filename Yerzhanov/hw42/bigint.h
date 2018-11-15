@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cstring>
 #include <cstdio>
-#include <string>
 
 
 class BigInt {
@@ -14,16 +13,23 @@ private:
 public:
     BigInt(int64_t val = 0)
             :   data_(nullptr)
-            ,   is_pos_(true)
+            ,   is_pos_(val >= 0)
             ,   size_(0) {
-        if (val < 0) {
+        if (!is_pos_) {
             val *= -1;
-            is_pos_ = false;
         }
-        std::string tmp = std::to_string(val);
-        size_ = tmp.size();
+        int64_t tmp = val;
+        do {
+            ++size_;
+            tmp /= 10;
+        } while (tmp);
         data_ = new char[size_ + 1];
-        std::strcpy(data_, tmp.c_str());
+        data_[size_] = 0;
+        for (size_t i = size_ - 1; i > 0; --i) {
+            data_[i] = val % 10 + '0';
+            val /= 10;
+        }
+        data_[0] = val + '0';
     }
 
     BigInt(const BigInt& s)
@@ -40,7 +46,7 @@ public:
         std::swap(data_, s.data_);
     }
 
-    ~BigInt(void) {
+    ~BigInt() {
         if (data_ != nullptr) {
             delete[] data_;
         }
@@ -91,7 +97,7 @@ public:
     bool operator<=(const BigInt& s) const { return !(*this > s); }
     bool operator!=(const BigInt& s) const { return !(*this == s); }
 
-    BigInt operator-(void) const {
+    BigInt operator-() const {
         BigInt ret = *this;
         ret.is_pos_ ^= true;
         return ret;
@@ -121,17 +127,16 @@ public:
             mod[max - i] = tmp % 10 + '0';
             ovf = tmp / 10;
         }
+        mod[max + 1] = 0;
         if (ovf != 0) {
             mod[0] = ovf + '0';
             ret.data_ = new char[max + 2];
-            std::copy(mod, mod + max + 1, ret.data_);
+            std::copy(mod, mod + max + 2, ret.data_);
             ret.size_ = max + 1;
-            ret.data_[max + 1] = 0;
         } else {
             ret.data_ = new char[max + 1];
-            std::copy(mod + 1, mod + max + 1, ret.data_);
+            std::copy(mod + 1, mod + max + 2, ret.data_);
             ret.size_ = max;
-            ret.data_[max] = 0;
         }
         if (mod != nullptr) {
             delete[] mod;
@@ -179,10 +184,13 @@ public:
             }
             return ret;
         }
+        mod[max] = 0;
         ret.data_ = new char[max - k + 2];
-        std::copy(mod + k - 1, mod + max, ret.data_);
-        ret.data_[max - k + 1] = 0;
+        std::copy(mod + k - 1, mod + max + 1, ret.data_);
         ret.size_ = max - k + 1;
+        if (mod != nullptr) {
+            delete[] mod;
+        }
         return ret;
     }
     friend std::ostream& operator<<(std::ostream& out, const BigInt& self);

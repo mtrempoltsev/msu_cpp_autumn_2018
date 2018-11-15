@@ -3,26 +3,37 @@
 #include <cstring>
 
 
-const unsigned int BASE = 1e9;
+const uint64_t BASE = 1e18;
 
 
 class BigInt
 {
 public:
-	BigInt(const int num = 0)
+	BigInt(const int64_t num = 0)
 		: capacity(1)
 		, length(1)
 	{
-		data = static_cast<int64_t *>(std::calloc(1, sizeof(int64_t)));
-		//TODO:
-		//case num = 1 234 234 234
+		int64_t tmp_num;
 
 		if (num < 0) {
-			data[0] = -num;
+			tmp_num = -num;
 			is_positive = false;
 		} else {
-			data[0] = num;
+			tmp_num = num;
 			is_positive = true;
+		}
+
+		if (tmp_num / BASE == 0) {
+			data = static_cast<int64_t *>(std::calloc(capacity, sizeof(int64_t)));
+
+			data[0] = tmp_num;
+		} else {
+			capacity = 2;
+			length = 2;
+			data = static_cast<int64_t *>(std::calloc(capacity, sizeof(int64_t)));
+
+			data[0] = tmp_num % BASE;
+			data[1] = tmp_num / BASE;
 		}
 	}
 
@@ -39,7 +50,6 @@ public:
 
 	~BigInt()
 	{	
-		//std::cout <<"call destructor for " << *this << "\n";
 		std::free(data);
 	}
 
@@ -60,7 +70,6 @@ public:
 			data[i] = other.data[i];
 		}
 		//memcpy(data, other.data, length * sizeof(int64_t));
-		//std::cout << "element after: " << *this << "\n";
 
 		return *this;
 	}
@@ -136,8 +145,8 @@ public:
         	}
 
         	for (size_t i = 0; i < tmp.length - 1; i++) {
-        		tmp.data[i + 1] += tmp.data[i] % BASE;
-        		tmp.data[i] /= BASE;
+        		tmp.data[i + 1] += tmp.data[i] / BASE;
+        		tmp.data[i] %= BASE;
         	}
 
         	if (tmp.data[tmp.length - 1] / BASE != 0) {
@@ -148,7 +157,6 @@ public:
         		tmp.data[tmp.length - 2] %= BASE;
         	}
         }
-
         return tmp;
     }
 
@@ -292,7 +300,7 @@ std::ostream& operator <<(std::ostream &os, const BigInt& c)
 
 	for (int i = c.length - 2; i >= 0; i--) {
 		len = std::to_string(c.data[i]).length();
-		while (len < 9) { //9 or 10
+		while (len < 18) { //9 or 10
 			os << 0;
 			len++;
 		}
@@ -302,22 +310,3 @@ std::ostream& operator <<(std::ostream &os, const BigInt& c)
     
     return os;
 }
-
-// int main()
-// {
-// 	BigInt x(10);
-// 	BigInt x1(-10);
-
-// 	BigInt y(9);
-
-// 	BigInt a(999999999);
-// 	BigInt b(999999999);
-
-// 	BigInt z = a + b;
-
-
-// 	//std::cout << z << "\n";
-// 	std::cout << x1 + x << "\n";
-
-// 	return 0;
-// }

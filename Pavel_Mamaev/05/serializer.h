@@ -48,17 +48,11 @@ public:
         return Error::NoError;
     }
     Error process(uint64_t value) {
-        string text;
-        while (value){
-            text += (value % 10 +'0');
-            value /= 10;
-        }
-        reverse(begin(text), end(text));
-        out_ << text << Separator;
+        out_ << value << Separator;
         return Error::NoError;
     }
     template <class T>
-    Error process(T& value) {
+    Error process(T&& value) {
         return Error::CorruptedArchive;
     }
     template <class T, class... Args>
@@ -70,9 +64,8 @@ public:
         return tmp;
     }
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
-    {
-        return process(args...);
+    Error operator()(ArgsT&&... args) {
+        return process(forward<ArgsT>(args)...);
     }
     
     
@@ -125,8 +118,7 @@ public:
         return object.serialize(*this);
     }
     template <class... ArgsT>
-    Error operator()(ArgsT&&... args)
-    {
-        return process(args...);
+    Error operator()(ArgsT&&... args) {
+        return process(forward<ArgsT>(args)...);
     }
 };

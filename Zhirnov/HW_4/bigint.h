@@ -125,7 +125,7 @@ public:
         delete[] innerData;
     }
 
-    BigInt& operator=(BigInt &elem)
+    BigInt& operator=(const BigInt &elem)
     {
         if (&elem == this)
             return *this;
