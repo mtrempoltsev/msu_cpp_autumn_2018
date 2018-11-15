@@ -19,7 +19,7 @@ public:
 
     template<class... ArgsT>
     Error operator()(ArgsT... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 private:
@@ -36,7 +36,7 @@ private:
     }
 
     template<class T>
-    Error out_object(T &val) {
+    Error out_object(T &&) {
         return Error::CorruptedArchive;
     }
 
@@ -66,7 +66,7 @@ public:
 
     template<class... ArgsT>
     Error operator()(ArgsT &&... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 private:
@@ -75,7 +75,7 @@ private:
     Error load(uint64_t &value) {
         std::string str;
         in_ >> str;
-        if ((str[0] == '-') || (str[0] == '\0'))
+        if ((str.empty()) || (str[0] == '-') || (str[0] == '\0'))
             return Error::CorruptedArchive;
         value = stoul(str);
         return Error::NoError;
@@ -96,7 +96,7 @@ private:
     }
 
     template<class T>
-    Error process(T &val) {
+    Error process(T &&val) {
         return load(val);
     }
 
