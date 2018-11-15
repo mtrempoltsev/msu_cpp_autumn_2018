@@ -27,7 +27,7 @@ public:
 			sign = 0;
 		else
 			sign = 1;
-		size = sizeof(n)/4 + 1;
+		size = sizeof(n) / 4 + 1;
 		Biginteger = new int [size];
 		for(int i = 0; i < size; ++i)
 		{
@@ -66,7 +66,7 @@ public:
 		for (int i = 0; i < MAX_Int.size - 1; ++i)
 		{
 			sum = Temp.Biginteger[i] + MAX_Int.Biginteger[i];
-			if (NoNone(Temp, i) && sum < 0)//NoNone(Temp, i))
+			if (NoNone(Temp, i) && sum < 0)
 			{
 				Temp.Biginteger[i] = (sum % BASE) + BASE;
 				Temp.Biginteger[i + 1] += (sum - Temp.Biginteger[i] % BASE) / BASE;
@@ -117,9 +117,6 @@ public:
 	}
 	BigInt operator -(const BigInt& a) const
 	{
-		//BigInt z1 = -a;
-		//BigInt z2 = (*this);
-		//return z1+z2;
 		return BigInt(*this+-a);
 	}
 	bool operator >(const BigInt& a) const
@@ -160,7 +157,7 @@ public:
 	}
 	bool operator <=(const BigInt& a) const
 	{
-		return ((a > *this) || (a == *this));
+		return (a > *this || a == *this);
 	}
 	bool operator !=(const BigInt& a) const
 	{
