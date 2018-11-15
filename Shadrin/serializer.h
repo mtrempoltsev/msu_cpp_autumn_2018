@@ -3,6 +3,7 @@
 #include <iostream>
 #include <type_traits>
 #include <sstream>
+#include <exception>
 
 enum class Error
 {
@@ -18,29 +19,23 @@ class Serializer
     std::ostream &out; 
 
     template <class T>
-    inline Error _gen_process(T&& val) {
-        if (std::is_same<T, bool &>::value) {
+    inline bool _gen_process(T&& val) {
+        if (std::is_same_v<T, bool>) {
             out << (val ? "true" : "false");
-        } else if (std::is_same<T, uint64_t &>::value) {
+        } else if (std::is_same<T, uint64_t>::value) {
             out << val;
         } else {
-            return Error::CorruptedArchive;
-        }
-        return Error::NoError;
-    }
-
-    template <class T>
-    Error process(T&& val) {
-        return _gen_process(val);
-    }
-
-    template <class T, class... Args>
-    Error process(T&& val, Args&&... args) {
-        if (_gen_process(val) == Error::CorruptedArchive) {
-            return Error::CorruptedArchive;
+            return false;
         }
         out << Separator;
-        return process(std::forward<Args>(args)...);
+        return true;
+    }
+
+    template <class... Args>
+    Error process(Args&&... args) {
+        return ((_gen_process(std::forward<Args>(args)) && ...)
+            ? Error::NoError
+            : Error::CorruptedArchive);
     }
 
 public:
@@ -59,7 +54,7 @@ public:
     template <class... ArgsT>
     Error operator()(ArgsT... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 };
@@ -69,50 +64,46 @@ class Deserializer {
     std::istream &in; 
 
     template <class T>
-    inline Error _gen_process(T&& val) {
+    inline bool _gen_process(T&& val) {
         std::string s;
         in >> s;
-        if (std::is_same<T, bool &>::value) {
+        if (std::is_same_v<T, bool>) {
             if (s == "true") {
                 val = true;
             } else if (s == "false") {
                 val = false;
             } else {
-                return Error::CorruptedArchive;
+                return false;
             }
-        } else if (std::is_same<T, uint64_t &>::value) {
+        } else if (std::is_same_v<T, uint64_t>) {
             if (s[0] == '-') {
-                return Error::CorruptedArchive;
+                return false;
             } else {
                 uint64_t t;
                 std::size_t pos;
                 try {
                     t = std::stoull(s, &pos);
-                } catch (...) {
-                    return Error::CorruptedArchive;
+                } catch (const std::invalid_argument &e) {
+                    return false;
+                } catch (const std::out_of_range &e) {
+                    return false;
                 }
                 if (pos != s.size()) {
-                    return Error::CorruptedArchive;
+                    return false;
                 }
                 val = t;
             }
         } else {
-            return Error::CorruptedArchive;
+            return false;
         }
-        return Error::NoError;
+        return true;
     }
 
-    template <class T>
-    Error process(T&& val) {
-        return _gen_process(val);
-    }
-
-    template <class T, class... Args>
-    Error process(T&& val, Args&&... args) {
-        if (_gen_process(val) == Error::CorruptedArchive) {
-            return Error::CorruptedArchive;
-        }
-        return process(std::forward<Args>(args)...);
+    template <class... Args>
+    Error process(Args&&... args) {
+        return ((_gen_process(std::forward<Args>(args)) && ...)
+                ? Error::NoError
+                : Error::CorruptedArchive);
     }
 
 public:
@@ -129,7 +120,7 @@ public:
 
     template <class... ArgsT>
     Error operator()(ArgsT&... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 };
