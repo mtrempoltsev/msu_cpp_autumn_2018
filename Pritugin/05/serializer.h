@@ -5,39 +5,39 @@
 
 enum class Error
 {
-    NoError,
-    CorruptedArchive
+	NoError,
+	CorruptedArchive
 };
 
 class Serializer
 {
-    static constexpr char Separator = ' ';
+	static constexpr char Separator = ' ';
 public:
-    explicit Serializer(std::ostream& out)
-        : out_(out)
-    {
-    }
+	explicit Serializer(std::ostream& out)
+		: out_(out)
+	{
+	}
 
-    template <class T>
-    Error save(T& object)
-    {
-        return object.serialize(*this);
-    }
+	template <class T>
+	Error save(T& object)
+	{
+		return object.serialize(*this);
+	}
 
-    template <class... ArgsT>
-    Error operator()(ArgsT... args)
-    {
-        return process(args...);
-    }
-    
+	template <class... ArgsT>
+	Error operator()(ArgsT... args)
+	{
+		return process(args...);
+	}
+	
 private:
 	std::ostream& out_;
-    Error process()
-    {
+	Error process()
+	{
 		return Error::NoError;
 	}
-    
-	Error process(bool& val)
+	
+	Error process(bool val)
 	{
 		if(val)
 			out_ << "true" << Separator;
@@ -45,13 +45,13 @@ private:
 			out_ << "false" << Separator;
 		return Error::NoError;
 	}
-	Error process(uint64_t& val)
+	Error process(uint64_t val)
 	{
 		out_ << val << Separator;
 		return Error::NoError;
 	}
 	template <class T, class... Args>
-	Error process(T&& val, Args&&... args)
+	Error process(T val, Args&&... args)
 	{
 		if(process(val) == Error::NoError)
 			return process(std::forward<Args>(args)...);
@@ -63,23 +63,23 @@ private:
 class Deserializer
 {
 public:
-    explicit Deserializer(std::istream& in)
-        : in_(in)
-    {
-    }
+	explicit Deserializer(std::istream& in)
+		: in_(in)
+	{
+	}
 
-    template <class T>
-    Error load(T& object)
-    {
-        return object.deserialize(*this);
-    }
+	template <class T>
+	Error load(T& object)
+	{
+		return object.serialize(*this);
+	}
 
-    template <class... ArgsT>
-    Error operator()(ArgsT&... args)
-    {
-        return process(args...);
-    }
-    
+	template <class... ArgsT>
+	Error operator()(ArgsT&&... args)
+	{
+		return process(args...);
+	}
+	
 private:
 	std::istream& in_;
 	Error process(bool& value)
@@ -121,9 +121,9 @@ private:
 	}
 
 	template <class T, class... Args>
-	Error process(T&& val, Args&&... args)
+	Error process(T& val, Args&&... args)
 	{
-		if(process(val) == Error::NoError) 
+		if(process(val) == Error::NoError)
 			return process(std::forward<Args>(args)...);
 		else
 			return Error::CorruptedArchive;
