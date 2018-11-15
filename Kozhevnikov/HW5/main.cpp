@@ -26,17 +26,29 @@ public:
 private:
     std::ostream &out_;
 
+    Error out_obj(bool &obj) {
+        if (obj) {
+            out_ << "true";
+        } else {
+            out_ << "false";
+        }
+        out_ << Separator;
+        return Error::NoError;
+    }
+
+    Error out_obj(uint64_t &obj) {
+        out_ << unsigned(obj) << Separator;
+        return Error::NoError;
+    }
+
+    template <class T>
+    Error out_obj(T &obj) {
+        return Error::CorruptedArchive;
+    }
+
     template<class T>
     Error process(T &&val) {
-        if (typeid(val) == typeid(bool)) {
-            if (val) {
-                out_ << "true" << Separator;
-            } else {
-                out_ << "false" << Separator;
-            }
-        } else if (typeid(val) == typeid(uint64_t)) {
-            out_ << val << Separator;
-        } else {
+        if (out_obj(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
 
@@ -45,15 +57,9 @@ private:
 
     template<class T, class... Args>
     Error process(T &&val, Args &&... args) {
-        if (typeid(val) == typeid(bool)) {
-            if (val) {
-                out_ << "true" << Separator;
-            } else {
-                out_ << "false" << Separator;
-            }
-        } else if (typeid(val) == typeid(uint64_t))
-            out_ << val << Separator;
-        else return Error::CorruptedArchive;
+        if (out_obj(val) == Error::CorruptedArchive) {
+            return Error::CorruptedArchive;
+        }
 
         return process(std::forward<Args>(args)...);
     }
@@ -77,25 +83,21 @@ public:
 private:
     std::istream &in_;
 
-    template<class ...Args>
-    Error process(bool &val, Args &... args) {
+    Error in_obj(bool &obj) {
         std::string a;
         in_ >> a;
         if (a == "true") {
-            val = true;
+            obj = true;
         } else if (a == "false") {
-            val = false;
+            obj = false;
         } else {
             return Error::CorruptedArchive;
         }
-
-        return process(args...);
+        return Error::NoError;
     }
 
-    template<class ...Args>
-    Error process(uint64_t &val, Args &... args) {
+    Error in_obj(uint64_t &obj) {
         std::string a;
-        uint64_t buf;
         in_ >> a;
         if (a.empty()) {
             return Error::CorruptedArchive;
@@ -103,47 +105,29 @@ private:
             return Error::CorruptedArchive;
         } else {
             try {
-                buf = stoul(a);
+                obj = stoul(a);
             } catch (...) {
                 return Error::CorruptedArchive;
             }
-            val = buf;
         }
-
-        return process(args...);
-    }
-
-    Error process(bool &val) {
-        std::string a;
-        in_ >> a;
-        if (a == "true") {
-            val = true;
-        } else if (a == "false") {
-            val = false;
-        } else {
-            return Error::CorruptedArchive;
-        }
-
         return Error::NoError;
     }
 
-    Error process(uint64_t &val) {
-        std::string a;
-        uint64_t buf;
-        in_ >> a;
-        if (a.empty()) {
-            return Error::CorruptedArchive;
-        } else if (a[0] == '-') {
-            return Error::CorruptedArchive;
-        } else {
-            try {
-                buf = stoul(a);
-            } catch (...) {
-                return Error::CorruptedArchive;
-            }
-            val = buf;
-        }
+    template <class T>
+    Error in_obj(T &val) {
+        return Error::CorruptedArchive;
+    }
 
-        return Error::NoError;
+    template <class T>
+    Error process (T &&val) {
+        return in_obj(val);
+    }
+
+    template <class T, class... Args>
+    Error process (T &&val, Args &&... args) {
+        if (in_obj(val) == Error::CorruptedArchive) {
+            return Error::CorruptedArchive;
+        }
+        return process(std::forward<Args>(args)...);
     }
 };
