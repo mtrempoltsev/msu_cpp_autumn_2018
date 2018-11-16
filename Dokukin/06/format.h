@@ -12,7 +12,7 @@ enum State
 	normal,
 	bracket
 }; 
-
+ 
 int64_t parse(const string& str, vector<string>& substrings)
 {
 	int64_t nargs_expected = -1;

@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& out, const Test&)
     out << "test";
     return out;
 }
-
+ 
 int main()
 {
     checkEqual(format(""), "");
