@@ -21,7 +21,7 @@ public:
 	}
 
 	template <class T>
-	Error save(T value) {
+	Error save(T& value) {
 		return value.serialize(*this);
 	}
 
