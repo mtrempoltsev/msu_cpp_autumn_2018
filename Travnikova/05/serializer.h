@@ -21,7 +21,7 @@ public:
 	}
 
 	template <class T>
-	Error save(T& value) {
+	Error save(T value) {
 		return value.serialize(*this);
 	}
 
@@ -52,7 +52,7 @@ private:
 	}
 	
 	template <class T, class... ArgsT>
-	Error process(T value, ArgsT&... args) {
+	Error process(T value, ArgsT... args) {
 		if (process(value) == Error::NoError) {
 			return process(args...);
 		}
