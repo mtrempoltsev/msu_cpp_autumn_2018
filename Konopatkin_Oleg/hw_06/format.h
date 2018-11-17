@@ -14,7 +14,7 @@ int get_label(std::istringstream& s, int& cur) {
     return res;
 }
 
-std::string format_(const std::string&& fmt) {
+std::string format(const std::string& fmt) {
     std::istringstream in(fmt);
     std::ostringstream out;
     int cur;
@@ -30,7 +30,7 @@ std::string format_(const std::string&& fmt) {
 }
 
 template <class T, class... ArgsT>
-std::string format_(const std::string&& fmt, const T&& fst, const ArgsT&&... args) {
+std::string format(const std::string& fmt, T&& fst, ArgsT&&... args) {
     std::istringstream in(fmt);
     std::ostringstream out;
     int cur;
@@ -52,10 +52,5 @@ std::string format_(const std::string&& fmt, const T&& fst, const ArgsT&&... arg
         }
     }
 
-    return format_(std::forward<std::string>(out.str()), std::forward<const ArgsT>(args)...);
-}
-
-template <class... ArgsT>
-std::string format(const ArgsT... args) {
-    return format_(std::forward<const ArgsT>(args)...);
+    return format(std::forward<std::string>(out.str()), std::forward<ArgsT>(args)...);
 }
