@@ -64,9 +64,8 @@ public:
         return tmp;
     }
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
-    {
-        return process(args...);
+    Error operator()(ArgsT&&... args) {
+        return process(forward<ArgsT>(args)...);
     }
     
     
@@ -119,8 +118,7 @@ public:
         return object.serialize(*this);
     }
     template <class... ArgsT>
-    Error operator()(ArgsT&&... args)
-    {
-        return process(args...);
+    Error operator()(ArgsT&&... args) {
+        return process(forward<ArgsT>(args)...);
     }
 };

@@ -23,7 +23,7 @@ public:
 
     template <class... Args>
     Error operator()(Args&&... args) {
-        return serialize(args...);
+        return serialize(std::forward<Args>(args)...);
     }
 private:
     template <class T, class... Args>
@@ -35,18 +35,18 @@ private:
         }
     }
 
-    Error serialize(bool& item) {
+    Error serialize(bool item) {
         out_ << (item ? "true" : "false") << sep;
         return Error::NoError;
     }
 
-    Error serialize(uint64_t& item) {
+    Error serialize(uint64_t item) {
         out_ << item << sep;
         return Error::NoError;
     }
 
     template <class T>
-    Error serialize(T& item) {
+    Error serialize(T&& item) {
         return Error::CorruptedArchive;
     }
 };
@@ -65,7 +65,7 @@ public:
 
     template<class... Args>
     Error operator()(Args&&... args) {
-        return deserialize(args...);
+        return deserialize(std::forward<Args>(args)...);
     }
 private:
     template<class T, class... Args>

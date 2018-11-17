@@ -23,7 +23,7 @@ public:
 	template <class... ArgsT>
 	Error operator()(ArgsT&&... args)
 	{
-		return process(args...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 
 private:
@@ -48,7 +48,7 @@ private:
 
 	Error process(bool value)
 	{
-		out_ << ((value == true)?("true"):("false")) << Separator;
+		out_ << ((value)?("true"):("false")) << Separator;
 		return Error::NoError;
 	}
 
@@ -77,7 +77,7 @@ public:
 	template <class... ArgsT>
 	Error operator()(ArgsT&&... args) 
 	{
-		return process(args...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 
 private:

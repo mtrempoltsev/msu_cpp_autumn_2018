@@ -25,7 +25,7 @@ public:
 	}
 
 	template <class... ArgsT>
-	Error operator()(ArgsT&&... args)
+	Error operator()(ArgsT... args)
 	{
 		return process(args...);
 	}
@@ -123,7 +123,7 @@ private:
 	template <class T, class... Args>
 	Error process(T& val, Args&&... args)
 	{
-		if(process(val) == Error::NoError) 
+		if(process(val) == Error::NoError)
 			return process(std::forward<Args>(args)...);
 		else
 			return Error::CorruptedArchive;
