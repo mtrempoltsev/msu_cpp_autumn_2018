@@ -9,20 +9,20 @@ void print_arg_n(std::ostream& os, int n)
 }
 
 template<typename T, typename... Targs>
-void print_arg_n(std::ostream& os, int n, const T& first, const Targs&... rest)
+void print_arg_n(std::ostream& os, int n, T&& first, Targs&&... rest)
 // print_arg_n(os, n, ...) печатает n-ый аргумент из (...) в os
 {
     if(n == 0) {
         os << first;
     } else if(n > 0) {
-        print_arg_n(os, n - 1, rest...);
+        print_arg_n(os, n - 1, std::forward<Targs>(rest)...);
     } else {
         throw std::runtime_error("format: argument out of range");
     }
 }
 
 template<typename... Targs>
-std::string format(const char* fmt, const Targs&... args)
+std::string format(const char* fmt, Targs&&... args)
 {
     size_t fmt_len = strlen(fmt);
     char* fmt_copy = new char[fmt_len + 1];
@@ -51,7 +51,7 @@ std::string format(const char* fmt, const Targs&... args)
                 in_brackets = false;
                 fmt_plain = fmt_ptr + 1;
                 if(buf != -1) {
-                    print_arg_n(ss, buf, args...);
+                    print_arg_n(ss, buf, std::forward<Targs>(args)...);
                 } else {
                     throw std::runtime_error("format: expected a number in { }");
                 }
