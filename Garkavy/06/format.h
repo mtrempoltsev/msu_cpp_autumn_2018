@@ -38,51 +38,51 @@ std::string format(const char* fmt, Targs&&... args)
     bool in_brackets = false;
     int arg_n = -1;
     std::stringstream ss;
-    for ( ; c = *fmt_ptr; ++fmt_ptr) {
-        if(c == '{') {
-            if(!in_brackets) {
-                *fmt_ptr = '\0';
-                ss << fmt_plain;
-                in_brackets = true;
-                arg_n = -1;
-            } else {
-                delete[] fmt_copy;
-                throw std::runtime_error("format: expected a number in { }");
-            }
-        } else if(c == '}') {
-            if(in_brackets) {
-                in_brackets = false;
-                fmt_plain = fmt_ptr + 1;
-                if(arg_n != -1) {
-                    if(!print_arg_n(ss, arg_n, std::forward<Targs>(args)...)) {
-                        delete[] fmt_copy;
-                        throw std::runtime_error("format: argument out of range");
-                    }
+    try {
+        for ( ; c = *fmt_ptr; ++fmt_ptr) {
+            if(c == '{') {
+                if(!in_brackets) {
+                    *fmt_ptr = '\0';
+                    ss << fmt_plain;
+                    in_brackets = true;
+                    arg_n = -1;
                 } else {
-                    delete[] fmt_copy;
                     throw std::runtime_error("format: expected a number in { }");
                 }
-            } else {
-                delete[] fmt_copy;
-                throw std::runtime_error("format: expected '{' before '}'");
-            }
-        } else if(in_brackets) {
-            if(std::isdigit(c)) {
-                if(arg_n == -1) {
-                    arg_n = 0;
+            } else if(c == '}') {
+                if(in_brackets) {
+                    in_brackets = false;
+                    fmt_plain = fmt_ptr + 1;
+                    if(arg_n != -1) {
+                        if(!print_arg_n(ss, arg_n, std::forward<Targs>(args)...)) {
+                            throw std::runtime_error("format: argument out of range");
+                        }
+                    } else {
+                        throw std::runtime_error("format: expected a number in { }");
+                    }
+                } else {
+                    throw std::runtime_error("format: expected '{' before '}'");
                 }
-                arg_n = 10 * arg_n + (c - '0');
-            } else {
-                delete[] fmt_copy;
-                throw std::runtime_error("format: expected a number in { }");
+            } else if(in_brackets) {
+                if(std::isdigit(c)) {
+                    if(arg_n == -1) {
+                        arg_n = 0;
+                    }
+                    arg_n = 10 * arg_n + (c - '0');
+                } else {
+                    throw std::runtime_error("format: expected a number in { }");
+                }
             }
         }
+        if(!in_brackets) {
+            ss << fmt_plain;
+        } else {
+            throw std::runtime_error("format: unexpected end of format string");
+        }
     }
-    if(!in_brackets) {
-        ss << fmt_plain;
-    } else {
+    catch(...) {
         delete[] fmt_copy;
-        throw std::runtime_error("format: unexpected end of format string");
+        throw;
     }
     delete[] fmt_copy;
     return ss.str();
