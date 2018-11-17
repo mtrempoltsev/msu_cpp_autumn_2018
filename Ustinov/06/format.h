@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include<sstream>
+#include <sstream>
 #include <stdexcept>
 
 
@@ -29,7 +29,6 @@ std::string format(const std::string& str, ArgsT&&... args) {
   std::vector<std::string> params;
   std::ostringstream out;
   int num = 0;
-  char x;
 
   parse_args(params, std::forward<ArgsT>(args)...);
   for (int i=0; i < str.length(); ++i) {
@@ -37,8 +36,7 @@ std::string format(const std::string& str, ArgsT&&... args) {
           if (i + 2 >= str.length()) {
               throw std::runtime_error("error");
           }
-          x = str[i+1];
-          if ((x < '0') || (x > '9')) {
+          if ((str[i+1] < '0') || (str[i+1] > '9')) {
               throw std::runtime_error("error");
           }
           if (str[i+2] != '}') {
