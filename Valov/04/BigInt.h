@@ -1,11 +1,10 @@
-#define BS 1000000000
 #include <iostream> 
 #include <cstdint>
 #include <cmath>
 class BigInt
 {
 private:
-	static const int BASE = BS;
+	static const int BASE = 1000000000;
 	int size;
 	bool sign;
 	int* Biginteger;
