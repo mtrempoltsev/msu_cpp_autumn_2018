@@ -5,6 +5,8 @@
 #include <memory>
 #include <sstream>
 
+#include <iostream>
+
 using namespace std;
 
 enum State
@@ -90,25 +92,12 @@ int64_t parse(const string& str, vector<string>& substrings)
 	return 	nargs_expected;	
 }
 
-void my_format(vector<string>& strings, const int64_t& nargs_expected)
+template <class T>
+string my_format(T&& value)
 {
-	throw runtime_error("Error in my_format: not enough args");
-}
-
-template <class T, class... Args>
-void my_format(vector<string>& strings, const int64_t& nargs_expected,
-				 T&& value, Args&&... args)
-{
-	int64_t narg = nargs_expected + 1;
-	
 	stringstream res;
 	res << value;
-	strings.push_back(res.str());
-	
-	if (strings.size() < narg)
-	{
-		my_format(strings, nargs_expected, std::forward<Args>(args)...);
-	}
+	return res.str();
 }
 
 string my_parse(vector<string>& substrings, vector<string>& strings)
@@ -138,15 +127,25 @@ string format(const string& str, Args&&... args)
 {
 	vector<string> substrings;
 	int64_t nargs_expected = parse(str, substrings);
+	
 	if (nargs_expected == -1)
 	{
 		return str;
 	}
 	else
 	{
-		vector<string> strings;
-		my_format(strings, nargs_expected, std::forward<Args>(args)...);
-		string res = my_parse(substrings, strings);
-		return res;
+		if (sizeof...(args) > nargs_expected)
+		{
+			vector<string> strings
+			{
+				my_format(forward<Args>(args))...
+			};
+			string res = my_parse(substrings, strings);
+			return res;
+		}
+		else
+		{
+			throw runtime_error("Error in format: not enough args");
+		}
 	}
 }
