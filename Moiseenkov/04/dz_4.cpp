@@ -23,7 +23,7 @@ class BigInt {
     
     
     
-    void r_add(const BigInt& number, BigInt& result) const
+    int r_add(const BigInt& number, BigInt& result) const
     {
         char extra = 0;
 
@@ -39,9 +39,10 @@ class BigInt {
             extra = (right >= left) ? 0 : 10;
             result.data[result.size++] =  (right - left + extra) % 10;
         }
+        return result.data[result.size++];
     }
 
-    void l_add(const BigInt& number, BigInt& result) const 
+    int l_add(const BigInt& number, BigInt& result) const 
     {
         char extra = 0;
 
@@ -56,6 +57,7 @@ class BigInt {
             extra = (left >= right) ? 0 : 10;
             result.data[result.size++] =  (left - right + extra) % 10;
         }
+        return result.data[result.size++];
     }
 
 
@@ -95,8 +97,7 @@ public:
 
     BigInt(const BigInt& copied): size(copied.size), capacity(copied.capacity), sign(copied.sign)
     {
-        if (data != nullptr)
-            delete[] data;
+
         data = new char[capacity];
         
         std::memcpy(data, copied.data, capacity * sizeof(char));

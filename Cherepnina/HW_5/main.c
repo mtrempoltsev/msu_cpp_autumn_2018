@@ -19,32 +19,39 @@ public:
 
     template<class... ArgsT>
     Error operator()(ArgsT... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 private:
     std::ostream &out_;
 
+    Error out_object(uint64_t &val) {
+        out_ << unsigned(val) << Separator;
+        return Error::NoError;
+    }
+
+    Error out_object(bool &val) {
+        out_ << (val ? "true" : "false") << Separator;
+        return Error::NoError;
+    }
+
+    template<class T>
+    Error out_object(T &&) {
+        return Error::CorruptedArchive;
+    }
+
     template<class T>
     Error process(T &&val) {
-        if (typeid(val) == typeid(bool))
-            out_ << (val ? "true" : "false");
-        else if (typeid(val) == typeid(u_int64_t))
-            out_ << val;
-        else return Error::CorruptedArchive;
-
-        return Error::NoError;
+        return out_object(val);
     }
 
     template<class T, class... Args>
     Error process(T &&val, Args &&... args) {
-        if (typeid(val) == typeid(bool))
-            out_ << (val ? "true" : "false") << Separator;
-        else if (typeid(val) == typeid(u_int64_t))
-            out_ << val << Separator;
-        else return Error::CorruptedArchive;
-        process(std::forward<Args>(args)...);
+        if (out_object(val) == Error::CorruptedArchive)
+            return Error::CorruptedArchive;
+        return process(std::forward<Args>(args)...);
     }
+
 };
 
 class Deserializer {
@@ -59,17 +66,17 @@ public:
 
     template<class... ArgsT>
     Error operator()(ArgsT &&... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 private:
     std::istream &in_;
 
-    Error load(u_int64_t &value) {
+    Error load(uint64_t &value) {
         std::string str;
         in_ >> str;
-        if ((str[0] == '-') || (str[0] == '\0'))
-            return Error ::CorruptedArchive;
+        if ((str.empty()) || (str[0] == '-') || (str[0] == '\0'))
+            return Error::CorruptedArchive;
         value = stoul(str);
         return Error::NoError;
     }
@@ -89,7 +96,7 @@ private:
     }
 
     template<class T>
-    Error process(T &val) {
+    Error process(T &&val) {
         return load(val);
     }
 
