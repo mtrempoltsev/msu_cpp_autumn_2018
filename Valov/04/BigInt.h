@@ -42,14 +42,6 @@ public:
 		memcpy(Biginteger, copy.Biginteger, sizeof(int) * size);
 
 	}
-	int getSize()
-	{
-		return Biginteger[0];
-	}
-	int getSign()
-	{
-		return sign;
-	}
 	friend std::ostream& operator<<(std::ostream& os, const BigInt& BI);
 	BigInt operator +(const BigInt& copy) const
 	{
