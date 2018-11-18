@@ -22,7 +22,7 @@ class Serializer
     inline bool _gen_process(T&& val) {
         if constexpr (std::is_same_v<T, bool>) {
             out << (val ? "true" : "false");
-        } else if constexpr (std::is_same<T, uint64_t>::value) {
+        } else if constexpr (std::is_same_v<T, uint64_t>) {
             out << val;
         } else {
             return false;
