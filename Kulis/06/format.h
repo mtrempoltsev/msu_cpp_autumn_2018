@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 
-static void stringsFromArgs(std::vector<std::string> & vec)
+void stringsFromArgs(std::vector<std::string> & vec)
 {
 }
 
 template <class Arg>
-static void stringsFromArgs(std::vector<std::string> & vec, Arg && arg)
+void stringsFromArgs(std::vector<std::string> & vec, Arg && arg)
 {
     std::ostringstream str;
     str << arg;
@@ -19,7 +19,7 @@ static void stringsFromArgs(std::vector<std::string> & vec, Arg && arg)
 }
 
 template <class Arg, class ... Args>
-static void stringsFromArgs(std::vector<std::string> & vec, Arg && arg, Args &&... args)
+void stringsFromArgs(std::vector<std::string> & vec, Arg && arg, Args &&... args)
 {
     std::ostringstream str;
     str << arg;
@@ -27,7 +27,7 @@ static void stringsFromArgs(std::vector<std::string> & vec, Arg && arg, Args &&.
     stringsFromArgs(vec, std::forward<Args>(args)...);
 }
 
-static size_t readnum(const std::string & str, size_t start, size_t & result)
+size_t readnum(const std::string & str, size_t start, size_t & result)
 {
     int i = start;
     for (result = 0; i < str.size() && isdigit(str[i]); ++i)
