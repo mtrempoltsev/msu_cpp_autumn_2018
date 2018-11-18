@@ -33,6 +33,12 @@ void get_vector_elem(std::vector<std::string> &argv, T &&val, Args &&... args) {
 }
 
 std::string format(std::string &&str) {
+    for (int i = 0; i < str.length(); ++i)
+        switch (str[i]) {
+            case '{':
+            case '}':
+                throw std::runtime_error("incorrect number of arguments");
+        }
     return str;
 }
 
