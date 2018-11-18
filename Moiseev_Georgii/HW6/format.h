@@ -5,7 +5,7 @@
 
 
 template <class T>
-void unroll(std::vector<std::string> &arguments, T x)
+void unroll(std::vector<std::string> &arguments, T&& x)
 {
     std::stringstream buf;
     buf << x;
@@ -15,7 +15,7 @@ void unroll(std::vector<std::string> &arguments, T x)
 
 
 template <class T, class... ArgsT>
-void unroll(std::vector<std::string> &arguments, T x, ArgsT... args)
+void unroll(std::vector<std::string> &arguments, T&& x, ArgsT&&... args)
 {
     std::stringstream buf;
     buf << x;
@@ -47,7 +47,7 @@ std::string format(const char* str)
 
 
 template <class... ArgsT>
-std::string format(const char* str, ArgsT... args)
+std::string format(const char* str, ArgsT&&... args)
 {
     std::string format_str;
 
@@ -84,7 +84,7 @@ std::string format(const char* str, ArgsT... args)
 
             format_str.append(arguments[ind]);
         }
-        
+
         else
             throw std::runtime_error("No opening bracket");
     }
