@@ -29,7 +29,6 @@ std::string& format_index(std::string& str, int index, Arg&& Head, ArgsT&&... Ta
     std::string str_to_replace = "{" + to_string(index) + "}";
     size_t pos = str.find(str_to_replace);
     size_t size = str_to_replace.size();
-    
     while (pos != std::string::npos) {
         str.replace(pos, size, to_string(Head));
         pos = str.find(str_to_replace);
@@ -37,7 +36,7 @@ std::string& format_index(std::string& str, int index, Arg&& Head, ArgsT&&... Ta
     return format_index(str, index + 1, std::forward<ArgsT>(Tail)...);
 }
 
-std::string format(const std::string& str)
+std::string& format(std::string&& str)
 {
     if(str.find("{") != std::string::npos) {
         throw std::runtime_error("{ in wrong place");
@@ -49,9 +48,8 @@ std::string format(const std::string& str)
 }
 
 template<class... ArgsT>
-std::string format(const std::string& arg_str, ArgsT&&... Tail)
+std::string& format(std::string&& str, ArgsT&&... Tail)
 {
-    std::string str = arg_str;
     format_index(str, 0, std::forward<ArgsT>(Tail)...);
     if(str.find("{") != std::string::npos) {
         throw std::runtime_error("{ in wrong place");
