@@ -37,7 +37,8 @@ private:
     }
 
     Error out_obj(uint64_t &obj) {
-        out_ << unsigned(obj) << Separator;
+        out_ << obj << Separator;
+
         return Error::NoError;
     }
 

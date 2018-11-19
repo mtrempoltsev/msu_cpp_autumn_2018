@@ -2,38 +2,16 @@
 #include <sstream>
 #include <vector>
 #include <stdexcept>
-
+#include <ctype.h>
+#include <cstdlib>
 
 template <class T>
-void unroll(std::vector<std::string> &arguments, T&& x)
+std::string to_str(T&& x)
 {
     std::stringstream buf;
     buf << x;
 
-    arguments.push_back(buf.str());
-}
-
-
-template <class T, class... ArgsT>
-void unroll(std::vector<std::string> &arguments, T&& x, ArgsT&&... args)
-{
-    std::stringstream buf;
-    buf << x;
-
-    arguments.push_back(buf.str());
-    unroll(arguments, std::forward<ArgsT>(args)...);
-}
-
-
-inline bool isNumber(const char ch)
-{
-    return ch >= '0' && ch <= '9';
-}
-
-
-inline size_t toNumber(const char ch)
-{
-    return ch - '0';
+    return buf.str();
 }
 
 
@@ -45,14 +23,17 @@ std::string format(const char* str)
     return str;
 }
 
+size_t to_num(char c)
+{
+    return c - '0';
+}
 
 template <class... ArgsT>
 std::string format(const char* str, ArgsT&&... args)
 {
     std::string format_str;
 
-    std::vector<std::string> arguments;
-    unroll(arguments, std::forward<ArgsT>(args)...);
+    std::vector<std::string> arguments{to_str(std::forward<ArgsT>(args))...};
 
     for (auto iter = str; *iter != '\0'; ++iter)
     {
@@ -69,11 +50,11 @@ std::string format(const char* str, ArgsT&&... args)
             size_t ind = 0;
             for (; *iter != '}' && *iter != '\0'; ++iter)
             {
-                if (isNumber(*iter) == false)
+                if (isdigit(*iter) == 0)
                     throw std::runtime_error("Wrong input in {}");
 
                 ind *= 10;
-                ind += toNumber(*iter);
+                ind += to_num(*iter);
             }
 
             if (*iter != '}')
