@@ -6,25 +6,12 @@
 #include <string>
 #include <vector>
 
-void stringsFromArgs(std::vector<std::string> & vec)
-{
-}
-
 template <class Arg>
-void stringsFromArgs(std::vector<std::string> & vec, Arg && arg)
+std::string to_string(Arg && arg)
 {
     std::ostringstream str;
     str << arg;
-    vec.push_back(str.str());
-}
-
-template <class Arg, class ... Args>
-void stringsFromArgs(std::vector<std::string> & vec, Arg && arg, Args &&... args)
-{
-    std::ostringstream str;
-    str << arg;
-    vec.push_back(str.str());
-    stringsFromArgs(vec, std::forward<Args>(args)...);
+    return str.str();
 }
 
 size_t readnum(const std::string & str, size_t start, size_t & result)
@@ -41,8 +28,7 @@ template <class ... Args>
 std::string format(const std::string & str, Args &&... args)
 {
     std::string result;
-    std::vector<std::string> strings;
-    stringsFromArgs(strings, std::forward<Args>(args)...);
+    std::vector<std::string> strings{to_string(std::forward<Args>(args))...};
 
     size_t last_index = 0;
     size_t index = str.find_first_of("{}");
