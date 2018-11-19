@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
+#include<sstream>
 #include <stdexcept>
 
 
@@ -10,33 +10,27 @@ std::string format(const std::string& str) {
 }
 
 template <class T>
-void parse_args(std::vector<std::string>& params, T&& t) {
-    std::ostringstream out;
-    out << t;
-    params.push_back(out.str());
-}
-
-template <class T, class... ArgsT>
-void parse_args(std::vector<std::string>& params, T&& t, ArgsT&&... args) {
-  std::ostringstream out;
-  out << t;
-  params.push_back(out.str());
-  parse_args(params, std::forward<ArgsT>(args)...);
+std::string arg_to_string (T&& arg)
+{
+    std::stringstream stream;
+    stream << arg;
+    return stream.str();
 }
 
 template <class... ArgsT>
 std::string format(const std::string& str, ArgsT&&... args) {
-  std::vector<std::string> params;
+  std::vector<std::string> params{arg_to_string(std::forward<ArgsT>(args))...};
   std::ostringstream out;
   int num = 0;
+  char x;
 
-  parse_args(params, std::forward<ArgsT>(args)...);
   for (int i=0; i < str.length(); ++i) {
       if (str[i] == '{') {
           if (i + 2 >= str.length()) {
               throw std::runtime_error("error");
           }
-          if ((str[i+1] < '0') || (str[i+1] > '9')) {
+          x = str[i+1];
+          if ((x < '0') || (x > '9')) {
               throw std::runtime_error("error");
           }
           if (str[i+2] != '}') {
