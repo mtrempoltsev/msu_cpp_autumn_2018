@@ -99,7 +99,7 @@ public:
  
     BigInt operator -() const {
         BigInt result;
-        if ( !((size_ == 1) && (mem_[0] == 0)) ) {
+        if ( !(size_ == 1 && mem_[0] == 0) ) {
             result.negative_ = !negative_;
         } else {
             result.negative_=false;
