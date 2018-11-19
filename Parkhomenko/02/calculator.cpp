@@ -8,7 +8,7 @@ class Calculator {
     std::string string;
 public: 
     int64_t result;
-    Calculator(std::string str) {
+    Calculator(const std::string str) {
         string = str;
      	result = 0;
     }
@@ -41,7 +41,7 @@ public:
                     return 1;
                 }
                 number[0] = str[i];
-                arg = arg * 10 + atoi(const_cast<char*>(number));
+                arg = arg * 10 + atoi(number);
             }
             arg = -arg;
         } else {
@@ -52,7 +52,7 @@ public:
                     return 1;
                 }
                 number[0] = str[i];
-                arg = arg * 10 + atoi(const_cast<char*>(number));
+                arg = arg * 10 + atoi(number);
             }
         }
         return 0;
@@ -156,8 +156,13 @@ public:
 
     int main_calc() {
         int error;
+        delete_gap();
         error = define_result_plus_minus(string, result);
         return error;
+    }
+    
+    void print_result() {
+        std::cout << result << std::endl;
     }
 };
 
@@ -169,12 +174,11 @@ int main(int argc, char* argv[]) {
     } 
     std::string string = argv[1];
     int error;
-    Calculator calc = Calculator(string); 	
-    calc.delete_gap();
+    Calculator calc(string); 	
     error = calc.main_calc();
     if (error) {
         return 1;
     }
-    std::cout << calc.result << std::endl;
+    calc.print_result();
     return 0;
 }
