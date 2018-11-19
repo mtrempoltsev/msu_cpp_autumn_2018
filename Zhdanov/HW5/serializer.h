@@ -32,10 +32,10 @@ public:
 private:
 	std::ostream& out_;
 	template <class T, class... Args>
-	Error process(T val, Args&&... args)
+	Error process(T val, Args&... args)
 	{
 		if (process(val) == Error::NoError)
-			return process(std::forward<Args>(args)...);
+			return process(args...);
 		else
 			return Error::CorruptedArchive;
 	};
@@ -73,7 +73,7 @@ public:
 	}
 
 	template <class... ArgsT>
-	Error operator()(ArgsT&&... args)
+	Error operator()(ArgsT&... args)
 	{
 		return process(args...);
 	}
@@ -81,10 +81,10 @@ public:
 private:
 	std::istream& in_;
 	template <class T, class... Args>
-	Error process(T& val, Args&&... args)
+	Error process(T& val, Args&... args)
 	{
 		if (process(val) == Error::NoError)
-			return process(std::forward<Args>(args)...);
+			return process(args...);
 		else
 			return Error::CorruptedArchive;
 	};
