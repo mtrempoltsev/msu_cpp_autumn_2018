@@ -24,7 +24,7 @@ void getPar(std::vector<std::string>& vec, T&& val, Args&&... args)
 }
 
 template <class ... Args>
-std::string format(const std::string str, Args&&... args)
+std::string format(const std::string& str, Args&&... args)
 {
     std::vector<std::string> vec(0);
     getPar(vec, std::forward<Args>(args)...);
