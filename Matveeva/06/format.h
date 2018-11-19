@@ -37,43 +37,42 @@ int max_number(const string& str, vector<string>& substrings){
     if (in_brackets)
         throw runtime_error("");
     if (help != "")
-	{
-		substrings.push_back(help);
-	}
-	if (max_num != -1)
+	substrings.push_back(help);
+    if (max_num != -1)
         max_num++;
-	return max_num;
+    return max_num;
 }
 void build_replacement(vector<string>& replacement, const int& max_num)
 {
-	throw runtime_error("");
+    throw runtime_error("");
 }
 
 template <class T, class... Args>
 void build_replacement(vector<string>& replacement, const int& max_num, T value, Args&&... args)
 {
     stringstream res;
-	res << value;
-	replacement.push_back(res.str());
-	if (replacement.size() < max_num)
+    res << value;
+    replacement.push_back(res.str());
+    if (replacement.size() < max_num)
         build_replacement(replacement, max_num, forward<Args>(args)...);
 }
 
 template <class... Args>
-string format(const string& s, Args&&... args){
+string format(const string& s, Args&&... args)
+{
     vector<string> substrings;
     int max_num = max_number(s, substrings);
-	if (max_num == -1)
-		return s;
+    if (max_num == -1)
+	return s;
     vector<string> replacement;
-	build_replacement(replacement, max_num, forward<Args>(args)...);
-	string res = "";
-	for (int i = 0; i < substrings.size(); i++){
+    build_replacement(replacement, max_num, forward<Args>(args)...);
+    string res = "";
+    for (int i = 0; i < substrings.size(); i++){
         if (substrings[i][0] != '{')
             res += substrings[i];
         else{
             res += replacement[stoull(substrings[i].substr(1, substrings[i].size() - 1))];
         }
-	}
-	return res;
+    }
+    return res;
 }
