@@ -10,7 +10,7 @@ class Serializer {
     
     template <class T, class... Args>
 	Error process(T&& value, Args&&... args) {
-		if (process(value) == Error::CorruptedArchive) return Error::CorruptedArchive;
+		if (process(std::forward<T>(value)) == Error::CorruptedArchive) return Error::CorruptedArchive;
 		else return process(std::forward<Args>(args)...);
 	}
 	
@@ -49,7 +49,7 @@ class Deserializer {
     
     template <class T, class... Args>
 	Error process(T&& value, Args&&... args) {
-		if (process(value) == Error::CorruptedArchive) return Error::CorruptedArchive;
+		if (process(std::forward<T>(value)) == Error::CorruptedArchive) return Error::CorruptedArchive;
 		else return process(std::forward<Args>(args)...);
 	}
 

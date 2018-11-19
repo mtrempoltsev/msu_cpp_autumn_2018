@@ -46,7 +46,7 @@ std::string format(const std::string& inp_str, ArgsT&& ... args)
                 throw std::runtime_error("Got wrong expression-3");
         }
     }
-    auto arg_vector = args_in_vector(std::forward<ArgsT>(args)...);
+    std::vector<std::string> arg_vector{ arg_to_string(std::forward<ArgsT>(args))... };
     if (cur_num + 1 > arg_vector.size())
         throw std::runtime_error("Not enough variables");
     std::string out_str;

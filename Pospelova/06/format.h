@@ -10,16 +10,10 @@
 using namespace std;
 
 template<class T>
-void parse(vector<string>& string_args, T&& arg) {
+string to_string(T&& arg) {
 	ostringstream out;
 	out << arg;
-	string_args.push_back(out.str());
-}
-
-template<class T, class... Args>
-void parse(vector<string>& string_args, T&& arg, Args&&... args) {
-	parse(string_args, arg);
-	parse(string_args, forward<Args>(args)...);
+	return out.str();
 }
 
 string format(const string& str) {
@@ -27,9 +21,8 @@ string format(const string& str) {
 }
 
 template <class... ArgsT>
-string format(const string& str, ArgsT... args) {
-	vector<string> string_args;
-	parse(string_args, forward<ArgsT>(args)...);
+string format(const string& str, ArgsT&&... args) {
+	vector<string> string_args{to_string(forward<ArgsT>(args))...};
 	ostringstream out;
 	size_t i = 0;
 	while (i < str.length()) {
