@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include<iostream>
+#include <iostream>
 
 void getPar(std::vector<std::string>& vec) {}
 
