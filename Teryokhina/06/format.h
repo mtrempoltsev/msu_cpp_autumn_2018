@@ -5,18 +5,11 @@
 #include <stdexcept>
 
 template<class T>
-void parse_args(std::vector<std::string>& strs, T&& arg)
+std::string to_string(T&& arg)
 {
     std::ostringstream ostream;
     ostream << arg;
-    strs.push_back(ostream.str());
-}
-
-template<class T, class... Args>
-void parse_args(std::vector<std::string>& strs, T&& arg, Args&&... args)
-{
-    parse_args(strs, std::forward<T>(arg));
-    parse_args(strs, std::forward<Args>(args)...);
+    return ostream.str();
 }
 
 std::string format_(const std::string& string_to_format, std::vector<std::string>& strings_to_insert){
@@ -59,7 +52,6 @@ std::string format(const std::string& string_to_format)
 template <class... Args>
 std::string format(const std::string& string_to_format, Args&&... args)
 {
-    std::vector<std::string> strings_to_insert;
-    parse_args(strings_to_insert, std::forward<Args>(args)...);
+    std::vector<std::string> strings_to_insert{to_string(std::forward<Args>(args))...};
     return format_(string_to_format, strings_to_insert);
 }
