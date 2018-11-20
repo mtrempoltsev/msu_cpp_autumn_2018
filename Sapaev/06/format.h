@@ -70,17 +70,6 @@ std::string format_with_vector(const std::string& str,
     return sstr.str();
 }
 
-std::string format(const std::string& str)
-{
-    if(str.find("{") != std::string::npos) {
-        throw std::runtime_error("{ in wrong place");
-    }
-    if(str.find("}") != std::string::npos) {
-        throw std::runtime_error("} in wrong place");
-    }
-    return str;
-}
-
 template<class... ArgsT>
 std::string format(const std::string& arg_str, ArgsT&&... Tail)
 {
