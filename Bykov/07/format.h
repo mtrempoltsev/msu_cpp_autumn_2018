@@ -4,30 +4,17 @@
 #include <vector>
 #include <iostream>
 
-void getPar(std::vector<std::string>& vec) {}
-
 template <class T>
-void getPar(std::vector<std::string>& vec, T&& val)
-{
+std::string to_str(T&& val){
     std::ostringstream s;
     s << val;
-    vec.push_back(s.str());
-}
-
-template <class T, class... Args>
-void getPar(std::vector<std::string>& vec, T&& val, Args&&... args)
-{
-    std::ostringstream s;
-    s << val;
-    vec.push_back(s.str());
-    getPar(vec, std::forward<Args>(args)...);
+    return s.str();
 }
 
 template <class ... Args>
 std::string format(const std::string& str, Args&&... args)
 {
-    std::vector<std::string> vec(0);
-    getPar(vec, std::forward<Args>(args)...);
+    std::vector<std::string> vec{to_str(std::forward<Args>(args))...};
     std::ostringstream newstr;
     bool isNumNow = false;
     int ind = 0;
