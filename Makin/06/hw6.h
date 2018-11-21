@@ -42,7 +42,7 @@ std::string format(const std::string& input_str, ArgsT&&... args)
 			{
 				if (!isdigit(input_str[pos]))
 					throw std::runtime_error("error");
-				num = input_str[pos] - 48;
+				num = num *10 + input_str[pos] - '0';
 				pos++;
 			}
 			if (input_str[pos] != '}')
