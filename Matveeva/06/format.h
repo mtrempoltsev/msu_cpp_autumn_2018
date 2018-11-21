@@ -42,19 +42,13 @@ int max_number(const string& str, vector<string>& substrings){
         max_num++;
     return max_num;
 }
-void build_replacement(vector<string>& replacement, const int& max_num)
-{
-    throw runtime_error("");
-}
 
-template <class T, class... Args>
-void build_replacement(vector<string>& replacement, const int& max_num, T value, Args&&... args)
+template <class T>
+string to_string (T&& s)
 {
-    stringstream res;
-    res << value;
-    replacement.push_back(res.str());
-    if (replacement.size() < max_num)
-        build_replacement(replacement, max_num, forward<Args>(args)...);
+    stringstream in;
+    in << s;
+    return in.str();
 }
 
 template <class... Args>
@@ -64,8 +58,9 @@ string format(const string& s, Args&&... args)
     int max_num = max_number(s, substrings);
     if (max_num == -1)
 	return s;
-    vector<string> replacement;
-    build_replacement(replacement, max_num, forward<Args>(args)...);
+    vector<string> replacement{to_string(forward<Args>(args))...};
+    if (replacement.size()< max_num)
+        throw runtime_error("");
     string res = "";
     for (int i = 0; i < substrings.size(); i++){
         if (substrings[i][0] != '{')

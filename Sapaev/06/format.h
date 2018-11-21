@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 template<class ArgT>
 std::string to_string(const ArgT& arg)
@@ -10,52 +11,68 @@ std::string to_string(const ArgT& arg)
     return tmp.str();
 }
 
-template<class Arg>
-std::string& format_index(std::string& str, int index, Arg&& Head)
+int my_atoi (const std::string& str)
 {
-    std::string str_to_replace = "{" + to_string(index) + "}";
-    size_t pos = str.find(str_to_replace);
-    size_t size = str_to_replace.size();
-    while (pos != std::string::npos) {
-        str.replace(pos, size, to_string(Head));
-        pos = str.find(str_to_replace);
+    int tmp = 0;
+    for (size_t i = 0; i < str.size(); ++i) {
+        if (!isdigit(str[i])) {
+            throw std::runtime_error("Incorrect symbol in number");
+        }
+        tmp = 10 * tmp + str[i] - '0';
     }
-    return str;
+    return tmp;
 }
 
-template<class Arg, class... ArgsT>
-std::string& format_index(std::string& str, int index, Arg&& Head, ArgsT&&... Tail)
+std::string format_with_vector(const std::string& str,
+                               const std::vector<std::string>& formats)
 {
-    std::string str_to_replace = "{" + to_string(index) + "}";
-    size_t pos = str.find(str_to_replace);
-    size_t size = str_to_replace.size();
-    while (pos != std::string::npos) {
-        str.replace(pos, size, to_string(Head));
-        pos = str.find(str_to_replace);
+    enum State {NORMAL, BRACKET};
+    State state = NORMAL;
+    std::stringstream sstr;
+    std::string buf = "";
+    
+    for (size_t i = 0; i < str.size(); ++i) {
+        int vi;
+        switch (state) {
+            case NORMAL:
+                if (str[i] == '{') {
+                    state = BRACKET;
+                    buf = "";
+                    continue;
+                } else if (str[i] == '}') {
+                    throw std::runtime_error("Brackets are not opened yet");
+                } else {
+                    sstr << str[i];
+                }
+                break;
+                
+            case BRACKET:
+                if (str[i] == '}') {
+                    vi = my_atoi(buf.c_str());
+                    if (vi >= formats.size()) {
+                        throw std::runtime_error("Out of Range");
+                    }
+                    sstr << formats[vi];
+                    buf = "";
+                    state = NORMAL;
+                    continue;
+                } else if (str[i] == '{') {
+                    throw std::runtime_error("Brackets are already opened");
+                } else {
+                    buf += str[i];
+                }
+                break;
+        }
     }
-    return format_index(str, index + 1, std::forward<ArgsT>(Tail)...);
-}
-
-std::string& format(std::string&& str)
-{
-    if(str.find("{") != std::string::npos) {
-        throw std::runtime_error("{ in wrong place");
+    if (state == BRACKET) {
+        throw std::runtime_error("Brackets are not closed");
     }
-    if(str.find("}") != std::string::npos) {
-        throw std::runtime_error("} in wrong place");
-    }
-    return str;
+    return sstr.str();
 }
 
 template<class... ArgsT>
-std::string& format(std::string&& str, ArgsT&&... Tail)
+std::string format(const std::string& arg_str, ArgsT&&... Tail)
 {
-    format_index(str, 0, std::forward<ArgsT>(Tail)...);
-    if(str.find("{") != std::string::npos) {
-        throw std::runtime_error("{ in wrong place");
-    }
-    if(str.find("}") != std::string::npos) {
-        throw std::runtime_error("} in wrong place");
-    }
-    return str;
+    std::vector<std::string> formats{to_string(std::forward<ArgsT>(Tail))...};
+    return format_with_vector(arg_str, formats);
 }
