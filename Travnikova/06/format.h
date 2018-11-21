@@ -22,7 +22,7 @@ string format(const string& str, ArgsT&&... args) {
 	int left = 0;
 	int right = 0;
 	int pos = 0;
-	while (1) {
+	while (true) {
 		while (left < str.length() && str[left] != '{') {
 			if (str[left] == '}') {
 				throw runtime_error("");
@@ -39,15 +39,19 @@ string format(const string& str, ArgsT&&... args) {
 			break;
 		} else {
 			right = str.find("}", left);
-			if (right != -1 && right - left == 2) {
-				pos = str[left + 1];
-				if (!isdigit(pos)) {
+			if (right != -1) {
+				pos = 0;
+				for (int i = left + 1; i < right; i++) {
+					if (!isdigit(str[i])) {
+						throw runtime_error("");
+					} else {
+						pos = pos * 10 + str[i] - '0';
+					}
+				}
+				if (pos  >= Args.size()) {
 					throw runtime_error("");
 				}
-				if (pos - '0' >= Args.size()) {
-					throw runtime_error("");
-				}
-				ans << Args[pos - '0'];
+				ans << Args[pos];
 				left = right + 1;
 			} else {
 				throw runtime_error("");
