@@ -2,7 +2,7 @@
 #include <vector>
 #include <sstream>
 
-int search(std::string str, int &i) {
+int search(const std::string &str, int &i) {
     int digit = 0;
     for (i; i < str.length(); ++i)
         switch (str[i]) {
@@ -24,22 +24,7 @@ std::string to_string(Args &&... args) {
     return sstr.str();
 }
 
-//template<class T>
-//void get_vector_elem(std::vector<std::string> &argv, T &&val) {
-//    std::stringstream buf;
-//    buf << val;
-//    argv.push_back(buf.str());
-//}
-//
-//template<class T, class... Args>
-//void get_vector_elem(std::vector<std::string> &argv, T &&val, Args &&... args) {
-//    std::stringstream buf;
-//    buf << val;
-//    argv.push_back(buf.str());
-//    get_vector_elem(argv, std::forward<Args>(args)...);
-//}
-
-std::string format(std::string &&str) {
+std::string format(const std::string &str) {
     for (int i = 0; i < str.length(); ++i)
         switch (str[i]) {
             case '{':
@@ -53,8 +38,6 @@ template<class... Args>
 std::string format(std::string &&str, Args &&... args) {
 
     std::vector<std::string> argv{to_string(std::forward<Args>(args))...};
-
-//    get_vector_elem(argv, std::forward<Args>(args)...);
 
     size_t new_str_len = str.length();
     for (int i = 0; i < argv.size(); ++i) {
