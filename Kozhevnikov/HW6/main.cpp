@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-int read_num(std::string str, int &cur) {
+int read_num(const std::string &str, int &cur) {
     std::string buf;
     int num = 0;
     while (str[cur] != '}') {
@@ -28,9 +28,9 @@ std::string to_string(Args &&... args) {
 }
 
 template<class ...Args>
-std::string _format(std::string str, Args &&... args) {
+std::string format(const std::string &str, Args &&... args) {
     std::vector<std::string> params{to_string(std::forward<Args>(args))...};
-    int cur = 0;
+     int cur = 0;
     int num = 0;
     std::string result;
     while (cur < str.length()) {
@@ -55,9 +55,4 @@ std::string _format(std::string str, Args &&... args) {
 
 std::string format(std::string str) {
     return str;
-}
-
-template<class ...Args>
-std::string format(std::string str, Args &&... args) {
-    return _format(str, std::forward<Args>(args)...);
 }
