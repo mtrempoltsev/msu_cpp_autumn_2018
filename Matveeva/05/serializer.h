@@ -16,7 +16,7 @@ class Serializer
     template <class T, class... Args>
     Error process(T&& val, Args&&... args)
     {
-        if (process(val) == Error::CorruptedArchive)
+        if (process(forward<T>(val)) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         return process(forward<Args>(args)...);
     }
@@ -53,7 +53,7 @@ public:
     }
 
     template <class... Args>
-    Error operator()(Args... args)
+    Error operator()(Args&&... args)
     {
         return process(forward<Args>(args)...);
     }
@@ -66,7 +66,7 @@ class Deserializer
     template <class T, class... Args>
     Error process(T&& val, Args&&... args)
     {
-        if (process(val) == Error::CorruptedArchive)
+        if (process(forward<T>(val)) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         return process(forward<Args>(args)...);
     }
