@@ -53,6 +53,6 @@ std::string format(const std::string &str, Args &&... args) {
     return result;
 }
 
-std::string format(std::string str) {
+std::string format(const std::string &str) {
     return str;
 }
