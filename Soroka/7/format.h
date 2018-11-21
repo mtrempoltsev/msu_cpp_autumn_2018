@@ -1,37 +1,40 @@
 #pragma once
-
 #include <string>
 #include <vector>
 #include <exception>
 #include <sstream>
 
 template<class T>
-std::string to_string(T&& t) {
+std::string to_str(T&& temp)
+{
     std::ostringstream out;
-    out << t;
+    out << temp;
     return out.str();
 }
 
 template<class... Args>
-std::string format(const std::string& s, Args&&... args) {
-    std::vector<std::string> strArgs{to_string(std::forward<Args>(args))...};
-    std::istringstream in(s);
+std::string format(const std::string& str, Args&&... args)
+{
     std::ostringstream out;
-    char c;
+    std::istringstream in(str);
+    std::vector<std::string> arguments{to_str(std::forward<Args>(args))...};
     in >> std::noskipws;
-    while (in >> c) {
-        if (c == '{') {
+    char ch;
+    while (in >> ch) {
+        if (ch == '{') {
             int n;
             in >> n;
-            if (n >= strArgs.size() || !(in >> c) || (c != '}')) {
+            if (n >= arguments.size() || !(in >> ch) || (ch != '}')) {
                 throw std::runtime_error("error");
             }
-            out << strArgs[n];
-        } else if (c == '}') {
+            out << arguments[n];
+        } else if (ch == '}') {
             throw std::runtime_error("error");
         } else  {
-            out << c;
+            out << ch;
         }
     }
     return out.str();
 }
+
+
