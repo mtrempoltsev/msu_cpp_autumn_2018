@@ -10,9 +10,6 @@ public:
     using pointer = T*;
     using size_type = std::size_t;
 
-    // волшебные ::operator new и ::operator delete
-    // тупо аналоги    malloc   и   free?
-
     pointer allocate(size_type cnt)
     {
         return static_cast<pointer>(::operator new(cnt * sizeof(value_type)));
@@ -154,7 +151,7 @@ public:
         if (size_ < newSize)
         {
             auto newData = alloc_.allocate(newSize);
-            std::move(data_, data_ + size_, newData); // copy?
+            std::move(data_, data_ + size_, newData);
             alloc_.deallocate(data_, size_);
             data_ = newData;
             size_ = newSize;
