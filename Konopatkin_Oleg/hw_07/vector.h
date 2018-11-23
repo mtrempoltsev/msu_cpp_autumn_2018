@@ -226,9 +226,16 @@ public:
     }
 };
 
-/*
-Vector<int>: 840048 us
-std::vector<int>: 1023058 us
-std::deque<int>: 1283073 us
-std::list<int>: 8224470 us
+/* 
+Vector<int>: 74004 us
+std::vector<int>: 89005 us
+std::deque<int>: 207011 us
+std::list<int>: 5817332 us
+*/
+
+/* На сервере:
+Vector<int>: 63381 us
+std::vector<int>: 90338 us
+std::deque<int>: 188175 us
+std::list<int>: 3545155 us
 */
