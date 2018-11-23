@@ -17,10 +17,10 @@ int search(const std::string &str, int &i) {
     throw std::runtime_error("incorrect input");
 }
 
-template<typename... Args>
-std::string to_string(Args &&... args) {
+template<class T>
+std::string to_string(T arg) {
     std::stringstream sstr;
-    (sstr << ... << args );
+    sstr << arg;
     return sstr.str();
 }
 
