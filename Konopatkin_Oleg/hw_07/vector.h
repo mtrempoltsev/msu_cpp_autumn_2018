@@ -10,6 +10,9 @@ public:
     using pointer = T*;
     using size_type = std::size_t;
 
+    // волшебные ::operator new и ::operator delete
+    // тупо аналоги    malloc   и   free?
+
     pointer allocate(size_type cnt)
     {
         return static_cast<pointer>(::operator new(cnt * sizeof(value_type)));
@@ -118,14 +121,11 @@ private:
     pointer data_;
     size_type len_;  // длина вектора
     size_type size_; // размер буфера
-    const size_type BASE_SIZE = 256;
+    static const size_type BASE_SIZE = 256;
 
 public:
 
-    Vector () : len_(0), alloc_() {
-        size_ = BASE_SIZE;
-        data_ = alloc_.allocate(size_);
-    }
+    Vector () : len_(0), alloc_(), size_(BASE_SIZE), data_(alloc_.allocate(size_)) {}
 
     Vector (size_type size, value_type&& def) : len_(size), alloc_() {
         size_ = std::min(BASE_SIZE, size * 2);
