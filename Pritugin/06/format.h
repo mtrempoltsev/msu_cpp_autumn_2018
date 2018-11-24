@@ -1,62 +1,10 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <cctype>
 
-// standart types
-std::string to_string(int x) 
-{
-	return std::to_string(x); 
-}
 
-std::string to_string(unsigned int x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(long x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(unsigned long x) 
-{
-	return std::to_string(x);
-}
-
-std::string to_string(long long x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(unsigned long long x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(float x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(double x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(long double x)
-{
-	return std::to_string(x);
-}
-
-std::string to_string(const char *x)
-{
-	return std::string(x);
-}
-
-std::string to_string(const std::string &x)
-{
-	return x;
-}
+using std::to_string;
 
 template<typename T>
 std::string to_string(const T &t)
@@ -68,11 +16,16 @@ std::string to_string(const T &t)
 
 // ----------------
 
-
-
-
-std::string _format_(const std::string &s, const std::vector<std::string> &strs)
+std::string format(const std::string& s)
 {
+	return s;
+}
+
+template<class... Args>
+std::string format(const std::string& s, Args&&... args)
+{
+	std::vector<std::string> strs {to_string(std::forward<Args>(args))...};
+	
 	static const char FORMAT_SYMBOL = '{';
 	std::string res;
 	std::string buf;
@@ -84,7 +37,7 @@ std::string _format_(const std::string &s, const std::vector<std::string> &strs)
 			throw std::runtime_error("Error");
 		if (arg)
 		{
-			if (s[i] >= '0' && s[i] <= '9')
+			if (isdigit(s[i]))
 			{
 				buf += s[i];
 			}
@@ -127,26 +80,6 @@ std::string _format_(const std::string &s, const std::vector<std::string> &strs)
 		}
 	}
 	return res;
-}
-
-template<class Arg, class... Args>
-std::string _format_(const std::string& s, std::vector<std::string>& strs, Arg&& arg, Args&& ... args)
-{
-	strs.push_back(to_string(std::forward<Arg>(arg)));
-	return _format_(s, strs, std::forward<Args>(args)...);
-}
-
-
-std::string format(const std::string& s)
-{
-	return s;
-}
-
-template<class Arg, class... Args>
-std::string format(const std::string& s, Arg&& arg, Args&&... args)
-{
-	std::vector<std::string> strs;
-	return _format_(s, strs, std::forward<Arg>(arg), std::forward<Args>(args)...);
 }
 
 

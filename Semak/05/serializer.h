@@ -82,7 +82,7 @@ private:
 
 
     template <class T, class... ArgsT>
-    Error process(T& val, ArgsT&&... args)
+    Error process(T&& val, ArgsT&&... args)
     {
         Error er = process(val);
         if(er == Error::NoError)
@@ -95,10 +95,10 @@ private:
     {
         std::string strVal;
         in_ >> strVal;
+        if(strVal[0] == '-')
+            return Error::CorruptedArchive;
         try
         {
-            if(strVal[0] == '-')
-                throw std::invalid_argument("Negative number");
             val = std::stoull(strVal);
         }
         catch(std::exception& ex)

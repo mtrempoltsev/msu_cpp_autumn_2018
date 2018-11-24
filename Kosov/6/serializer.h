@@ -19,8 +19,8 @@ public:
         return object.serialize(*this);
     }
     template <class... ArgsT>
-    Error operator()(ArgsT... args){
-        return process(args...);
+    Error operator()(ArgsT&&... args){
+        return process(std::forward<ArgsT>(args)...);
     }
     
 private:
@@ -54,7 +54,7 @@ public:
     }
     template <class... ArgsT>
     Error operator()(ArgsT&&... args){
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 private:
     std::istream& in_;
