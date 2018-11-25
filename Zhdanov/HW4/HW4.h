@@ -63,7 +63,7 @@ public:
 	{
 		delete[] number;
 	};
-	BigInt& operator=(const int& number)
+	BigInt& operator=(const int number)
 	{
 		BigInt new_number(number);
 		*this = new_number;
@@ -83,9 +83,9 @@ public:
 	};
 	bool operator>=(const BigInt& number) const
 	{
-		if (this->sign == true && number.sign == false)
+		if (this->sign && !number.sign)
 			return true;
-		if (this->sign == true)
+		if (this->sign)
 		{
 			if (this->length > number.length)
 				return true;
@@ -100,7 +100,7 @@ public:
 			};
 			return true;
 		};
-		if (this->sign == false)
+		if (!this->sign)
 		{
 			if (this->length < number.length)
 				return true;
@@ -118,9 +118,9 @@ public:
 	};
 	bool operator>(const BigInt& number) const
 	{
-		if (this->sign == true && number.sign == false)
+		if (this->sign && !number.sign)
 			return true;
-		if (this->sign == true)
+		if (this->sign)
 		{
 			if (this->length > number.length)
 				return true;
@@ -135,7 +135,7 @@ public:
 			};
 			return false;
 		};
-		if (this->sign == false)
+		if (!this->sign)
 		{
 			if (this->length < number.length)
 				return true;
@@ -164,13 +164,13 @@ public:
 		int tmp_num;
 		if (number < 0)
 		{
-			if (this->sign == true)
+			if (this->sign)
 				return false;
 			tmp_num = -number;
 		};
 		if (number >= 0)
 		{
-			if (this->sign == false)
+			if (!this->sign)
 				return false;
 			tmp_num = number;
 		};
@@ -314,22 +314,22 @@ public:
 		};
 		return new_number;
 	};
-	BigInt& operator-()
+	BigInt& operator-() const
 	{
+		BigInt new_number(*this);
 		if (this->length > 0)
-			this->sign = !(this->sign);
-		return *this;
+			new_number.sign = !(this->sign);
+		return new_number;
 	};
 	BigInt operator-(const BigInt& number) const
 	{
 		BigInt new_number = number;
-		-new_number;
-		new_number = *this + new_number;
+		new_number = *this + (-new_number);
 		return new_number;
 	};
 	friend ostream& operator<<(ostream& out, const BigInt& number)
 	{
-		if (number.sign == false)
+		if (!number.sign)
 			out << '-';
 		for(int i=0;i<number.length;++i)
 			out << +number.number[number.length-i-1];
