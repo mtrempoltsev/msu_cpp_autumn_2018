@@ -11,7 +11,7 @@ public:
 	typedef size_t size_type;
 	pointer allocate(size_type size) {
 		return static_cast<pointer>(::operator new[](size
-									* sizeof(value_type)));
+						* sizeof(value_type)));
 	}
 	void deallocate(pointer ptr){::operator delete(ptr);}
 	template<class... ArgsT>
