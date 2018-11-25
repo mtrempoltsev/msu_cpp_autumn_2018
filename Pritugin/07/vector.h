@@ -223,12 +223,13 @@ public:
 	{
 		return _size_ == 0;
 	}
-	
+
 	void push_back(value_type&& elem)
 	{
 		if(_size_ < _maxsize_)
 		{
-			_data_[_size_++] = std::move(elem);
+			new (_data_ + _size_) value_type{std::forward<value_type>(elem)};
+			_size_++;
 			return;
 		}
 
@@ -239,12 +240,13 @@ public:
 			_alloc_.destroy(_data_ + i);
 		}
 		
-		bufer[_size_++] = std::move(elem);
+		new (bufer + _size_) value_type{std::forward<value_type>(elem)};
+		_size_++;
 		_alloc_.deallocate(_data_, _maxsize_);
 		_maxsize_ *= 2;
 		_data_ = bufer;
 	}
-	
+
 	void push_back(const_reference elem)
 	{
 		if(_size_ < _maxsize_)
