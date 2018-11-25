@@ -124,8 +124,7 @@ public:
 
     Vector () : len_(0), alloc_(), size_(BASE_SIZE), data_(alloc_.allocate(size_)) {}
 
-    Vector (size_type size, value_type&& def) : len_(size), size_(size), alloc_() {
-        data_ = alloc_.allocate(size_);
+    Vector (size_type size, value_type&& def) : len_(size), alloc_(), size_(size), data_(alloc_.allocate(size_)) {
         for (size_type i = 0; i < len_; ++i) {
             data_[i] = def;
         }
