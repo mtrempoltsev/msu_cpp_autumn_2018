@@ -228,8 +228,7 @@ public:
 	{
 		if(_size_ < _maxsize_)
 		{
-			new (_data_ + _size_) value_type{std::forward<value_type>(elem)};
-			_size_++;
+			new (_data_ + _size_++) value_type{std::forward<value_type>(elem)};
 			return;
 		}
 
@@ -240,8 +239,7 @@ public:
 			_alloc_.destroy(_data_ + i);
 		}
 		
-		new (bufer + _size_) value_type{std::forward<value_type>(elem)};
-		_size_++;
+		new (bufer + _size_++) value_type{std::forward<value_type>(elem)};
 		_alloc_.deallocate(_data_, _maxsize_);
 		_maxsize_ *= 2;
 		_data_ = bufer;
