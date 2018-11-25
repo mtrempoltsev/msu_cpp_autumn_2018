@@ -26,15 +26,18 @@ std::string format(const std::string& format_str, ArgsT&& ... args)
         }
         if (format_str[i] == '{') {
             ++i;
-            if (i + 1 > last || format_str[i + 1] != '}' || !isdigit(format_str[i])) {
+            int ind = 0;
+            while (isdigit(format_str[i])) {
+                ind = ind * 10 + format_str[i++] - '0';
+            }
+            if (i > last || format_str[i] != '}' || !isdigit(format_str[i - 1])) {
                 throw runtime_error("");
             }
-            int ind = format_str[i] - '0';
             if (ind + 1 > ptr.size()) {
                 throw runtime_error("");
             }
             res += ptr[ind];
-            i += 2;
+            ++i;
         } else {
             res += format_str[i++];
         }
