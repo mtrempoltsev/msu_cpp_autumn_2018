@@ -50,6 +50,12 @@ class Vector
 
         explicit Vector(size_type count = baselen): alloc_{}, allocd_{count},
             data_{alloc_.allocate(allocd_)}, used_{0} {};
+        // explicit Vector(size_type count = baselen): alloc_{}, allocd_{count},
+        //          data_{alloc_.allocate(allocd_)}, used_{count} {
+        //              for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
+        //                  alloc_.construct(ptr);
+        //              }
+        //          };
         ~Vector();
         void reserve(size_type count);
         void push_back(value_type&& value);
@@ -164,7 +170,7 @@ void Vector<T, Alloc>::push_back(value_type&& value)
     if (used_ >= allocd_) {
         reserve(allocd_ * multipl);
     }
-    data_[used_++] = std::move(value);
+    new (data_ + (used_)++) value_type{std::forward<value_type>(value)};
 }
 
 template<class T, class Alloc>
@@ -173,7 +179,7 @@ void Vector<T, Alloc>::push_back(const_reference value)
     if (used_ >= allocd_) {
         reserve(allocd_ * multipl);
     }
-    data_[used_++] = value;
+    new (data_ + (used_)++) value_type{value};
 }
 
 template<class T, class Alloc>
