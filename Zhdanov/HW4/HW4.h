@@ -4,7 +4,7 @@
 
 using namespace std;
 
-const int max_uint = 10;
+const int max_uint = 100;
 const uint8_t max_i8t = 255;
 class BigInt
 {
@@ -331,8 +331,13 @@ public:
 	{
 		if (!number.sign)
 			out << '-';
-		for(int i=0;i<number.length;++i)
-			out << +number.number[number.length-i-1];
+		for (int i = 0; i < number.length; ++i)
+			if ((number.number[i] / 10 == 0) && (i != 0))
+			{
+				out << 0;
+				out << +number.number[number.length - i - 1];
+			}
+			else out << +number.number[number.length-i-1];
 		return out;
 	};
 };
