@@ -17,22 +17,22 @@ public:
     }
 
     template <class T>
-    Error save(T& object)
+    Error save(T & object)
     {
         return object.serialize(*this);
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    Error operator()(ArgsT &&... args)
     {
-        return process(std::forward<ArgsT>(args)...);
+        return process(std::forward<Args>(args)...);
     }
 
 private:
     template <class Arg, class ... Args>
     Error process(Arg && arg, Args &&... args)
     {
-        return process(arg) == Error::NoError ?
+        return process(std::forward<Args>(args)...) == Error::NoError ?
             process(std::forward<Args>(args)...) : Error::CorruptedArchive;
     }
 
@@ -80,14 +80,14 @@ public:
 
 private:
     template <class Arg, class ... Args>
-    Error process(Arg && arg, Args &&... args)
+    Error process(Arg & arg, Args &&... args)
     {
-        return process(arg) == Error::NoError ?
+        return process(std::forward<Args>(args)...) == Error::NoError ?
             process(std::forward<Args>(args)...) : Error::CorruptedArchive;
     }
 
     template <class T>
-    Error process(T &&)
+    Error process(T &)
     {
         return Error::CorruptedArchive;
     }

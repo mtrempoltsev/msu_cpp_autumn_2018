@@ -25,10 +25,10 @@ private:
 public:
     
     BigInt(long long a = 0) {
-        sign_ = 0;
+        sign_ = false;
         if (a < 0) {
             a = -a;
-            sign_ = 1;
+            sign_ = true;
         }
         vec_size_ = 32;
         number_ = new char[vec_size_];
@@ -74,7 +74,7 @@ public:
     BigInt operator- () const {
         BigInt tmp = *this;
         if (*this != 0)
-            tmp.sign_ = (sign_ == 1) ? 0 : 1;
+            tmp.sign_ = (sign_) ? false : true;
         return tmp;
     }
     
@@ -156,40 +156,40 @@ public:
     
     bool operator== (const BigInt &rvalue) const {
         if (this == &rvalue)
-            return 1;
+            return true;
         else {
             if ((sign_ != rvalue.sign_) || (num_size_ != rvalue.num_size_))
-                return 0;
+                return false;
             for (int i = 0; i < num_size_; i++)
                 if (number_[i] != rvalue.number_[i])
-                    return 0;
+                    return false;
         }
-        return 1;
+        return true;
     }
     
     bool operator< (const BigInt &rvalue) const {
         if (*this == rvalue)
-            return 0;
+            return false;
         if (sign_ > rvalue.sign_)
-            return 1;
+            return true;
         if (sign_ < rvalue.sign_)
-            return 0;
+            return false;
         if (num_size_ > rvalue.num_size_)
-            return (sign_ == 0) ? 0 : 1;
+            return (!sign_) ? false : true;
         if (num_size_ < rvalue.num_size_)
-            return (sign_ == 0) ? 1 : 0;
+            return (!sign_) ? true : false;
         for (int i = num_size_ - 1; i >= 0; --i) {
             if (number_[i] > rvalue.number_[i])
-                return (sign_ == 0) ? 0 : 1;
+                return (!sign_) ? false : true;
             if (number_[i] < rvalue.number_[i])
-                return (sign_ == 0) ? 1 : 0;
+                return (sign_ == false) ? true : false;
         }
         return 0;
     }
     
     bool operator> (const BigInt &rvalue) const {
         if (rvalue == *this)
-            return 0;
+            return false;
         return (rvalue < *this);
     }
     
@@ -208,7 +208,7 @@ public:
 };
 
 ostream &operator<< (ostream &out, const BigInt &obj) {
-    if (obj.sign_ == 1)
+    if (obj.sign_)
         out << '-';
     for (int i = obj.num_size_ - 1; i >= 0; --i)
         out << obj.number_[i] - 0;

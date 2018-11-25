@@ -12,14 +12,6 @@ std::string arg_to_string (T&& arg)
 }
 
 template <class... ArgsT>
-std::vector<std::string> args_in_vector (ArgsT&&... args)
-{
-    return std::vector<std::string> {
-        {arg_to_string(std::forward<ArgsT>(args))...}
-    };
-}
-
-template <class... ArgsT>
 std::string format(const std::string& inp_str, ArgsT&& ... args)
 {
     int cur_index = 0;

@@ -52,5 +52,5 @@ std::string format(const std::string& fmt, T&& fst, ArgsT&&... args) {
         }
     }
 
-    return format(std::forward<std::string>(out.str()), std::forward<ArgsT>(args)...);
+    return format(out.str(), std::forward<ArgsT>(args)...);
 }

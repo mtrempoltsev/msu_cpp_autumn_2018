@@ -8,10 +8,7 @@ class Calculator {
     std::string string;
 public: 
     int64_t result;
-    Calculator(std::string str) {
-        string = str;
-     	result = 0;
-    }
+    Calculator(const std::string str) : string(str), result(0) {}
 
     void delete_gap() {
         int count = 0;
@@ -25,62 +22,66 @@ public:
         return;
     }
 
-    int convert_arg(const std::string str, int64_t& arg) {
+    int convert_arg(int64_t& arg) {
         arg = 0;
         int ind = 0;
-        if (str.length() == 0) {
+        if (string.length() == 0) {
             std::cout << "error" << std::endl;
             return 1;
         }
-        if (str[ind] == '-') {
+        if (string[ind] == '-') {
             ++ind;
-            for (int i = ind; i < str.length(); ++i) {
+            for (int i = ind; i < string.length(); ++i) {
                 char number[1];
-                if (not isdigit(str[i])) {
+                if (not isdigit(string[i])) {
                     std::cout << "error" << std::endl;
                     return 1;
                 }
-                number[0] = str[i];
-                arg = arg * 10 + atoi(const_cast<char*>(number));
+                number[0] = string[i];
+                arg = arg * 10 + atoi(number);
             }
             arg = -arg;
         } else {
-            for (int i = ind; i < str.length(); ++i) {
+            for (int i = ind; i < string.length(); ++i) {
                 char number[1];
-                if (not isdigit(str[i])) {
+                if (not isdigit(string[i])) {
                     std::cout << "error" << std::endl;
                     return 1;
                 }
-                number[0] = str[i];
-                arg = arg * 10 + atoi(const_cast<char*>(number));
+                number[0] = string[i];
+                arg = arg * 10 + atoi(number);
             }
         }
         return 0;
     }
 
-    int define_result_multiply_divide(const std::string string_local, int64_t& result) {
+    int define_result_multiply_divide(int64_t& result) {
         int n_first_arg = 0;
-        for (int i = 0; i < string_local.length(); i++) {
-            if (string_local[i] == '*') {
-                std::string str1 = string_local;
-                std::string str2 = string_local;
+        for (int i = 0; i < string.length(); i++) {
+            if (string[i] == '*') {
+                std::string str1 = string;
+                std::string str2 = string;
                 int error1, error2;
                 int64_t arg1, arg2;
-                error1 = convert_arg(str1.erase(n_first_arg, str1.length() - n_first_arg), arg1);
-                error2 = define_result_multiply_divide(str2.erase(0, n_first_arg + 1), arg2);
+                string = str1.erase(n_first_arg, str1.length() - n_first_arg);
+                error1 = convert_arg(arg1);
+                string = str2.erase(0, n_first_arg + 1);
+                error2 = define_result_multiply_divide(arg2);
                 if (error1 || error2) {
                     return 1;
                 }
                 result = arg1 * arg2;
                 return 0;
             } 
-            if (string_local[i] == '/') {
-                std::string str1 = string_local;
-                std::string str2 = string_local;
+            if (string[i] == '/') {
+                std::string str1 = string;
+                std::string str2 = string;
                 int error1, error2;
                 int64_t arg1, arg2;
-                error1 = convert_arg(str1.erase(n_first_arg, str1.length() - n_first_arg), arg1);
-                error2 = define_result_multiply_divide(str2.erase(0, n_first_arg + 1), arg2);
+                string = str1.erase(n_first_arg, str1.length() - n_first_arg);
+                error1 = convert_arg(arg1);
+                string = str2.erase(0, n_first_arg + 1);
+                error2 = define_result_multiply_divide(arg2);
                 if (error1 || error2) {
                     return 1;
                 }
@@ -93,52 +94,58 @@ public:
             }    
             ++n_first_arg;
         }
-        int error = convert_arg(string_local, result);
+        int error = convert_arg(result);
         if (error) { 
             return 1;
         }
         return 0;
     }
 
-    int define_result_plus_minus(const std::string string_local, int64_t& result) {
+    int define_result_plus_minus(int64_t& result) {
         int n_first_arg = 0;
-        for (int i = 0; i < string_local.length(); i++) {
-            if (string_local[i] == '+') {
-                std::string str1 = string_local;
-                std::string str2 = string_local;
+        for (int i = 0; i < string.length(); i++) {
+            if (string[i] == '+') {
+                std::string str1 = string;
+                std::string str2 = string;
                 int error1, error2;
                 int64_t arg1, arg2;
-                error1 = define_result_multiply_divide(str1.erase(n_first_arg, str1.length() - n_first_arg), arg1);
-                error2 = define_result_plus_minus(str2.erase(0, n_first_arg + 1), arg2);
+                string = str1.erase(n_first_arg, str1.length() - n_first_arg);
+                error1 = define_result_multiply_divide(arg1);
+                string = str2.erase(0, n_first_arg + 1);
+                error2 = define_result_plus_minus(arg2);
                 if (error1 || error2) {
                     return 1;
                 }
                 result = arg1 + arg2; 
                 return 0;
             } 
-            if ((string_local[i] == '-') && (i > 0) && (i + 1 < string_local.length()) && \
-                    (isdigit(string_local[i+1])) && (isdigit(string_local[i-1]))) {
+            if ((string[i] == '-') && (i > 0) && (i + 1 < string.length()) && \
+                    (isdigit(string[i+1])) && (isdigit(string[i-1]))) {
                 std::string str_minus = "-";
-                std::string str1 = string_local;
-                std::string str2 = string_local;
+                std::string str1 = string;
+                std::string str2 = string;
                 int error1, error2;
                 int64_t arg1, arg2;
-                error1 = define_result_multiply_divide(str1.erase(n_first_arg, str1.length() - n_first_arg), arg1);
-                error2 = define_result_plus_minus(str_minus + str2.erase(0, n_first_arg + 1), arg2);
+                string = str1.erase(n_first_arg, str1.length() - n_first_arg);
+                error1 = define_result_multiply_divide(arg1);
+                string = str_minus + str2.erase(0, n_first_arg + 1);
+                error2 = define_result_plus_minus(arg2);
                 if (error1 || error2) {
                     return 1;
                 }
                 result = arg1 + arg2;
                 return 0;
             }
-            if ((string_local[i] == '-') && (i > 0) && (i + 1 < string_local.length()) && \
-                    (string_local[i+1] == '-') && (isdigit(string_local[i-1]))) {
-                std::string str1 = string_local;
-                std::string str2 = string_local;
+            if ((string[i] == '-') && (i > 0) && (i + 1 < string.length()) && \
+                    (string[i+1] == '-') && (isdigit(string[i-1]))) {
+                std::string str1 = string;
+                std::string str2 = string;
                 int error1, error2;
                 int64_t arg1, arg2;
-                error1 = define_result_multiply_divide(str1.erase(n_first_arg, str1.length() - n_first_arg), arg1);
-                error2 = define_result_plus_minus(str2.erase(0, n_first_arg + 2), arg2);
+                string = str1.erase(n_first_arg, str1.length() - n_first_arg);
+                error1 = define_result_multiply_divide(arg1);
+                string = str2.erase(0, n_first_arg + 2);
+                error2 = define_result_plus_minus(arg2);
                 if (error1 || error2) {
                     return 1;
                 }
@@ -147,7 +154,7 @@ public:
             }
             ++n_first_arg;	
         }    
-        int error = define_result_multiply_divide(string_local, result);
+        int error = define_result_multiply_divide(result);
         if (error) { 
             return 1;
         }
@@ -156,8 +163,13 @@ public:
 
     int main_calc() {
         int error;
-        error = define_result_plus_minus(string, result);
+        delete_gap();
+        error = define_result_plus_minus(result);
         return error;
+    }
+    
+    void print_result() {
+        std::cout << result << std::endl;
     }
 };
 
@@ -169,12 +181,11 @@ int main(int argc, char* argv[]) {
     } 
     std::string string = argv[1];
     int error;
-    Calculator calc = Calculator(string); 	
-    calc.delete_gap();
+    Calculator calc(string); 	
     error = calc.main_calc();
     if (error) {
         return 1;
     }
-    std::cout << calc.result << std::endl;
+    calc.print_result();
     return 0;
 }
