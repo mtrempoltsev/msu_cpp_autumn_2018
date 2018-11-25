@@ -13,7 +13,7 @@ class Allocator
         using size_type = size_t;
 
         pointer allocate(size_type count);
-        void dealloc(pointer ptr, size_type count);
+        void deallocate(pointer ptr, size_type count);
 
         template<class... ArgsT>
         void construct(pointer ptr, ArgsT&& ... Args);
@@ -82,7 +82,7 @@ typename Allocator<T>::pointer Allocator<T>::allocate(size_type count)
 }
 
 template<class T>
-void Allocator<T>::dealloc(pointer ptr, size_type count)
+void Allocator<T>::deallocate(pointer ptr, size_type count)
 {
     ::operator delete[](ptr, sizeof(T) * count);
 }
@@ -139,7 +139,7 @@ Vector<T, Alloc>::~Vector<T, Alloc>()
     for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
         alloc_.destroy(ptr);
     }
-    alloc_.dealloc(data_, allocd_);
+    alloc_.deallocate(data_, allocd_);
 }
 
 template<class T, class Alloc>
@@ -153,7 +153,7 @@ void Vector<T, Alloc>::reserve(size_type count)
     for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
         alloc_.destroy(ptr);
     }
-    alloc_.dealloc(data_, allocd_);
+    alloc_.deallocate(data_, allocd_);
     data_ = newdata;
     allocd_ = count;
 }
