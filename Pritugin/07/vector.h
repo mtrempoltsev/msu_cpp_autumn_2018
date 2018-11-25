@@ -69,7 +69,7 @@ public:
 
 template <class T>
 class Iterator
-	: public std::iterator<std::forward_iterator_tag, T>
+	: public std::iterator<std::random_access_iterator_tag, T>
 {
 	T* ptr_;
 public:
@@ -107,8 +107,6 @@ public:
 		return *this;
 	}
 };
-
-
 template <class T, class Alloc = Allocator<T>>
 class Vector
 {
@@ -142,7 +140,12 @@ public:
 	}
 	
 	// Copy constructors
-	Vector(const Vector& other) : Vector(other._size_, other._data_) {}
+	Vector(const Vector& other) : _size_(other._size), _maxsize_(other._maxsize_)
+	{
+		_data_ = _alloc_.allocate(_maxsize_);
+		for(size_type i = 0; i < _size_; ++i)
+			_alloc_.construct(_data_ + i, other._data_[i]);
+	}
 	
 	// Move constructors
 	Vector(Vector&& other) : _size_(other._size_),
