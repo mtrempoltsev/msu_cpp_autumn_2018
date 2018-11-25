@@ -44,7 +44,7 @@ class Iterator
 public:
     using value_type = T;
     using pointer = T*;
-    using const_pointer = T*;
+    using const_pointer = const T*;
     using reference = T&;
     using const_reference = const T&;    
     using difference_type = std::ptrdiff_t;
@@ -92,7 +92,7 @@ public:
     }
 
     bool operator!=(Iterator other) const {
-        return !(iter == other.iter);
+        return iter != other.iter;
     }
 
     reference operator*() const {
@@ -107,7 +107,7 @@ class Vector
 public:
     using value_type = T;
     using pointer = T*;
-    using const_pointer = T*;
+    using const_pointer = const T*;
     using reference = T&;
     using const_reference = const T&;
     using size_type = std::size_t;
@@ -124,8 +124,7 @@ public:
 
     Vector () : len_(0), alloc_(), size_(BASE_SIZE), data_(alloc_.allocate(size_)) {}
 
-    Vector (size_type size, value_type&& def) : len_(size), alloc_() {
-        size_ = std::min(BASE_SIZE, size * 2);
+    Vector (size_type size, value_type&& def) : len_(size), size_(size), alloc_() {
         data_ = alloc_.allocate(size_);
         for (size_type i = 0; i < len_; ++i) {
             data_[i] = def;
