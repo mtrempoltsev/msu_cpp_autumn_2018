@@ -48,14 +48,12 @@ class Vector
         using allocator_type = Alloc;
         using iterator = Iterator<T>;
 
-        explicit Vector(size_type count = baselen): alloc_{}, allocd_{count},
-            data_{alloc_.allocate(allocd_)}, used_{0} {};
-        // explicit Vector(size_type count = baselen): alloc_{}, allocd_{count},
-        //          data_{alloc_.allocate(allocd_)}, used_{count} {
-        //              for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
-        //                  alloc_.construct(ptr);
-        //              }
-        //          };
+        explicit Vector(size_type count = 0): alloc_{}, allocd_{basealloc},
+            data_{alloc_.allocate(allocd_)}, used_{count} {
+                for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
+                    alloc_.construct(ptr);
+                }
+         };
         ~Vector();
         void reserve(size_type count);
         void push_back(value_type&& value);
@@ -77,7 +75,7 @@ class Vector
         size_type allocd_;
         T* data_;
         size_type used_;
-        static constexpr size_type baselen{10};
+        static constexpr size_type basealloc{20};
         static constexpr size_type multipl{2};
 };
 
