@@ -112,9 +112,8 @@ public:
 		return 0;
 	}
 	template<typename... ArgsT>
-	explicit PatternArgs(ArgsT&&... pattern_args) {
-		args = std::move(std::vector<std::string> {to_string(std::forward<ArgsT>(pattern_args))...});
-	}
+	explicit PatternArgs(ArgsT&&... pattern_args) : 
+		args(std::move(std::vector<std::string> {to_string(std::forward<ArgsT>(pattern_args))...})) {}
 
 	const std::string& operator[] (size_t num) const {
 		return args[num];
