@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdlib>
 #include <iostream>
 #include<algorithm> 
@@ -49,12 +51,13 @@ public:
 		:length(length), sign(sign)
 	{
 		number = new uint8_t[length];
-		for(int i=0; i<length;++i)
+		for (int i = 0; i < length; ++i)
 			number[i] = 0;
 	};
 	BigInt(const BigInt& to_copy)
-		:length(to_copy.length), sign(to_copy.sign)
 	{
+		length = to_copy.length;
+		sign = to_copy.sign;
 		number = new uint8_t[length];
 		for (int i = 0; i < length; ++i)
 			number[i] = to_copy.number[i];
@@ -177,7 +180,7 @@ public:
 		bool same = true;
 		for (int i = 0; i < this->length; ++i)
 		{
-			same = same&&(+this->number[i] == (tmp_num % +max_uint));
+			same = same && (+this->number[i] == (tmp_num % +max_uint));
 			tmp_num /= max_uint;
 			if (!same)
 				break;
@@ -337,7 +340,7 @@ public:
 				out << 0;
 				out << +number.number[number.length - i - 1];
 			}
-			else out << +number.number[number.length-i-1];
+			else out << +number.number[number.length - i - 1];
 		return out;
 	};
 };
