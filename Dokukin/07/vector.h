@@ -23,7 +23,7 @@ public:
 	
     void deallocate(pointer p)
     {
-		::operator delete(p);
+		::operator delete[](p);
 	}
 	
 	template<class... Args >
@@ -40,7 +40,7 @@ public:
 
 template <class T>
 class Iterator
-	: public std::iterator<std::forward_iterator_tag, T>
+	: public std::iterator<std::random_access_iterator_tag, T>
 {
     T* ptr_;
     
@@ -131,7 +131,7 @@ public:
 		data_ = alloc_.allocate(max_size_);
 		for (size_type i = 0; i < size_; ++i)
 		{
-			alloc_.construct(data_[i]);
+			alloc_.construct(data_ + i);
 		}
 	}
 	
@@ -144,6 +144,16 @@ public:
 	{
 		clear();
 		alloc_.deallocate(data_);
+	}
+
+	void clear() noexcept
+	{
+		for (size_type i = 0; i < size_; ++i)
+		{
+			alloc_.destroy(data_ + i);
+		}
+		size_ = 0;
+		max_size_ = 0;
 	}
 	
 	bool empty() const
@@ -160,7 +170,7 @@ public:
 	{
 		if (size_ < max_size_)
 		{
-			data_[size_++] = move(value);
+			alloc_.construct(data_ + size_++, forward<value_type>(value));
 		}
 		else
 		{	
@@ -168,7 +178,7 @@ public:
 			pointer newData = alloc_.allocate(max_size_);
 			for (size_type i = 0; i < size_; ++i)
 			{
-				newData[i] = move(data_[i]);
+				alloc_.construct(newData + i, forward<value_type>(*(data_ + i)));
 				alloc_.destroy(data_ + i);
 			}
 			alloc_.deallocate(data_);
@@ -184,8 +194,9 @@ public:
 		}
 		else
 		{
-			string errorMessage = string("Position ") + to_string(pos) + 
-				string(" is out of bounds. Current size is ") + to_string(size_);
+			string errorMessage = string("Position ") + to_string(pos); 
+			errorMessage += string(" is out of bounds. Current size is ");
+			errorMessage += to_string(size_);
 			throw std::out_of_range(errorMessage);
 		}
 	}
@@ -211,7 +222,7 @@ public:
 			pointer newData = alloc_.allocate(max_size_);
 			for (size_type i = 0; i < size_; ++i)
 			{
-				newData[i] = move(data_[i]);
+				alloc_.construct(newData + i, forward<value_type>(*(data_ + i)));
 				alloc_.destroy(data_ + i);
 			}
 			alloc_.deallocate(data_);
@@ -234,7 +245,7 @@ public:
 			
 			for (size_type i = 0; i < i_max; ++i)
 			{
-				newData[i] = move(data_[i]);
+				alloc_.construct(newData + i, forward<value_type>(*(data_ + i)));
 				alloc_.destroy(data_ + i);				
 			}
 			
@@ -254,16 +265,6 @@ public:
 			size_ = count;
 			max_size_ = new_max_size;
 		}	
-	}
-	
-	void clear() noexcept
-	{
-		for (size_type i = 0; i < size_; ++i)
-		{
-			alloc_.destroy(data_ + i);
-		}
-		size_ = 0;
-		max_size_ = 0;
 	}
 	
 	iterator begin() const noexcept
