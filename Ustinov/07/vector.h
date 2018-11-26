@@ -21,8 +21,9 @@ class Allocator {
       ptr = new(ptr) value_type();
   }
 
-  void construct(pointer ptr, const value_type& value)  {
-      ptr = new(ptr) value_type(value);
+  template <class... Args>
+  void construct(pointer ptr, Args&&... arg)  {
+      ptr = new(ptr) value_type(std::forward<Args>(arg)...);
   }
 
   void destroy(pointer ptr) {
@@ -31,7 +32,7 @@ class Allocator {
 };
 
 template <class T>
-class Iterator: public std::iterator<std::input_iterator_tag, T> {
+class Iterator: public std::iterator<std::random_access_iterator_tag, T> {
    T *ptr_;
  public:
    using iterator = Iterator<T>;
@@ -83,9 +84,11 @@ class Vector {
    using reference = T&;
    using pointer = T*;
 
-   Vector(const size_t capacity=0):
-          data_(alloc_.allocate(capacity)), size_(0), capacity_(capacity)
-          {}
+   Vector(const size_t count=0):
+          data_(alloc_.allocate(count * 2)),
+          capacity_(count * 2) {
+              resize(count);
+          }
 
    ~Vector() {
       clear();
@@ -173,16 +176,8 @@ class Vector {
       return iterator(data_);
    }
 
-   const_iterator begin() const {
-      return const_iterator(data_);
-   }
-
    iterator end() {
       return iterator(data_ + size_);
-   }
-
-   const_iterator end() const {
-      return const_iterator(data_ + size_);
    }
 
    reverse_iterator rbegin() {
