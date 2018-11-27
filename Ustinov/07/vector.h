@@ -83,6 +83,40 @@ class Iterator: public std::iterator<std::random_access_iterator_tag, T> {
       ptr_ -= count;
       return *this;
    }
+
+   iterator operator+(size_t count) {
+      iterator tmp(ptr_ + count);
+      return tmp;
+   }
+
+   iterator operator-(size_t count) {
+      iterator tmp(ptr_ - count);
+      return tmp;
+   }
+
+   iterator operator+(const iterator& other) {
+      iterator tmp(ptr_ + other.ptr_);
+      return tmp;
+   }
+
+   iterator operator-(const iterator& other) {
+      iterator tmp(ptr_ - other.ptr_);
+      return tmp;
+   }
+
+   friend iterator operator+(size_t count, const iterator& other) {
+     iterator tmp(other.ptr_ + count);
+     return tmp;
+   }
+
+   friend iterator operator-(size_t count, const iterator& other) {
+     iterator tmp(count - other.ptr_);
+     return tmp;
+   }
+
+   reference operator[](size_t count) {
+      return ptr_[count];
+   }
 };
 
 template <class T, class Alloc = Allocator<T>>
