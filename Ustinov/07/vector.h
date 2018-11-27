@@ -17,10 +17,6 @@ class Allocator {
       free(ptr);
   }
 
-  void construct(pointer ptr) {
-      ptr = new(ptr) value_type();
-  }
-
   template <class... Args>
   void construct(pointer ptr, Args&&... arg)  {
       ptr = new(ptr) value_type(std::forward<Args>(arg)...);
@@ -44,12 +40,24 @@ class Iterator: public std::iterator<std::random_access_iterator_tag, T> {
             ptr_(ptr)
             {}
 
+   Iterator(const iterator& it):
+            ptr_(it.ptr_)
+            {}
+
    bool operator==(const iterator& other) {
       return ptr_ == other.ptr_;
    }
 
    bool operator!=(const iterator& other) {
       return !(*this == other);
+   }
+
+   bool operator<(const iterator& other) {
+      return ptr_ < other.ptr_;
+   }
+
+   bool operator>(const iterator& other) {
+      return ptr_ > other.ptr_;
    }
 
    reference operator*() {
@@ -63,6 +71,16 @@ class Iterator: public std::iterator<std::random_access_iterator_tag, T> {
 
    iterator& operator--() {
       --ptr_;
+      return *this;
+   }
+
+   iterator& operator+=(size_t count) {
+      ptr_ += count;
+      return *this;
+   }
+
+   iterator& operator-=(size_t count) {
+      ptr_ -= count;
       return *this;
    }
 };
