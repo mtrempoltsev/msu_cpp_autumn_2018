@@ -12,16 +12,16 @@ class Allocator
 public:
 	
 	using value_type = T;
-    using pointer = T*;
-    using size_type = size_t;
+	using pointer = T*;
+	using size_type = size_t;
     
-    pointer allocate(size_type n)
-    {
+	pointer allocate(size_type n)
+	{
 		return static_cast<pointer>(::operator new(n * sizeof(value_type)));
 	}
 	
-    void deallocate(pointer p, size_type count)
-    {
+	void deallocate(pointer p, size_type count)
+	{
 		::operator delete[](p, sizeof(value_type) * count);
 	}
 	
