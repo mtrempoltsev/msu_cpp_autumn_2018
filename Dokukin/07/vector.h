@@ -99,24 +99,24 @@ public:
     }
 	
 	bool operator>(const Iterator<T>& other) const
-    {
-        return distance(other - ptr_) > 0;
-    }
+	{
+		return distance(other - ptr_) > 0;
+	}
 	
 	bool operator<(const Iterator<T>& other) const
-    {
-        return distance(other - ptr_) < 0;
-    }
+	{
+		return distance(other - ptr_) < 0;
+	}
 	
 	bool operator>=(const Iterator<T>& other) const
-    {
-        return distance(other - ptr_) >= 0;
-    }
+	{
+		return distance(other - ptr_) >= 0;
+	}
 	
 	bool operator<=(const Iterator<T>& other) const
-    {
-        return distance(other - ptr_) <= 0;
-    }
+	{
+		return distance(other - ptr_) <= 0;
+	}
 };
 
 template <class T, class Alloc = Allocator<T>>
