@@ -96,7 +96,27 @@ public:
 			--ptr_;
 		}
         return *this;
-    }        
+    }
+	
+	bool operator>(const Iterator<T>& other) const
+    {
+        return distance(other - ptr_) > 0;
+    }
+	
+	bool operator<(const Iterator<T>& other) const
+    {
+        return distance(other - ptr_) < 0;
+    }
+	
+	bool operator>=(const Iterator<T>& other) const
+    {
+        return distance(other - ptr_) >= 0;
+    }
+	
+	bool operator<=(const Iterator<T>& other) const
+    {
+        return distance(other - ptr_) <= 0;
+    }
 };
 
 template <class T, class Alloc = Allocator<T>>
@@ -179,7 +199,7 @@ public:
 			size_type new_max_size_ = (max_size_ > 0) ? (2 * max_size_) : 8;
 			reserve(new_max_size_);
 		}
-		alloc_.construct(data_ + size_++, forward<value_type>(value));
+		alloc_.construct(data_ + size_++, value);
 	}
 	
 	reference operator[](size_type pos)
