@@ -122,8 +122,8 @@ private:
     size_type max_size_;   
     
 public:
-    explicit Vector(size_type count) : size_(count), max_size_(count * 2)
-    {
+	explicit Vector(size_type count) : size_(count), max_size_(count * 2)
+	{
 		data_ = alloc_.allocate(max_size_);
 		for (size_type i = 0; i < size_; ++i)
 		{
@@ -132,7 +132,7 @@ public:
 	}
 	
 	explicit Vector() : size_(0), max_size_(8)
-    {
+	{
 		data_ = alloc_.allocate(max_size_);
 	}
 	
