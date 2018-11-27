@@ -22,7 +22,7 @@ public:
 };
 
 template<class T>
-class Iterator: public iterator<forward_iterator_tag, T> {
+class Iterator: public iterator<random_access_iterator_tag, T> {
 public:
 	typedef T value_type;
 	typedef value_type *pointer;
