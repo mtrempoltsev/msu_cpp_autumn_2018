@@ -121,12 +121,12 @@ public:
 	reference operator[](size_type index) {return data[index];}
 	const_reference operator[](size_type index) const {return data[index];}
 	reference at(size_type index) {
-		if ((index < size_) && (index >= 0))
+		if (index < size_)
 			return data[index];
 		throw out_of_range("Error: index");
 	}
 	const_reference at(size_type index) const {
-		if ((index < size_) && (index >= 0))
+		if (index < size_)
 			return data[index];
 		throw out_of_range("Error: index");
 	}
