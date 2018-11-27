@@ -17,6 +17,10 @@ int search(const std::string &str, int &i) {
     throw std::runtime_error("incorrect input");
 }
 
+std::string to_string(std::string str) {
+    return str;
+}
+
 template<class T>
 std::string to_string(T arg) {
     std::stringstream sstr;
@@ -35,7 +39,7 @@ std::string format(const std::string &str) {
 }
 
 template<class... Args>
-std::string format(std::string &&str, Args &&... args) {
+std::string format(const std::string &str, Args &&... args) {
 
     std::vector<std::string> argv{to_string(std::forward<Args>(args))...};
 

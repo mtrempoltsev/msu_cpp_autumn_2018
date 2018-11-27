@@ -71,10 +71,11 @@ template <class T>
 class Iterator
 	: public std::iterator<std::random_access_iterator_tag, T>
 {
+	
 	T* ptr_;
 public:
 	using reference = T&;
-
+	typedef std::random_access_iterator_tag iterator_category;
 	explicit Iterator(T* ptr)
 		: ptr_(ptr)
 	{
@@ -228,8 +229,7 @@ public:
 	{
 		if(_size_ < _maxsize_)
 		{
-			new (_data_ + _size_) value_type{std::forward<value_type>(elem)};
-			_size_++;
+			_alloc_.construct(_data_ + _size_++, std::forward<value_type>(elem));
 			return;
 		}
 
@@ -240,8 +240,7 @@ public:
 			_alloc_.destroy(_data_ + i);
 		}
 		
-		new (bufer + _size_) value_type{std::forward<value_type>(elem)};
-		_size_++;
+		_alloc_.construct(_data_ + _size_++, std::forward<value_type>(elem));
 		_alloc_.deallocate(_data_, _maxsize_);
 		_maxsize_ *= 2;
 		_data_ = bufer;
@@ -251,7 +250,7 @@ public:
 	{
 		if(_size_ < _maxsize_)
 		{
-			_data_[_size_++] = elem;
+			_alloc_.construct(_data_ + _size_++, elem);
 			return;
 		}
 
@@ -262,7 +261,7 @@ public:
 			_alloc_.destroy(_data_ + i);
 		}
 		
-		bufer[_size_++] = elem;
+		_alloc_.construct(_data_ + _size_++, elem);
 		_alloc_.deallocate(_data_, _maxsize_);
 		_maxsize_ *= 2;
 		_data_ = bufer;
