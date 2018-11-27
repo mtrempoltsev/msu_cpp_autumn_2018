@@ -4,7 +4,7 @@
 #include <string>
 
 template<class T>
-std::string get_args(T&& arg)
+std::string to_string(T&& arg)
 {
     std::stringstream ss;
     ss << arg;
@@ -14,8 +14,8 @@ std::string get_args(T&& arg)
 template<class... ArgsT>
 std::string format(const std::string& str, ArgsT&&... args)
 {
-    std::vector<std::string> str_args({get_args(std::forward<ArgsT>(args))...});
-    std::string ans{};
+    std::vector<std::string> str_args({to_string(std::forward<ArgsT>(args))...});
+    std::string ans;
 
     for (size_t i = 0; i < str.length(); i++) {
         if (str[i] == '}') {
@@ -29,7 +29,7 @@ std::string format(const std::string& str, ArgsT&&... args)
                 if (isdigit(str[i])) {
                     pos = pos * 10 + str[i] - '0';
                 } else {
-                    throw std::runtime_error("wrong position value");
+                    throw std::runtime_error("wrong value");
                 }
                 i++;
             }
