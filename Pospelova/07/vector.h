@@ -86,7 +86,11 @@ public:
 				A.construct(data + i);
 	}
 	Vector(const Vector& other)
-		: Vector(other.data, other.size_, other.alloc_size) {}
+		: Vector(other.size_, other.alloc_size) {
+		data = A.allocate(alloc_size);
+		for(size_type i = 0; i < size_; ++i)
+			A.construct(data + i, other.data[i]);
+	}
 	Vector(Vector&& other)
 		: data(other.data)
 		, size_(other.size_)
