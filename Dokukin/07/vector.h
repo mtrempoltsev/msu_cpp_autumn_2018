@@ -53,50 +53,50 @@ public:
         : ptr_(ptr)
     {}
 
-    bool operator==(const Iterator<T>& other) const
-    {
-        return ptr_ == other.ptr_;
-    }
+	bool operator==(const Iterator<T>& other) const
+	{
+		return ptr_ == other.ptr_;
+	}
 
-    bool operator!=(const Iterator<T>& other) const
-    {
-        return !(*this == other);
-    }
+	bool operator!=(const Iterator<T>& other) const
+	{
+		return !(*this == other);
+	}
     
-    reference operator*() const
-    {
-        return *ptr_;
-    }
+	reference operator*() const
+	{
+		return *ptr_;
+	}
 
-    Iterator& operator++()
-    {
-        ++ptr_;
-        return *this;
-    }
+	Iterator& operator++()
+	{
+		++ptr_;
+		return *this;
+	}
     
-    Iterator& operator+=(const size_type& n)
-    {
+	Iterator& operator+=(const size_type& n)
+	{
 		for (size_type i = 0; i < n; ++i)
 		{
 			++ptr_;
 		}
-        return *this;
-    }    
+		return *this;
+	}    
     
-    Iterator& operator--()
-    {
-        --ptr_;
-        return *this;
-    } 
+	Iterator& operator--()
+	{
+		--ptr_;
+		return *this;
+	} 
     
-    Iterator& operator-=(const size_type& n)
-    {
+	Iterator& operator-=(const size_type& n)
+	{
 		for (size_type i = 0; i < n; ++i)
 		{
 			--ptr_;
 		}
-        return *this;
-    }
+		return *this;
+	}
 	
 	bool operator>(const Iterator<T>& other) const
 	{
