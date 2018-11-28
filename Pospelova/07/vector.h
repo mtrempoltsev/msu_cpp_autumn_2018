@@ -70,6 +70,53 @@ public:
 		else
 			return ptr++;
 	}
+	bool operator<(const_iterator& other) const {
+		return (ptr < other.ptr);
+	}
+	bool operator>(const_iterator& other) const {
+		return ((*this) > other);
+	}
+	bool operator<=(const_iterator& other) const {
+		return (ptr <= other.ptr);
+	}
+	bool operator>=(const_iterator& other) const {
+		return ((*this) >= other);
+	}
+	reference operator[](size_t index) const {
+		return ptr[index];
+	}
+	iterator operator+(const iterator& other) {
+		iterator tmp(ptr + other.ptr);
+		return tmp;
+	}
+	iterator operator-(const iterator& other) {
+		iterator tmp(ptr - other.ptr);
+		return tmp;
+	}
+	iterator operator+(size_t number) {
+		iterator tmp(ptr + number);
+		return tmp;
+	}
+	iterator operator-(size_t number) {
+		iterator tmp(ptr - number);
+		return tmp;
+	}
+	friend iterator operator+(size_t count, const iterator& other) {
+		iterator tmp(other.ptr + count);
+		return tmp;
+	}
+	friend iterator operator-(size_t count, const iterator& other) {
+		iterator tmp(other.ptr - count);
+		return tmp;
+	}
+	iterator& operator+=(size_t number) {
+		ptr += number;
+		return (*this);
+	}
+	iterator& operator-=(size_t number) {
+		ptr -= number;
+		return (*this);
+	}
 };
 
 template<class T, class Allocat = Allocator<T>>
