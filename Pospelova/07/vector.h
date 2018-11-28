@@ -46,17 +46,29 @@ public:
 	}
 	Iterator& operator++() {
 		if (forward_direction)
-			ptr++;
+			++ptr;
 		else
-			ptr--;
+			--ptr;
 		return *this;
 	}
 	Iterator& operator--() {
 		if (forward_direction)
-			ptr--;
+			--ptr;
 		else
-			ptr++;
+			++ptr;
 		return *this;
+	}
+	Iterator operator++(int) {
+		if (forward_direction)
+			return ptr++;
+		else
+			return ptr--;
+	}
+	Iterator operator--(int) {
+		if (forward_direction)
+			return ptr--;
+		else
+			return ptr++;
 	}
 };
 
