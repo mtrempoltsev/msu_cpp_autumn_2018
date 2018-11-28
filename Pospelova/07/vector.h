@@ -153,7 +153,7 @@ public:
 	void push_back(rvalue_reference value) {
 		if (alloc_size == size_)
 			this->reserve(alloc_size + BUF_SIZE);
-		A.construct(data + size_, forward<value_type>(value));
+		A.construct(data + size_, move(value));
 		size_++;
 	}
 	void push_back(const_reference value) {
