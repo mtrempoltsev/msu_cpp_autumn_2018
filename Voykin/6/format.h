@@ -79,15 +79,15 @@ string format(const string& str, Args&&... args)
     {
         throw runtime_error("");
     }
-    for (string x: tokens)
+    for (size_t i = 0; i < tokens.size(); i++)
     {
-        if (x[0] == '{')
+        if (tokens[i][0] == '{')
         {
-            new_format += args_to_string[stoull(x.substr(1, x.size() - 2))];
+            new_format += args_to_string[stoull(tokens[i].substr(1, tokens[i].size() - 2))];
         }
         else
         {
-            new_format += x;
+            new_format += tokens[i];
         }
     }
     return new_format;
