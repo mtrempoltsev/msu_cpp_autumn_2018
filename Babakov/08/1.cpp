@@ -38,27 +38,27 @@ public:
 Semaphore s1, s2(0);
 
 void ping_out() {
-	for (int i = 0; i < PING_AMOUNT; i++) {
-		s1.enter();
-			std::cout << "ping\n";
-		s2.leave();
-	}
+    for (int i = 0; i < PING_AMOUNT; i++) {
+        s1.enter();
+        std::cout << "ping\n";
+        s2.leave();
+    }
 }
 
 void pong_out() {
-	for (int i = 0; i < PING_AMOUNT; i++) {
-		s2.enter();
-			std::cout << "pong\n";
-		s1.leave();
-	}
+    for (int i = 0; i < PING_AMOUNT; i++) {
+        s2.enter();
+        std::cout << "pong\n";
+        s1.leave();
+    }
 }
 
 int main() {
-	std::thread t1(ping_out);
-	std::thread t2(pong_out);
+    std::thread t1(ping_out);
+    std::thread t2(pong_out);
 
-	t1.join();
-	t2.join();
+    t1.join();
+    t2.join();
 
-	return 0;
+    return 0;
 }
