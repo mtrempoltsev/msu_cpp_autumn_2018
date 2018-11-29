@@ -161,7 +161,7 @@ void Vector<T, Alloc>::reserve(size_type size)
 
     for (size_type ind = 0; ind < used_; ++ind) {
         alloc_.construct(new_data + ind, 
-                         std::forward<value_type>(*(data_ + ind)));
+                         std::move(*(data_ + ind)));
         alloc_.destroy(data_ + ind);
     }
     alloc_.deallocate(data_, allocated_);
@@ -175,7 +175,7 @@ void Vector<T, Alloc>::push_back(value_type&& value)
     if (used_ >= allocated_) {
         reserve(allocated_ * 2);
     }
-    alloc_.construct(data_ + (used_)++, std::forward<value_type>(value));
+    alloc_.construct(data_ + (used_)++, std::move(value));
 }
 
 template<class T, class Alloc>
