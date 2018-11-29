@@ -192,8 +192,7 @@ public:
         if (size > capacity_) {
             pointer new_data = alloc_.allocate(size);
             for (size_type i = 0; i < size_; i++) {
-                alloc_.construct(new_data + i, 
-                    std::forward<value_type>(*(data_ + i)));
+                alloc_.construct(new_data + i, *(data_ + i));
                 alloc_.destroy(data_ + i);
             }
 
