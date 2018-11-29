@@ -70,13 +70,13 @@ public:
 
     iterator& operator+=(const std::size_t ind)
     {
-    	pos_ += ind;
+        pos_ += ind;
         return *this;
     }
 
     iterator& operator-=(const std::size_t ind)
     {
-    	pos_ -= ind;
+        pos_ -= ind;
         return *this;
     }
 
