@@ -76,7 +76,7 @@ class Iterator
 public:
 	using reference = T&;
 	typedef std::random_access_iterator_tag iterator_category;
-	typedef ptrdiff_t difference_type;
+	typedef std::ptrdiff_t difference_type;
 	explicit Iterator(T* ptr)
 		: ptr_(ptr)
 	{
