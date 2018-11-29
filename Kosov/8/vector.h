@@ -153,7 +153,7 @@ public:
             size_type new_cap = (max_size_ > 0) ? (2 * max_size_) : 256;
             reserve(new_cap);
         }
-        alloc_.construct(arr + size_, std::forward<value_type>(new_el));
+        alloc_.construct(arr + size_, std::move(new_el));
         size_++;
     }
     
