@@ -16,7 +16,7 @@ public:
     template <class U, class... Args>
     void construct(U* p, Args&&... args)
     {
-        new((void *)p) U(std::forward<Args>(args)...);
+        new(p) U(std::forward<Args>(args)...);
     }
 
     template <class U>
@@ -33,7 +33,7 @@ public:
 
 template <class T>
 class Iterator: 
-    public std::iterator<std::forward_iterator_tag, T>
+    public std::iterator<std::random_access_iterator_tag, T>
 {
 public:
     using iterator = Iterator<T>;
@@ -53,6 +53,43 @@ public:
         return *this;
     }
 
+    friend iterator operator+(const std::size_t ind, const iterator& rhs)
+    {
+        return rhs + ind;
+    }
+
+    iterator operator+(const std::size_t ind) const
+    {
+        return pos_ + ind;
+    }
+
+    iterator operator-(const std::size_t ind) const
+    {
+        return pos_ - ind;
+    }
+
+    iterator& operator+=(const std::size_t ind)
+    {
+    	pos_ += ind;
+        return *this;
+    }
+
+    iterator& operator-=(const std::size_t ind)
+    {
+    	pos_ -= ind;
+        return *this;
+    }
+
+    std::size_t operator-(const iterator& rhs) const
+    {
+        return pos_ - rhs.pos_;
+    }
+
+    iterator operator[](const std::size_t ind) const
+    {
+        return pos_ + ind;
+    }
+
     iterator operator--(int)
     {
         return pos_--;
@@ -65,6 +102,11 @@ public:
     }
 
     T& operator*()
+    { 
+        return *pos_;
+    }
+
+    T operator*() const
     { 
         return *pos_;
     }
@@ -105,12 +147,13 @@ public:
 
     T& operator[](std::size_t ind)
     {
-        if (ind >= size_)
-            throw std::out_of_range("");
-
-        return data_[ind];
+        return *(iterator(data_)[ind]);
     }
 
+    T operator[](std::size_t ind) const
+    {
+        return *(iterator(data_)[ind]);
+    }
     void push_back(T&& value)
     {
         if (size_ == capacity_)
@@ -195,12 +238,12 @@ public:
 
     auto rbegin()
     {
-        return std::reverse_iterator<iterator>(data_ + size_);
+        return std::make_reverse_iterator<iterator>(data_ + size_);
     }
 
     auto rend()
     {
-        return std::reverse_iterator<iterator>(data_);
+        return std::make_reverse_iterator<iterator>(data_);
     }
 
 private:
