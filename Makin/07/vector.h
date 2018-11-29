@@ -156,7 +156,7 @@ public:
         {
             reserve((max_size_ > 0) ? (2 * max_size_) : 8);
         }
-        alloc_.construct(data_ + size_++, std::forward<value_type>(value));
+        alloc_.construct(data_ + size_++, std::move(value));
     }
     
 
@@ -195,7 +195,7 @@ public:
             for (size_type i = 0; i < size_; i++) 
             {
                 alloc_.construct(new_data + i, 
-                    std::forward<value_type>(*(data_ + i)));
+                    std::move(*(data_ + i)));
                 alloc_.destroy(data_ + i);
             }
 
