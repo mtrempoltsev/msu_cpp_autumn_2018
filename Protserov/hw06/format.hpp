@@ -12,17 +12,11 @@ std::string argtostr(T&& arg)
 }
 
 template<class... ArgsT>
-std::vector<std::string> argtostrvec(ArgsT&& ... args)
-{
-    return std::vector<std::string> {{argtostr(std::forward<ArgsT>(args))...}};
-}
-
-template<class... ArgsT>
 std::string format(const std::string& fmt, ArgsT&& ... args)
 {
     constexpr ssize_t params = sizeof...(args);
-    const std::regex braced_num{"\\{\\d+\\}"};
-    const std::regex valid{"\\{(?!(\\d+)\\})"};
+    static const std::regex braced_num{"\\{\\d+\\}"};
+    static const std::regex valid{"\\{(?!(\\d+)\\})"};
     if (std::regex_search(fmt.cbegin(), fmt.cend(), valid)) {
         throw std::runtime_error("");
     }
@@ -71,7 +65,7 @@ std::string format(const std::string& fmt, ArgsT&& ... args)
     if (params == 0) {
         return fmt;
     }
-    std::vector<std::string> paramstrs = argtostrvec(std::forward<ArgsT>(args)...);
+    std::vector<std::string> paramstrs{argtostr(std::forward<ArgsT>(args))...};
     size_t lastpos = 0;
     for (size_t j = 0; j < places; ++j) {
         sstr << fmt.substr(lastpos, match_idxs[j] - lastpos);

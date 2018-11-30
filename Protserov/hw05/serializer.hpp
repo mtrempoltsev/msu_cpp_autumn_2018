@@ -36,7 +36,7 @@ class Serializer
             }
         }
 
-        Error process(uint64_t val)
+        Error process(uint64_t& val)
         {
             if (!(out_ << val << Separator)) {
                 return Error::CorruptedArchive;
@@ -45,7 +45,7 @@ class Serializer
             }
         }
 
-        Error process(bool val)
+        Error process(bool& val)
         {
             const char* outval;
             if (val == true) {
@@ -78,7 +78,7 @@ class Serializer
         }
 
         template<class... ArgsT>
-        Error operator()(ArgsT... args)
+        Error operator()(ArgsT&&... args)
         {
             return process(std::forward<ArgsT>(args)...);
         }

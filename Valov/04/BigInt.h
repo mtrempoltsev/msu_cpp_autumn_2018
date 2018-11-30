@@ -1,11 +1,10 @@
-#define BS 1000000000
 #include <iostream> 
 #include <cstdint>
 #include <cmath>
 class BigInt
 {
 private:
-	static const int BASE = BS;
+	static const int BASE = 1000000000;
 	int size;
 	bool sign;
 	int* Biginteger;
@@ -27,7 +26,7 @@ public:
 			sign = 0;
 		else
 			sign = 1;
-		size = sizeof(n) / 4 + 1;
+		size = sizeof(n) / sizeof(int) + 1;
 		Biginteger = new int [size];
 		for(int i = 0; i < size; ++i)
 		{
@@ -37,20 +36,17 @@ public:
 	}
 	BigInt(const BigInt& copy)
 	{
+		*this = copy;
+	}
+	BigInt& operator=(const BigInt& copy)
+	{
+		if (this == &copy)
+          		return *this;
 		Biginteger = new int[copy.size];
-		size = copy.size;
-		sign = copy.sign;
-		memcpy(Biginteger, copy.Biginteger, sizeof(int) * size);
-
-	}
-	int getSize()
-	{
-		return Biginteger[0];
-	}
-	int getSign()
-	{
-		return sign;
-	}
+        	size = copy.size;
+        	sign = copy.sign;
+        	memcpy(Biginteger, copy.Biginteger, sizeof(int) * size);
+    	}
 	friend std::ostream& operator<<(std::ostream& os, const BigInt& BI);
 	BigInt operator +(const BigInt& copy) const
 	{
@@ -195,6 +191,10 @@ public:
 			}
 		}
 		return 1;
+	}
+	~BigInt()
+    	{//std::cout<<"call destructor\n";
+		delete[] Biginteger;
 	}
 };
 std::ostream& operator<<(std::ostream& os, const BigInt& BI)

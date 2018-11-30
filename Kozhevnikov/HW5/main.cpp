@@ -19,7 +19,7 @@ public:
     }
 
     template<class... ArgsT>
-    Error operator()(ArgsT... args) {
+    Error operator()(ArgsT &&... args) {
         return process(args...);
     }
 
@@ -37,7 +37,8 @@ private:
     }
 
     Error out_obj(uint64_t &obj) {
-        out_ << unsigned(obj) << Separator;
+        out_ << obj << Separator;
+
         return Error::NoError;
     }
 
@@ -47,7 +48,7 @@ private:
     }
 
     template<class T>
-    Error process(T &&val) {
+    Error process(T &val) {
         if (out_obj(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
@@ -56,7 +57,7 @@ private:
     }
 
     template<class T, class... Args>
-    Error process(T &&val, Args &&... args) {
+    Error process(T &val, Args &&... args) {
         if (out_obj(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
@@ -119,12 +120,12 @@ private:
     }
 
     template <class T>
-    Error process (T &&val) {
+    Error process (T &val) {
         return in_obj(val);
     }
 
     template <class T, class... Args>
-    Error process (T &&val, Args &&... args) {
+    Error process (T &val, Args &&... args) {
         if (in_obj(val) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
