@@ -161,7 +161,7 @@ public:
 			size_type new_max_size_ = (max_size_ > 0) ? (2 * max_size_) : 8;
 			reserve(new_max_size_);
 		}
-		alloc_.construct(data_ + size_++, move(value));
+		alloc_.construct(data_ + size_++, value);
 	}
 
 	void push_back(rvalueref value) {
@@ -169,7 +169,7 @@ public:
 			size_type new_max_size_ = (max_size_ > 0) ? (2 * max_size_) : 8;
 			reserve(new_max_size_);
 		}
-		alloc_.construct(data_ + size_++, value);
+		alloc_.construct(data_ + size_++, move(value));
 	}
 
 	reference operator[](size_type pos) {
