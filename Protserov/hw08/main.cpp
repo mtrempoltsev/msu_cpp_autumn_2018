@@ -2,45 +2,36 @@
 #include <condition_variable>
 #include <thread>
 #include <iostream>
-#include <atomic>
+#include <string>
 
-std::mutex m;
-std::unique_lock<std::mutex> lock{m};
-static std::condition_variable cond;
-static std::atomic<int> turn{0};
-static std::atomic<bool> finish{false};
-static constexpr int turns = 500;
+static constexpr unsigned players{2};
+static constexpr unsigned plays_each{500000};
+static bool notified[players] = {true, true};
+static std::mutex m;
+static std::condition_variable conds[players];
+static const std::string phrases[players] {"ping\n", "pong\n"};
 
-void player() {
-    while (true) {
-        cond.wait(lock);
-        if (turn < turns) {
-            if (turn % 2) {
-                std::cout << "ping" << std::endl;
-            } else {
-                std::cout << "pong" << std::endl;
-            }
-            ++turn;
-            cond.notify_one();
-        } else {
-            if (!finish) {
-                finish = !finish;
-                cond.notify_one();
-                return;
-            } else {
-                return;
-            }
-        }
+void player(unsigned parity)
+{
+    std::unique_lock<std::mutex> lock{m};
+    for (unsigned i{0}; i < plays_each; ++i) {
+        conds[parity].wait(lock, [parity]() {
+            return notified[parity];
+        });
+        notified[parity] = false;
+        std::cout << phrases[parity];
+        notified[(parity + 1) % players] = true;
+        conds[(parity + 1) % players].notify_one();
     }
 }
 
 int main()
 {
-    std::thread p1{player};
-    std::thread p2{player};
-    // std::this_thread::sleep_for(std::chrono::seconds(1));
-    cond.notify_one();
-    p1.join();
-    p2.join();
+    std::thread t1{player, 0};
+    std::thread t2{player, 1};
+    conds[0].notify_one();
+    t1.join();
+    t2.join();
+
     return 0;
 }
