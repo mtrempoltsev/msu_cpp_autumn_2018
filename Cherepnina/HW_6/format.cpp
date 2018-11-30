@@ -2,7 +2,7 @@
 #include <vector>
 #include <sstream>
 
-int search(std::string str, int &i) {
+int search(const std::string &str, int &i) {
     int digit = 0;
     for (i; i < str.length(); ++i)
         switch (str[i]) {
@@ -17,22 +17,18 @@ int search(std::string str, int &i) {
     throw std::runtime_error("incorrect input");
 }
 
+std::string to_string(std::string str) {
+    return str;
+}
+
 template<class T>
-void get_vector_elem(std::vector<std::string> &argv, T &&val) {
-    std::stringstream buf;
-    buf << val;
-    argv.push_back(buf.str());
+std::string to_string(T arg) {
+    std::stringstream sstr;
+    sstr << arg;
+    return sstr.str();
 }
 
-template<class T, class... Args>
-void get_vector_elem(std::vector<std::string> &argv, T &&val, Args &&... args) {
-    std::stringstream buf;
-    buf << val;
-    argv.push_back(buf.str());
-    get_vector_elem(argv, std::forward<Args>(args)...);
-}
-
-std::string format(std::string &&str) {
+std::string format(const std::string &str) {
     for (int i = 0; i < str.length(); ++i)
         switch (str[i]) {
             case '{':
@@ -43,10 +39,9 @@ std::string format(std::string &&str) {
 }
 
 template<class... Args>
-std::string format(std::string &&str, Args &&... args) {
-    std::vector<std::string> argv;
+std::string format(const std::string &str, Args &&... args) {
 
-    get_vector_elem(argv, std::forward<Args>(args)...);
+    std::vector<std::string> argv{to_string(std::forward<Args>(args))...};
 
     size_t new_str_len = str.length();
     for (int i = 0; i < argv.size(); ++i) {

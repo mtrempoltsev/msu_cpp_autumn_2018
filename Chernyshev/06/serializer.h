@@ -21,7 +21,7 @@ private:
     template<class T, class... Args>
     Error process(T &&val, Args &&...args)
     {
-        if (process(val) != Error::NoError) {
+        if (process(std::forward<T>(val)) != Error::NoError) {
             return Error::CorruptedArchive;
         }
         return process(std::forward<Args>(args)...);
@@ -37,20 +37,22 @@ private:
 
     Error process(bool val)
     {
-        if (!(out_ << std::boolalpha << val << Separator)) {
+        if (!(out_ << val << Separator)) {
             return Error::CorruptedArchive;
         }
         return Error::NoError;
     }
 
-    template<class... Args>
     Error process()
     {
         return Error::NoError;
     }
 
 public:
-    explicit Serializer(std::ostream &out): out_(out) {}
+    explicit Serializer(std::ostream &out): out_(out)
+    {
+        out_ << std::boolalpha;
+    }
 
     template<class T>
     Error save(T &object)
@@ -59,7 +61,7 @@ public:
     }
 
     template<class... Args>
-    Error operator()(Args ...args)
+    Error operator()(Args &&...args)
     {
         return process(std::forward<Args>(args)...);
     }
@@ -70,17 +72,6 @@ class Deserializer
 {
 private:
     std::istream& in_;
-
-    static bool check_is_uint(const std::string &s)
-    {
-        if (s.empty() || (!isdigit(s[0]) && s[0] != '+')) {
-            return false;
-        }
-
-        size_t sz;
-        stoull(s, &sz);
-        return sz == s.size();
-    }
 
     template<class T, class... Args>
     Error process(T &&val, Args &&...args)
@@ -96,11 +87,16 @@ private:
         std::string s;
         in_ >> s;
 
-        if (!check_is_uint(s)) {
+        if (s.empty() || (!isdigit(s[0]) && s[0] != '+')) {
             return Error::CorruptedArchive;
         }
 
-        val = std::stoull(s);
+        size_t sz;
+        val = std::stoull(s, &sz);
+        if (sz != s.size()) {
+            return Error::CorruptedArchive;
+        }
+
         return Error::NoError;
     }
 
@@ -117,7 +113,6 @@ private:
         return Error::NoError;
     }
 
-    template<class... Args>
     Error process()
     {
         return Error::NoError;

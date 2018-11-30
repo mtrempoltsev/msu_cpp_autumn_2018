@@ -4,35 +4,18 @@
 #include <vector>
 #include <sstream>
 
-class getter {
-public:
-    std::vector<std::string> a;
-    template <class... ArgsT>
-    getter(ArgsT&&... args) {
-        get(std::forward<ArgsT>(args)...);
-    }
-    std::vector<std::string> get_buf() {
-        return a;
-    }
-private:
-    template <class T, class... ArgsT>
-    void get(T&& a1, ArgsT&&... args) {
-        get(a1);
-        get(std::forward<ArgsT>(args)...);
-    }
-    template <class T>
-    void get(T&& a1) {
+namespace std {
+    template<class T>
+    std::string to_string(T&& s){
         std::stringstream ss;
-        ss << a1;
-        a.push_back(ss.str());
+        ss<<s;
+        return ss.str();
     }
-    void get(){}
-};
-
+}
 
 template <class... ArgsT>
-std::string format(const char* a, ArgsT... args) {
-    std::vector<std::string> sargs = getter(std::forward<ArgsT>(args)...).get_buf();
+std::string format(const char* a, ArgsT... args){
+    std::vector<std::string> sargs({std::to_string(std::forward<ArgsT>(args))...});
     std::stringstream ss;
     for (auto i = 0; a[i] != '\0'; i++) {
         if (a[i] == '}')
