@@ -23,13 +23,13 @@ class Serializer {
 
     template <class T>
     Error process(T&& val) {
-        return process_handler(val);
+        return process_handler(std::forward<T>(val));
     }
 
     template <class T, class... ArgsT>
     Error process(T&& val, ArgsT&&... args) 
     {
-        if (process_handler(val) == Error::CorruptedArchive) {
+        if (process_handler(std::forward<T>(val)) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
         return process(std::forward<ArgsT>(args)...);
@@ -71,13 +71,13 @@ class Deserializer {
 
     template <class T>
     Error process(T&& val) {
-        return process_handler(val);
+        return process_handler(std::forward<T>(val));
     }
 
     template <class T, class... ArgsT>
     Error process(T&& val, ArgsT&&... args) 
     {
-        if (process_handler(val) == Error::CorruptedArchive) {
+        if (process_handler(std::forward<T>(val)) == Error::CorruptedArchive) {
             return Error::CorruptedArchive;
         }
         return process(std::forward<ArgsT>(args)...);
