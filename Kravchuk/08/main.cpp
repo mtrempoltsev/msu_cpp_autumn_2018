@@ -3,28 +3,30 @@
 #include <thread>
 #include <atomic>
 
+#define N 500000
+
 using namespace std;
 
 static atomic<int> counter (0);
 
 void ping (){
   unsigned int printed_counter = 0;
-  while (printed_counter < 500000){
+  while (printed_counter < N){
       if (counter == 0){
           cout << "ping" << endl;
           printed_counter++;
-          counter.store (1);
+          counter = 1;
         }
     }
 }
 
 void pong (){
   unsigned int printed_counter = 0;
-  while (printed_counter < 500000){
+  while (printed_counter < N){
       if (counter == 1){
           cout << "pong" << endl;
           printed_counter++;
-          counter.store (0);
+          counter = 0;
         }
     }
 }
