@@ -1,31 +1,32 @@
 #include <thread>
 #include <iostream>
 #include <atomic>
-#include <mutex>
+#include <condition_variable>
 
-const size_t MAX_NUM = 1000000;
+const size_t MAX_NUM = 500000;
 size_t ball_num = 0;
 std::mutex m;
+std::condition_variable cond;
 
 void ping() {
     while (ball_num < MAX_NUM) {
-        m.lock();
-        if (ball_num % 2 == 0) {
-            std::cout << "ping" << std::endl;
-            ++ball_num;
-        }
-        m.unlock();
+        std::unique_lock<std::mutex> lock(m);
+        cond.wait(lock, []{return ball_num % 2 == 0;});
+
+        std::cout << "ping" << std::endl;
+        ++ball_num;
+        cond.notify_all();
     }
 }
 
 void pong() {
     while (ball_num < MAX_NUM) {
-        m.lock();
-        if (ball_num % 2 == 1) {
-            std::cout << "pong" << std::endl;
-            ++ball_num;
-        }
-        m.unlock();
+        std::unique_lock<std::mutex> lock(m);
+        cond.wait(lock, []{return ball_num % 2 == 1;});
+        
+        std::cout << "pong" << std::endl;
+        ++ball_num;
+        cond.notify_all();
     }
 }
 
