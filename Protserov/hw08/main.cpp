@@ -29,10 +29,11 @@ void player(unsigned parity)
 int main()
 {
     for (unsigned i = 0; i < players; ++i) {
-        notified[i] = true;
+        notified[i] = false;
     }
     std::thread t1{player, 0};
     std::thread t2{player, 1};
+    notified[0] = true;
     conds[0].notify_one();
     t1.join();
     t2.join();
