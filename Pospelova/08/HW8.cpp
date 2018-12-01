@@ -12,7 +12,7 @@ mutex m;
 void ping() {
 	while (count < max_count){
 		lock_guard<mutex> lock(m);
-		if (count % 2) {
+		if (!(count % 2)) {
 			cout << "ping" << endl;
 			count++;
 		}
@@ -22,7 +22,7 @@ void ping() {
 void pong() {
 	while (count < max_count){
 		lock_guard<mutex> lock(m);
-		if (!(count % 2)) {
+		if (count % 2) {
 			cout << "pong" << endl;
 			count++;
 		}
