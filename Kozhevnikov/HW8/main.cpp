@@ -1,9 +1,8 @@
 #include <iostream>
 #include <thread>
-#include <mutex>
+#include <atomic>
 
-std::mutex m;
-int turn = 0;
+std::atomic<int> lock;
 
 const int reps = 500000;
 
@@ -11,13 +10,10 @@ void ping() {
     int c = reps;
 
     while (c > 0) {
-        if (m.try_lock()) {
-            if (turn == 0) {
-                c--;
-                std::cout << "ping" << std::endl;
-                turn  = 1;
-            }
-            m.unlock();
+        if (lock.load() == 0) {
+            c--;
+            std::cout << "ping" << std::endl;
+            lock.store(1);
         }
     }
 }
@@ -25,18 +21,16 @@ void ping() {
 void pong() {
     int c = reps;
     while (c > 0) {
-        if (m.try_lock()) {
-            if (turn == 1) {
-                c--;
-                std::cout << "pong" << std::endl;
-                turn = 0;
-            }
-            m.unlock();
+        if (lock.load() == 1) {
+            c--;
+            std::cout << "pong" << std::endl;
+            lock.store(0);
         }
     }
 }
 
 int main() {
+    lock.store(0);
     std::thread t1(ping);
     std::thread t2(pong);
 
