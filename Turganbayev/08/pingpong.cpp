@@ -54,7 +54,7 @@ private:
     bool is_ping;
     std::mutex mutex;
 private:
-    void ping() {
+    void ping() override{
         size_t i = 0;
         while (i < iters()) {
             if (is_ping) {
@@ -65,7 +65,7 @@ private:
             }
         }
     }
-    void pong() {
+    void pong() override {
         size_t i = 0;
         while (i < iters()) {
             if (!is_ping) {
@@ -79,7 +79,7 @@ private:
 public:
     explicit MutexPingPong(size_t iters_count) : 
                 PingPong(iters_count), is_ping(true) {}
-    void run() {
+    void run() override {
         std::thread tr1(&MutexPingPong::ping, this);
         std::thread tr2(&MutexPingPong::pong, this);
         tr1.join();
