@@ -35,6 +35,6 @@ public:
 };
 
 int main(){
-    ping_pong a(10);
+    ping_pong a(500000);
     return 0;
 }
