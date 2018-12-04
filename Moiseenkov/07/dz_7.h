@@ -45,7 +45,9 @@ class Iterator : public iterator<random_access_iterator_tag, T>
 public:
     using pointer = T*;
     using reference = T&;
+    using iterator = Iterator<T>;
     using size_type = size_t;
+    typedef std::random_access_iterator_tag iterator_category;
 
     explicit Iterator(pointer ptr) : ptr_(ptr) 
     {
@@ -57,30 +59,30 @@ public:
     }
     
     
-    bool operator==(const Iterator<T>& other) const 
+    bool operator==(const iterator& other) const 
     {
         return ptr_ == other.ptr_;
     }
 
-    bool operator!=(const Iterator<T>& other) const
+    bool operator!=(const iterator& other) const
     {
         return !(*this == other);
     }
 
-    Iterator& operator++()
+    iterator& operator++()
     {
         ++ptr_;
         return *this;
     }
     
-    Iterator& operator--()
+    iterator& operator--()
     {
         --ptr_;
         return *this;
     }
     
 
-    Iterator& operator+=(const size_type& n) 
+    iterator& operator+=(const size_type& n) 
     {
         for (size_type i = 0; i < n; ++i) 
         {
@@ -89,7 +91,7 @@ public:
         return *this;
     }
 
-    Iterator& operator-=(const size_type& n) 
+    iterator& operator-=(const size_type& n) 
     {
         for (size_type i = 0; i < n; ++i) 
         {
@@ -98,22 +100,22 @@ public:
         return *this;
     }
 
-    bool operator>(const Iterator<T>& other) const 
+    bool operator>(const iterator& other) const 
     {
         return distance(other - ptr_) > 0;
     }
 
-    bool operator<(const Iterator<T>& other) const 
+    bool operator<(const iterator& other) const 
     {
         return distance(other - ptr_) < 0;
     }
 
-    bool operator>=(const Iterator<T>& other) const 
+    bool operator>=(const iterator& other) const 
     {
         return distance(other - ptr_) >= 0;
     }
 
-    bool operator<=(const Iterator<T>& other) const
+    bool operator<=(const iterator& other) const
     {
         return distance(other - ptr_) <= 0;
     }
@@ -249,8 +251,7 @@ public:
 
             for (size_type i = 0; i < i_max; ++i)
             {
-                alloc_.construct(newData + i,
-                        forward<value_type>(*(data_ + i)));
+                alloc_.construct(newData + i, *(data_ + i));
                 alloc_.destroy(data_ + i);
             }
 
@@ -281,8 +282,7 @@ public:
             
             for (size_type i = 0; i < size_; ++i) 
             {
-                alloc_.construct(newData + i,
-                        forward<value_type>(*(data_ + i)));
+                alloc_.construct(newData + i,*(data_ + i));
                 alloc_.destroy(data_ + i);
             }
             

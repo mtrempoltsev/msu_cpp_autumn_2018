@@ -61,6 +61,74 @@ public:
     reference operator *() const {
         return *current_;
     }
+
+    Iterator operator++(int)
+    {
+        Iterator temp = *this;
+        ++(*this);
+        return temp;
+    }
+
+    Iterator operator--(int)
+    {
+        Iterator temp = *this;
+        --(*this);
+        return temp;
+    }
+
+    Iterator& operator+=(int n)
+    {
+        current_ += n;
+        return *this;
+    }
+    
+    Iterator operator+(int n)
+    {
+        Iterator temp = *this;
+        return temp += n;
+    }
+    
+    Iterator& operator-=(int n)
+    {
+        return *this += -n;
+    }
+
+    Iterator operator-(int n)
+    {
+        Iterator temp = *this;
+        return temp -= n;
+    }
+    
+    std::ptrdiff_t operator-(const Iterator& it)
+    {
+        return current_ - it.ptr;
+    }
+
+    Iterator& operator[](int val)
+    {
+        return *(current_ + val);
+    }
+
+    bool operator < (const Iterator& it)
+    {
+        return (it - *this > 0);
+    }
+    
+    bool operator > (const Iterator& it)
+    {
+        return it < *this;
+    }
+    
+    bool operator >= (const Iterator& it)
+    {
+        return !(*this < it);
+    }
+    
+    bool operator <= (const Iterator& it)
+    {
+        return !(*this > it);
+    }
+
 };
 
 template <class T, class Alloc = Allocator<T>>
