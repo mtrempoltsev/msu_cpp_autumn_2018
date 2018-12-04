@@ -39,16 +39,16 @@ Token_value get_token(istream* input)
 	{
 	case 0:
 		return curr_tok = END;
-    case PRINT:
-    case '\n':
+    	case PRINT:
+    	case '\n':
 		return curr_tok = END;
 	case MUL:
-    case DIV:
-    case PLUS:
-    case MINUS:
+    	case DIV:
+    	case PLUS:
+    	case MINUS:
 		return curr_tok = Token_value(ch);
-    case NUM0: case NUM1: case NUM2: case NUM3: case NUM4:
-    case NUM5: case NUM6: case NUM7: case NUM8: case NUM9:
+    	case NUM0: case NUM1: case NUM2: case NUM3: case NUM4:
+    	case NUM5: case NUM6: case NUM7: case NUM8: case NUM9:
 		input->putback(ch);
 		*input >> number_value;
 		return curr_tok = NUMBER;
@@ -65,15 +65,15 @@ int64_t prim(istream* input, bool get)
 	}
 	switch (curr_tok) 
 	{
-    case NUMBER: 
+    	case NUMBER: 
 		{
 			int64_t v = number_value;
 			get_token(input);
 			return v;
 		}
-    case MINUS:
+    	case MINUS:
 		return -prim(input, true);
-    default:
+    	default:
 		throw runtime_error("");
 	}
 }
@@ -113,10 +113,10 @@ int64_t expr(istream* input, bool get)
 			left += term(input, true);
 			break;
 		case MINUS:
-		  left -= term(input, true);
-		  break;
+		  	left -= term(input, true);
+		  	break;
 		default:
-		  return left;
+		  	return left;
 		}
 	}
 }
@@ -125,9 +125,9 @@ int main(int argc, char* argv[])
 {
 	if (argc > 2 || argc == 1) 
 	{
-        cout << "error" << endl;
-        return 1;
-    }
+        	cout << "error" << endl;
+        	return 1;
+    	}
 	istream* input = nullptr; 
 	input = new istringstream(argv[1]);
 	try 
@@ -135,19 +135,16 @@ int main(int argc, char* argv[])
 		while (*input) 
 		{
 			get_token(input);
-		if (curr_tok == END)
-			break;
-		if (curr_tok == PRINT)
-			throw runtime_error("");
-		cout << expr(input, false) << endl;
+			if (curr_tok == END)
+				break;
+			if (curr_tok == PRINT)
+				throw runtime_error("");
+			cout << expr(input, false) << endl;
 		}
-		if (input != &cin) 
-			delete input;
-		return 0;
 	} 
 	catch (exception &error) 
 	{
-        cout << "error"<< endl;
-        return 1;
-    }
+        	cout << "error"<< endl;
+        	return 1;
+    	}
 }
