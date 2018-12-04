@@ -46,17 +46,76 @@ public:
 	}
 	Iterator& operator++() {
 		if (forward_direction)
-			ptr++;
+			++ptr;
 		else
-			ptr--;
+			--ptr;
 		return *this;
 	}
 	Iterator& operator--() {
 		if (forward_direction)
-			ptr--;
+			--ptr;
 		else
-			ptr++;
+			++ptr;
 		return *this;
+	}
+	Iterator operator++(int) {
+		if (forward_direction)
+			return ptr++;
+		else
+			return ptr--;
+	}
+	Iterator operator--(int) {
+		if (forward_direction)
+			return ptr--;
+		else
+			return ptr++;
+	}
+	bool operator<(const_iterator& other) const {
+		return (ptr < other.ptr);
+	}
+	bool operator>(const_iterator& other) const {
+		return ((*this) > other);
+	}
+	bool operator<=(const_iterator& other) const {
+		return (ptr <= other.ptr);
+	}
+	bool operator>=(const_iterator& other) const {
+		return ((*this) >= other);
+	}
+	reference operator[](size_t index) const {
+		return ptr[index];
+	}
+	iterator operator+(const iterator& other) {
+		iterator tmp(ptr + other.ptr);
+		return tmp;
+	}
+	iterator operator-(const iterator& other) {
+		iterator tmp(ptr - other.ptr);
+		return tmp;
+	}
+	iterator operator+(size_t number) {
+		iterator tmp(ptr + number);
+		return tmp;
+	}
+	iterator operator-(size_t number) {
+		iterator tmp(ptr - number);
+		return tmp;
+	}
+	friend iterator operator+(size_t count, const iterator& other) {
+		iterator tmp(other.ptr + count);
+		return tmp;
+	}
+	friend iterator operator-(size_t count, const iterator& other) {
+		iterator tmp(other.ptr - count);
+		return tmp;
+	}
+	iterator& operator+=(size_t number) {
+		ptr += number;
+		return (*this);
+	}
+	iterator& operator-=(size_t number) {
+		ptr -= number;
+		return (*this);
 	}
 };
 
@@ -153,7 +212,7 @@ public:
 	void push_back(rvalue_reference value) {
 		if (alloc_size == size_)
 			this->reserve(alloc_size + BUF_SIZE);
-		A.construct(data + size_, forward<value_type>(value));
+		A.construct(data + size_, move(value));
 		size_++;
 	}
 	void push_back(const_reference value) {
