@@ -26,7 +26,7 @@ std::string format(const std::string& str, ArgsT&&... args) {
             int acc = 0;
             ++i;
             if (str[i] == '}') {
-                throw std::runtime_error("");
+                throw std::runtime_error("error");
             }
             
             while (i < str.length() && str[i] != '}') {
@@ -35,21 +35,21 @@ std::string format(const std::string& str, ArgsT&&... args) {
                     acc *= 10;
                     acc += str[i] - '0';
                 } else {
-                    throw std::runtime_error("");
+                    throw std::runtime_error("error");
                 }
                 ++i;
             
             }
             if (i == str.length()) {
-                throw std::runtime_error("");
+                throw std::runtime_error("error");
             }
             if (acc >= strArgs.size()) {
-                throw std::runtime_error("");
+                throw std::runtime_error("error");
             }
             result << strArgs[acc];
         } else if (str[i] == '}') {
         
-            throw std::runtime_error("");
+            throw std::runtime_error("error");
         
         } else {
             result << str[i];
