@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 template <class T>
 std::string to_string(T&& arg) {
@@ -11,23 +12,26 @@ std::string to_string(T&& arg) {
 
 template <class... Args>
 std::string format(std::string str, Args&&... arg) {
-    std::string args[] = {to_string(std::forward<Args>(arg))...};
+    std::vector<std::string> args = {to_string(std::forward<Args>(arg))...};
     std::istringstream in(str);
     std::ostringstream out;
     std::string result;
     int c;
     while ((c = in.get()) != EOF) {
         if (c == '{') {	
-            char number;
-            number = in.get();
-	    int size = sizeof(args)/sizeof(args[0]);
-            if (number - '0' < size) {   
-                result += args[number - '0'];
+            int number = 0;
+            char c;
+            c = in.get();
+            while ((c - '0' >= 0) && (c - '0' <= 9)) {
+                number = number * 10 + c - '0';
+                c = in.get();
+            }
+            if (number < args.size()) {   
+                result += args[number];
             } else {
                 throw std::runtime_error("");
             }
-            number = in.get();
-            if (number != '}') {
+            if (c != '}') {
                 throw std::runtime_error("");
             }
         } else {
