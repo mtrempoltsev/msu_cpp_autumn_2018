@@ -9,7 +9,7 @@ std::condition_variable cond_var;
 bool isready = true;
 size_t iters = 500000;
 
-void print_pong() {
+void print_ping() {
   for (size_t i=0; i<iters; ++i) {
       std::unique_lock<std::mutex> lock(mutex);
       cond_var.wait(lock, [](){ return isready; });
@@ -19,7 +19,7 @@ void print_pong() {
   }
 }
 
-void print_ping() {
+void print_pong() {
   for (size_t i=0; i<iters; ++i) {
       std::unique_lock<std::mutex> lock(mutex);
       cond_var.wait(lock, [](){ return !isready; });
@@ -30,8 +30,8 @@ void print_ping() {
 }
 
 int main() {
-  std::thread t1(print_pong);
-  std::thread t2(print_ping);
+  std::thread t1(print_ping);
+  std::thread t2(print_pong);
   t1.join();
   t2.join();
   return 0;
