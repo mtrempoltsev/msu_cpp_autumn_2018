@@ -301,7 +301,7 @@ public:
 
 std::ostream& operator<<(std::ostream& out, const BigInt& buf){
     ArrayList tmp = buf.number.inverse();
-    if(!buf.isNegative && tmp.begin()->elem != 0) out << "-";
+    if(buf.isNegative && tmp.begin()->elem != 0) out << "-";
     for(auto ptr = tmp.begin(); ptr; ptr=ptr->next){
         out << ptr->elem;
     }
