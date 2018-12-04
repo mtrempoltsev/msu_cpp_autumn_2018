@@ -5,61 +5,148 @@
 
 using namespace std;
 
-class List {
+class Array {
   
 public:
-    uint64_t* list_of_numbers;
+    uint64_t* array_of_numbers;
     int length;
-    List() : length(0), list_of_numbers() {}
-    List(uint64_t number) {
-        list_of_numbers = new uint64_t[1];
-        list_of_numbers[0] = (uint64_t) number;
+    Array() : length(0), array_of_numbers() {}
+    Array(uint64_t number) {
+        array_of_numbers = new uint64_t[1];
+        array_of_numbers[0] = (uint64_t) number;
         length = 1;
     }
-    List(const List &other) {
-        list_of_numbers = new uint64_t[other.length];
+    Array(const Array &other) {
+        array_of_numbers = new uint64_t[other.length];
         length = other.length;
+        for (int i = 0; i < length; ++i) {
+            array_of_numbers[i] = other.array_of_numbers[i];
+        }
     }
-    List(uint64_t* list, int len) : length(len), list_of_numbers(list) {}
-    ~List() {
-        delete[] list_of_numbers;
+    Array(uint64_t* array, int len) : length(len), array_of_numbers(array) {}
+    ~Array() {
+        delete[] array_of_numbers;
     }
     uint64_t operator[](int ind) {
-        return list_of_numbers[ind];
+        return array_of_numbers[ind];
     }    
+    Array operator=(const Array &other) {
+        if (length == other.length) {
+            for (int i = 0; i < length; ++i) {
+                array_of_numbers[i] = other.array_of_numbers[i];
+            } 
+            return *this;
+        }
+        delete[] array_of_numbers;
+        length = other.length;
+        array_of_numbers = new uint64_t[length];
+        for (int i = 0; i < length; ++i) {
+            array_of_numbers[i] = other.array_of_numbers[i];
+        }
+        return *this;
+    }
+    bool operator==(const Array &other) const {
+        if (length != other.length) {
+            return false;
+        }
+        for (int i = 0; i < length; ++i) {
+            if (array_of_numbers[i] != other.array_of_numbers[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool operator>=(const Array &other) const {
+        if (length > other.length) {
+            return true;
+        }
+        if (length < other.length) {
+            return false;
+        }
+        for (int i = length - 1; i >= 0; --i) {
+            if (array_of_numbers[i] > other.array_of_numbers[i]) {
+                return true;
+            }
+            if (array_of_numbers[i] < other.array_of_numbers[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool operator>(const Array &other) const {
+        if (length > other.length) {
+            return true;
+        }
+        if (length < other.length) {
+            return false;
+        }
+        for (int i = length - 1; i >= 0; --i) {
+            if (array_of_numbers[i] > other.array_of_numbers[i]) {
+                return true;
+            }
+            if (array_of_numbers[i] < other.array_of_numbers[i]) {
+                return false;
+            }
+        }
+        return false;
+    }
+};
 
-    List operator+(const List &other) const {
-        uint64_t* list_local;
+class BigInt {
+    
+public: 
+    Array arrayBigInt;
+    bool minus;
+    BigInt() : minus(false), arrayBigInt(0){}
+    BigInt(const int64_t number) {
+        minus = (number < 0);
+        if (minus) {
+            arrayBigInt = -number;
+        }
+        else {
+            arrayBigInt = number;
+        }
+    }
+    BigInt(const BigInt &other) {
+        arrayBigInt = other.arrayBigInt;
+        minus = other.minus;
+    }
+    BigInt(const Array &other) : minus(false), arrayBigInt(other) {}
+    BigInt operator+(const uint64_t other) {
+        return *this + BigInt(other);
+    }
+    Array oper_plus(const Array arr1, const Array arr2) const {
+        uint64_t* array_local;
         int len;
-        if (length >= other.length) {
-            list_local = new uint64_t[length];
-            len = length;
+        if (arr1.length >= arr2.length) {
+            array_local = new uint64_t[arr1.length];
+            len = arr1.length;
         } else {
-            list_local = new uint64_t[other.length];
-            len = other.length;
+            array_local = new uint64_t[arr2.length];
+            len = arr2.length;
         }
         uint64_t reg = 0;
         for (int i = 0; i < len; ++i) {
-            if ((i < length) && (i < other.length)) {
-                list_local[i] = list_of_numbers[i] + other.list_of_numbers[i] + reg;
-                uint64_t two = list_of_numbers[i] + reg;
-                if ((two >= list_of_numbers[i]) && (list_local[i] >= two)) {
+            if ((i < arr1.length) && (i < arr2.length)) {
+                array_local[i] = arr1.array_of_numbers[i] + arr2.array_of_numbers[i] + reg;
+                uint64_t two = arr1.array_of_numbers[i] + reg;
+                if ((two >= arr1.array_of_numbers[i]) && (array_local[i] >= two)) {
                     reg = 0;
                 } else {
                     reg = 1;
                 }
             } 
-            if ((i < length) && (i >= other.length)) {
-                list_local[i] = list_of_numbers[i] + reg;
-                if (list_local[i] >= list_of_numbers[i]) {
+            if ((i < arr1.length) && (i >= arr2.length)) {
+                array_local[i] = arr1.array_of_numbers[i] + reg;
+                if (array_local[i] >= arr1.array_of_numbers[i]) {
                     reg = 0;
                 } else {
                     reg = 1;
                 }
             } 
-            if ((i >= length) && (i < other.length)) {
-                list_local[i] = other.list_of_numbers[i] + reg;
-                if (list_local[i] >= other.list_of_numbers[i]) {
+            if ((i >= arr1.length) && (i < arr2.length)) {
+                array_local[i] = arr2.array_of_numbers[i] + reg;
+                if (array_local[i] >= arr2.array_of_numbers[i]) {
                     reg = 0;
                 } else {
                     reg = 1;
@@ -70,39 +157,39 @@ public:
         if (reg != 0) {
             result = new uint64_t[len + 1];
             for (int i = 0; i < len; ++i) {
-                result[i] = list_local[i];
+                result[i] = array_local[i];
             } 
             result[len] = (uint64_t) reg;
             len = len + 1;
         } else {
             result = new uint64_t[len];
             for (int i = 0; i < len; ++i) {
-                result[i] = list_local[i];
+                result[i] = array_local[i];
             } 
         }
-        delete[] list_local;
-        List local(result, len);
+        delete[] array_local;
+        Array local(result, len);
         return local;
     } 
-    List operator-(const List &other) const {
-        uint64_t* list_local;
+    Array oper_minus(const Array arr1, const Array arr2) const {
+        uint64_t* array_local;
         int len;
-        list_local = new uint64_t[length];
-        len = length;
+        array_local = new uint64_t[arr1.length];
+        len = arr1.length;
         uint64_t reg = 0;
         for (int i = 0; i < len; ++i) {
-            if ((i < length) && (i < other.length)) {
-                list_local[i] = list_of_numbers[i] - other.list_of_numbers[i] + reg;
-                uint64_t two = list_of_numbers[i] + reg;
-                if ((two <= list_of_numbers[i]) && (list_local[i] <= two)) {
+            if ((i < arr1.length) && (i < arr2.length)) {
+                array_local[i] = arr1.array_of_numbers[i] - arr2.array_of_numbers[i] + reg;
+                uint64_t two = arr1.array_of_numbers[i] + reg;
+                if ((two <= arr1.array_of_numbers[i]) && (array_local[i] <= two)) {
                     reg = 0;
                 } else {
                     reg = -1;
                 }
             } 
-            if ((i < length) && (i >= other.length)) {
-                list_local[i] = list_of_numbers[i] + reg;
-                if (list_local[i] <= list_of_numbers[i]) {
+            if ((i < arr1.length) && (i >= arr2.length)) {
+                array_local[i] = arr1.array_of_numbers[i] + reg;
+                if (array_local[i] <= arr1.array_of_numbers[i]) {
                     reg = 0;
                 } else {
                     reg = -1;
@@ -111,7 +198,7 @@ public:
         }
         int ind = len - 1;
         int count = 0;
-        while ((ind >=0) && (list_local[ind] == 0)) {
+        while ((ind >=0) && (array_local[ind] == 0)) {
             ++count;
             --ind;
         }
@@ -124,113 +211,28 @@ public:
             len = len - count;
         }
         for (int i = 0; i < len; ++i) {
-            result[i] = list_local[i];
+            result[i] = array_local[i];
         } 
-        delete[] list_local;
-        List local(result, len);
+        delete[] array_local;
+        Array local(result, len);
         return local;
-    }
-    List operator=(const List &other) {
-        if (length == other.length) {
-            for (int i = 0; i < length; ++i) {
-                list_of_numbers[i] = other.list_of_numbers[i];
-            } 
-            return *this;
-        }
-        delete[] list_of_numbers;
-        length = other.length;
-        list_of_numbers = new uint64_t[length];
-        for (int i = 0; i < length; ++i) {
-            list_of_numbers[i] = other.list_of_numbers[i];
-        }
-        return *this;
-    }
-    bool operator==(const List &other) const {
-        if (length != other.length) {
-            return false;
-        }
-        for (int i = 0; i < length; ++i) {
-            if (list_of_numbers[i] != other.list_of_numbers[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-    bool operator>=(const List &other) const {
-        if (length > other.length) {
-            return true;
-        }
-        if (length < other.length) {
-            return false;
-        }
-        for (int i = length - 1; i >= 0; --i) {
-            if (list_of_numbers[i] > other.list_of_numbers[i]) {
-                return true;
-            }
-            if (list_of_numbers[i] < other.list_of_numbers[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-    bool operator>(const List &other) const {
-        if (length > other.length) {
-            return true;
-        }
-        if (length < other.length) {
-            return false;
-        }
-        for (int i = length - 1; i >= 0; --i) {
-            if (list_of_numbers[i] > other.list_of_numbers[i]) {
-                return true;
-            }
-            if (list_of_numbers[i] < other.list_of_numbers[i]) {
-                return false;
-            }
-        }
-        return false;
-    }
-};
-
-class BigInt {
-    
-public: 
-    List listBigInt;
-    bool minus;
-    BigInt() : minus(false), listBigInt(0){}
-    BigInt(const int64_t number) {
-        minus = (number < 0);
-        if (minus) {
-            listBigInt = -number;
-        }
-        else {
-            listBigInt = number;
-        }
-    }
-    BigInt(const BigInt &other) {
-        listBigInt = other.listBigInt;
-        minus = other.minus;
-    }
-    BigInt(const List &other) : minus(false), listBigInt(other) {}
-    BigInt operator+(const uint64_t other) {
-        return *this + BigInt(other);
     }
     BigInt operator+(const BigInt &other) const {
         BigInt new_bigint = BigInt();
         if (minus == other.minus) {
-            new_bigint.listBigInt = listBigInt + other.listBigInt;
+            new_bigint.arrayBigInt = oper_plus(arrayBigInt, other.arrayBigInt);
             new_bigint.minus = minus;
             return new_bigint;
         }
-        if (listBigInt >= other.listBigInt) {
-            new_bigint.listBigInt = listBigInt - other.listBigInt;
-            if (listBigInt == other.listBigInt) {
+        if (arrayBigInt >= other.arrayBigInt) {
+            new_bigint.arrayBigInt = oper_minus(arrayBigInt, other.arrayBigInt);
+            if (arrayBigInt == other.arrayBigInt) {
                 new_bigint.minus = false;
             } else {
                 new_bigint.minus = minus;
             }
         } else {
-            new_bigint.listBigInt = other.listBigInt - listBigInt;
+            new_bigint.arrayBigInt = oper_minus(other.arrayBigInt, arrayBigInt);
             new_bigint.minus = other.minus;
         }
         return new_bigint;
@@ -241,32 +243,32 @@ public:
     BigInt operator-(const BigInt &other) const {
         BigInt new_bigint = BigInt();
         if (minus == (not other.minus)) {
-            new_bigint.listBigInt = listBigInt + other.listBigInt;
+            new_bigint.arrayBigInt = oper_plus(arrayBigInt, other.arrayBigInt);
             new_bigint.minus = minus;
             return new_bigint;
         }
-        if (listBigInt >= other.listBigInt) {
-            new_bigint.listBigInt = listBigInt - other.listBigInt;
-            if (listBigInt == other.listBigInt) {
+        if (arrayBigInt >= other.arrayBigInt) {
+            new_bigint.arrayBigInt = oper_minus(arrayBigInt, other.arrayBigInt);
+            if (arrayBigInt == other.arrayBigInt) {
                 new_bigint.minus = false;
             } else {
                 new_bigint.minus = minus;
             }
         } else {
-            new_bigint.listBigInt = other.listBigInt - listBigInt;
+            new_bigint.arrayBigInt = oper_minus(other.arrayBigInt, arrayBigInt);
             new_bigint.minus = not minus;
         }
         return new_bigint;
     }
     BigInt operator-() {
         BigInt other = BigInt();
-        other.listBigInt = listBigInt;
+        other.arrayBigInt = arrayBigInt;
         other.minus = not minus;
         return *this;
     }
     bool operator==(const BigInt &other) const {
         if (minus == other.minus) {
-            return listBigInt == other.listBigInt;
+            return arrayBigInt == other.arrayBigInt;
         }
         return false;
     }
@@ -281,9 +283,9 @@ public:
             return false;
         }
         if (minus) {
-            return other.listBigInt >= listBigInt;
+            return other.arrayBigInt >= arrayBigInt;
         }
-        return listBigInt >= other.listBigInt;
+        return arrayBigInt >= other.arrayBigInt;
     }
     bool operator>(const BigInt &other) const {
         if (not minus && other.minus) {
@@ -293,9 +295,9 @@ public:
             return false;
         }
         if (minus) {
-            return other.listBigInt > listBigInt;
+            return other.arrayBigInt > arrayBigInt;
         }
-        return listBigInt > other.listBigInt;
+        return arrayBigInt > other.arrayBigInt;
     }
     bool operator<(const BigInt &other) const {
         return not (*this >= other);
@@ -309,8 +311,8 @@ std::ostream& operator<<(std::ostream& out, const BigInt buf) {
     if (buf.minus) {
         out << "-";
     }
-    for (int i = buf.listBigInt.length - 1; i >= 0; --i) {
-        out << buf.listBigInt.list_of_numbers[i];
+    for (int i = buf.arrayBigInt.length - 1; i >= 0; --i) {
+        out << buf.arrayBigInt.array_of_numbers[i];
     }
     return out;
 }
