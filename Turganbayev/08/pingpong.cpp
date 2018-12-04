@@ -12,7 +12,13 @@ private:
 public:
     size_t iters() const { return iters_; }
     explicit PingPong(size_t iters_count) : iters_(iters_count) {}
-    virtual void run() = 0;
+    virtual void run() {
+        std::thread tr1(&PingPong::ping, this);
+        std::thread tr2(&PingPong::pong, this);
+        tr1.join();
+        tr2.join();
+    }
+    virtual ~PingPong() = default;
 };
 
 class AtomicPingPong : public PingPong {
@@ -41,12 +47,6 @@ private:
 public:
     explicit AtomicPingPong(size_t iters_count, bool is_ping_ = true) : 
                 PingPong(iters_count), is_ping(is_ping_) {}
-    void run() override {
-        std::thread tr1(&AtomicPingPong::ping, this);
-        std::thread tr2(&AtomicPingPong::pong, this);
-        tr1.join();
-        tr2.join();
-    }
 };
 
 class MutexPingPong : public PingPong {
@@ -79,12 +79,6 @@ private:
 public:
     explicit MutexPingPong(size_t iters_count) : 
                 PingPong(iters_count), is_ping(true) {}
-    void run() override {
-        std::thread tr1(&MutexPingPong::ping, this);
-        std::thread tr2(&MutexPingPong::pong, this);
-        tr1.join();
-        tr2.join();
-    }
 };
 
 int main(int argc, char** argv) {
