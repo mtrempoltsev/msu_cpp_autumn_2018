@@ -1,17 +1,13 @@
 #include <iostream>
-#include <mutex>
 #include <atomic>
 #include <thread>
 
 
 static constexpr size_t TOTAL_ITERATIONS = 1000000;
-
 static std::atomic_int counter{0};
-static std::mutex mutex;
 
 void ping_pong(size_t ping_or_pong) {
     while (true) {
-        std::unique_lock<std::mutex> lock(mutex);
         if (counter >= TOTAL_ITERATIONS)
             break;
 
