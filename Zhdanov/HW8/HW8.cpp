@@ -1,7 +1,7 @@
 #include <iostream>
-#include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <thread>
 using namespace std;
 
 mutex m;
@@ -15,7 +15,7 @@ void ping(int n_times)
 		unique_lock<mutex> lock(m);
 		while (!r)
 			c.wait(lock);
-		cout << "ping" << endl;
+		cout << "ping" << '\n';
 		r = !r;
 		c.notify_one();
 	}
@@ -28,7 +28,7 @@ void pong(int n_times)
 		unique_lock<mutex> lock(m);
 		while (r)
 			c.wait(lock);
-		cout << "pong" << endl;
+		cout << "pong" << '\n';
 		r = !r;
 		c.notify_one();
 	}
