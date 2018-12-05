@@ -10,7 +10,7 @@ using Lock = unique_lock<mutex>;
 template<int T>
 void make(mutex& m, bool& flag, condition_variable& c)
 {
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 500000; ++i)
 	{
 		Lock lock(m);
 		c.wait(lock, [&flag](){ return T ? flag : !flag; });
