@@ -1,4 +1,6 @@
 #include <iterator>
+using std::size_t;
+using std::ptrdiff_t;
 
 template <class T>
 class Allocator {
@@ -8,7 +10,7 @@ public:
     using size_type = size_t;
 public:
     pointer allocate(size_type size) {
-        return static_cast<pointer>(::operator new(size * sizeof(value_type)));
+        return static_cast<pointer>(::operator new[] (size * sizeof(value_type)));
     }
 
     void deallocate(pointer ptr, size_type size) {
@@ -31,36 +33,40 @@ public:
     using pointer = T*;
     using reference = T&;
     using size_type = size_t;
+    using difference_type = ptrdiff_t;
 private:
     pointer ptr_;
 public:
     explicit Iterator(pointer ptr) : ptr_(ptr) {}
+    
+    Iterator(const Iterator &rhs) = default;
+    Iterator& operator=(const Iterator &rhs) = default;
 
     reference operator *() const {
         return *ptr_;
     }
 
-    bool operator < (const Iterator<T> rhs) const {
+    bool operator < (const Iterator& rhs) const {
         return ptr_ < rhs.ptr_;
     }
 
-    bool operator >= (const Iterator<T> rhs) const {
+    bool operator >= (const Iterator& rhs) const {
         return ptr_ >= rhs.ptr_;
     }
 
-    bool operator > (const Iterator<T> rhs) const {
+    bool operator > (const Iterator& rhs) const {
         return ptr_ > rhs.ptr_;
     }
 
-    bool operator <= (const Iterator<T> rhs) const {
+    bool operator <= (const Iterator& rhs) const {
         return ptr_ <= rhs.ptr_;
     }
 
-    bool operator == (const Iterator<T> rhs) const {
+    bool operator == (const Iterator& rhs) const {
         return ptr_ == rhs.ptr_;
     }
 
-    bool operator != (const Iterator<T> rhs) const {
+    bool operator != (const Iterator& rhs) const {
         return ptr_ != rhs.ptr_;
     }
 
@@ -69,7 +75,7 @@ public:
         return *this;
     }
 
-    Iterator& operator+=(size_type size) {
+    Iterator& operator+=(difference_type size) {
         ptr_ += size;
         return *this;
     }
@@ -79,9 +85,33 @@ public:
         return *this;
     }
 
-    Iterator& operator-=(size_type size) {
+    Iterator& operator-=(difference_type size) {
         ptr_ -= size;
         return *this;
+    }
+
+    Iterator operator + (difference_type size) const {
+        return Iterator(ptr_ + size);
+    }
+
+    Iterator operator - (difference_type size) const {
+        return Iterator(ptr_ - size);
+    }
+
+    friend Iterator operator + (difference_type size, const Iterator& rhs) {
+        return Iterator(rhs.ptr_ + size);
+    }
+    
+    friend Iterator operator - (difference_type size, const Iterator& rhs) {
+        return Iterator(rhs.ptr_ - size);
+    }
+
+    difference_type operator - (const Iterator& rhs) {
+        return ptr_ - rhs.ptr_;
+    }
+
+    reference operator [] (size_type idx) {
+        return ptr_[idx];
     }
 };
 
@@ -104,8 +134,7 @@ private:
     pointer data_;
     static const size_type default_size = 16;
 public:
-    explicit Vector(size_type n) : size_(n),
-            capacity_(n) {
+    explicit Vector(size_type n) : size_(n), capacity_(n) {
         data_ = alloc_.allocate(capacity_);
         for (size_t i = 0; i < size; i++) {
             alloc_.construct(data_ + i);
@@ -145,8 +174,7 @@ public:
         if (capacity_ < new_capacity) {
             pointer new_data = alloc_.allocate(new_capacity);
             for (size_t i = 0; i < size_; i++) {
-                alloc_.construct(new_data + i,
-                    std::forward<value_type>(*(data_ + i)));
+                alloc_.construct(new_data + i,*(data_ + i));
                 alloc_.destroy(data_ + i);
             }
             alloc_.deallocate(data_, capacity_);
