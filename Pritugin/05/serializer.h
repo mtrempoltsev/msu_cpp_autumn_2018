@@ -51,7 +51,7 @@ private:
 		return Error::NoError;
 	}
 	template <class T, class... Args>
-	Error process(T val, Args&&... args)
+	Error process(T&& val, Args&&... args)
 	{
 		if(process(val) == Error::NoError)
 			return process(std::forward<Args>(args)...);
@@ -59,6 +59,8 @@ private:
 			return Error::CorruptedArchive;
 	}
 };
+
+// ---------------------------
 
 class Deserializer
 {
@@ -112,7 +114,7 @@ private:
 				throw std::invalid_argument("Minus");
 			value = std::stoull(text.c_str());
 		}
-		catch(std::invalid_argument)
+		catch(const std::invalid_argument&)
 		{
 			return Error::CorruptedArchive;
 		}
@@ -121,9 +123,9 @@ private:
 	}
 
 	template <class T, class... Args>
-	Error process(T& val, Args&&... args)
+	Error process(T&& val, Args&&... args)
 	{
-		if(process(val) == Error::NoError) 
+		if(process(val) == Error::NoError)
 			return process(std::forward<Args>(args)...);
 		else
 			return Error::CorruptedArchive;

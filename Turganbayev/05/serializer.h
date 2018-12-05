@@ -24,7 +24,7 @@ public:
 
     template <class... ArgsT>
     Error operator()(ArgsT&&... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
     
 private:
@@ -73,7 +73,7 @@ public:
 
     template <class... ArgsT>
     Error operator()(ArgsT&&... args) {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
 private:
@@ -108,10 +108,10 @@ private:
         in_ >> text;
         try {
             value = std::stoull(text);
-            if (std::to_string(value) != text) {
-                throw std::invalid_argument("");
-            }
         } catch (const std::exception& ex) {
+            return Error::CorruptedArchive;
+        }
+        if (std::to_string(value) != text) {
             return Error::CorruptedArchive;
         }
         return Error::NoError;
