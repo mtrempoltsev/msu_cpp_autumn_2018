@@ -42,7 +42,11 @@ std::string format(std::string&& inp, Args&&... args) {
                 tmp = tmp * 10 + inp[i] - '0';
                 ++i;
             }
-            print(s, tmp, std::forward<Args>(args)...);
+            try {
+                print(s, tmp, std::forward<Args>(args)...);
+            } catch(...) {
+                throw std::runtime_error("");
+            }
         } else if (inp[i] == '}') {
             throw std::runtime_error("");
         } else {
