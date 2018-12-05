@@ -75,7 +75,7 @@ public:
         --_position;
         return *this;
     }
-    Iterator<T> operator+(const size_t val, const Iterator<T>& it)
+    friend Iterator<T> operator+(const size_t val, const Iterator<T>& it)
     {
         return it + val;
     }
@@ -90,6 +90,10 @@ public:
             ++_position;
         }
         return *this;
+    }
+    friend Iterator<T> operator-(const size_t val, const Iterator<T>& it)
+    {
+        return it - val;
     }
     Iterator<T> operator-(const size_t val) const
     {
