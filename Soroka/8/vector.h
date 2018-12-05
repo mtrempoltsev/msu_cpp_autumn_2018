@@ -253,7 +253,7 @@ public:
             }
             T* temp = alloc_.allocate(reserveSize);
             for (size_t it = 0; it < length; it++) {
-                alloc_.construct(temp + it, std::forward<T>(*(data + it)));
+                alloc_.construct(temp + it, std::move(*(data + it)));
             }
             alloc_.deallocate(data);
             data = temp;
