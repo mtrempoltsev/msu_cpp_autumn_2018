@@ -4,35 +4,25 @@
 #include <mutex>
 #include <atomic>
 
-const size_t each_to_repeat = 500000*2;
-std::mutex mutex;
-std::atomic<size_t> cur_repeat{0};
+const size_t count_to_repeat = 500000*2;
 
-void print_string(std::string str, size_t order){
-    for(;;){
-        std::lock_guard<std::mutex> lock(mutex);
-        if(cur_repeat >= each_to_repeat)
-            break;
+void print_string(size_t order){
+    static std::atomic<size_t> current_repeat{0};
+    static std::string strings[2] = { "ping", "pong" };
 
-        if(cur_repeat % 2 == 0)
-            if(order == 0){
-                std::cout << str << "\n";
-                ++cur_repeat;
-            }
-
-        if(cur_repeat % 2 == 1)
-            if(order == 1){
-                std::cout << str << "\n";
-                ++cur_repeat;
-            }
+    while(current_repeat < count_to_repeat){
+        if(current_repeat % 2 == order){
+            std::cout << strings[order] << "\n";
+            ++current_repeat;
+        }
     }
 }
 
 int main(){
     std::thread ping_t, pong_t;
 
-    ping_t = std::thread(print_string, "ping", 0);
-    pong_t = std::thread(print_string, "pong", 1);
+    ping_t = std::thread(print_string, 0);
+    pong_t = std::thread(print_string, 1);
 
     ping_t.join();
     pong_t.join();
