@@ -21,23 +21,31 @@ std::string format(const std::string& str, T&&... args)
 
     for (size_t i = 0; i < str.length(); i++)
     {
+
         if (str[i] == '}')
             throw std::runtime_error("no left bound");
 
         if (str[i] == '{')
         {
             i++;
-            int arg_num = str[i] - 48;
+            size_t arg_num = 0;
+
+            if (str[i] == '}')
+                throw std::runtime_error("no arg");
+
+            while ((str[i] != '}') && (i < str.length()))
+            {
+                arg_num = 10 * arg_num + str[i] - '0';
+                i++;
+            }
+
+            if (i >= str.length())
+                throw std::runtime_error("no right bound");
 
             if (arg_num > str_args.size() - 1)
                 throw std::runtime_error("arg not exist");
 
             res << str_args[arg_num];
-
-            if (str[i + 1] != '}')
-                throw std::runtime_error("no right bound");
-
-            i++;
             continue;
         }
 
