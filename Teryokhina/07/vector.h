@@ -13,7 +13,7 @@ public:
     }
 
     void deallocate(pointer p, size_type n){
-        ::operator delete[](p, n * sizeof(value_type));
+        ::operator delete(p, n * sizeof(value_type));
     }
 
     template <class... Args>
@@ -173,6 +173,13 @@ public:
     }
 
     void push_back(value_type &&value){
+        if (size_ >= allocated_size_)
+            reserve(2 * allocated_size_ + 1);
+        data_[size_] = std::move(value);
+        ++size_;
+    }
+
+    void push_back(const value_type& value){
         if (size_ >= allocated_size_)
             reserve(2 * allocated_size_ + 1);
         data_[size_] = std::move(value);
