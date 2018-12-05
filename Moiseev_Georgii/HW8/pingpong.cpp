@@ -14,7 +14,7 @@ void ping() //thread 1
 {
     while (rounds)
     {
-    	std::unique_lock<std::mutex> lock(m);
+        std::unique_lock<std::mutex> lock(m);
 
         played.wait(lock, [](){ return pingTime; });
 
@@ -30,9 +30,9 @@ void pong() //thread 2
 {
     while (rounds)
     {
-    	std::unique_lock<std::mutex> lock(m);
+        std::unique_lock<std::mutex> lock(m);
 
-		played.wait(lock, [](){ return !pingTime; });
+        played.wait(lock, [](){ return !pingTime; });
 
         std::cout << "pong\n";
         pingTime = true;
