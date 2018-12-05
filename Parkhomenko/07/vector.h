@@ -112,7 +112,6 @@ public:
             size_ = size;
         } else {
             if (size_ > size) {
-                //std::cout << size_ << " " << size << std::endl;
                 for (size_t i = size; i < size_; ++i) {
                     alloc_.destroy(data_ + i);
                 }
@@ -124,10 +123,9 @@ public:
     void reserve(size_t new_capacity) {
         if (capacity_ < new_capacity) {
             pointer new_data = alloc_.allocate(new_capacity);
-            pointer current_new = new_data;
-            pointer current_old = data_;
-            for (size_t i = 0; i < size_; ++i, ++current_new, ++current_old) {
-                alloc_.construct(current_new, *current_old);
+            for (size_t i = 0; i < size_; ++i) {
+                alloc_.construct(new_data + i, std::forward<T>(*(data_ + i)));
+                alloc_.destroy(data_ + i);
             }
             alloc_.deallocate(data_, capacity_);
             capacity_ = new_capacity;
