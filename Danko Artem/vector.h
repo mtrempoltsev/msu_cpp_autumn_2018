@@ -1,6 +1,7 @@
 #include <iterator>
 
-template<class T> class Allocator
+template<class T> 
+class Allocator
 {
 public:
     T* allocate(size_t n) {
