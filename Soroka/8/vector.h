@@ -18,13 +18,12 @@ public:
     }
 
     template <class... Args>
-    void create(T* tp, Args&&... args)
+    void construct(T* tp, Args&&... args)
     {
         new(tp) T(std::forward<Args>(args)...);
     }
 
-
-    void del(T* tp)
+    void destroy(T* tp)
     {
         tp->~T();
     }
@@ -34,57 +33,105 @@ public:
 template <class T>
 class Iterator: public std::iterator<std::random_access_iterator_tag, T>
 {
-     T* _position;
- public:
+    T* _position;
+public:
     Iterator(){}
     Iterator(T* position)
     {
         _position = position;
     }
     ~Iterator() {}
-
     T& operator*()
     {
         return *_position;
     }
-
+    T operator*() const
+    {
+        return *_position;
+    }
     bool operator==(const Iterator<T>& data) const
     {
         return _position == data._position;
     }
-
     bool operator!=(const Iterator<T>& data) const
     {
         return !(_position == data._position);
     }
-
     Iterator<T> operator++(int)
     {
         return _position++;
     }
-
     Iterator<T> operator--(int)
     {
         return _position--;
     }
-
     Iterator<T>& operator++()
     {
         ++_position;
         return *this;
     }
-
     Iterator<T>& operator--()
     {
         --_position;
         return *this;
+    }
+    friend Iterator<T> operator+(const size_t val, const Iterator<T>& it)
+    {
+        return it + val;
+    }
+    Iterator<T> operator+(const size_t val) const
+    {
+        return _position + val;
+    }
+    Iterator<T>& operator+=(const size_t& val)
+    {
+        for (size_t it = 0; it < val; it++)
+        {
+            ++_position;
+        }
+        return *this;
+    }
+    friend Iterator<T> operator-(const size_t val, const Iterator<T>& it)
+    {
+        return it - val;
+    }
+    Iterator<T> operator-(const size_t val) const
+    {
+       return _position - val;
+    }
+    Iterator<T>& operator-=(const size_t& val)
+    {
+        for (size_t it = 0; it < val; it++)
+        {
+            --_position;
+        }
+        return *this;
+    }
+    bool operator<(const Iterator<T>& it) const
+    {
+        return distance(it - _position) > 0;
+    }
+    bool operator<=(const Iterator<T>& it) const
+    {
+        return distance(it - _position) >= 0;
+    }
+    bool operator>(const Iterator<T>& it) const
+    {
+        return distance(it - _position) < 0;
+    }
+    bool operator>=(const Iterator<T>& it) const
+    {
+        return distance(it - _position) <= 0;
+    }
+    Iterator<T> operator[](const size_t val) const
+    {
+        return _position + val;
     }
 };
 
 template <class T, class Alloc = Allocator<T>>
 class Vector
 {
-
     Alloc alloc_;
     T* data;
     size_t length;
@@ -103,14 +150,14 @@ public:
     {
         auto d = data;
         while((d++) < data + length)
-            alloc_.del(d);
+            alloc_.destroy(d);
         alloc_.deallocate(data);
     }
 
     void clear()
     {
         for (size_t it = 0; it < length; it++) {
-                alloc_.del(data + it);
+                alloc_.destroy(data + it);
         }
         length = 0;
         capacity_length = 0;
@@ -161,16 +208,16 @@ public:
     void push_back(T&& value)
     {
         if (length == capacity_length)
-            reserve(capacity_length * 2);
-        alloc_.create(data + length, value);
+            reserve(capacity_length << 1);
+        alloc_.construct(data + length, std::move(value));
         length++;
     }
 
     void push_back(const T& value)
     {
         if (length == capacity_length)
-            reserve(capacity_length * 2);
-        alloc_.create(data + length, value);
+            reserve(capacity_length << 1);
+        alloc_.construct(data + length, value);
         length++;
     }
 
@@ -179,7 +226,7 @@ public:
         if (length > 0)
         {
             length--;
-            alloc_.del(data + length);
+            alloc_.destroy(data + length);
         }
     }
 
@@ -187,26 +234,30 @@ public:
     {
         if (length > re_size) {
             for (size_t it = re_size; it < length; it++) {
-                alloc_.del(data + it);
+                alloc_.destroy(data + it);
             }
         } else {
             if (capacity_length < re_size)
                 reserve(re_size << 1);
             for (size_t it = length; it < re_size; it++)
-                alloc_.create(data + it);
+                alloc_.construct(data + it);
         }
         length = re_size;
     }
 
     void reserve(size_t reserveSize)
     {
-        if (capacity_length < reserveSize)
-        {
+        if (capacity_length < reserveSize) {
+            for (size_t it = 0; it < length; it++) {
+                alloc_.destroy(data + it);
+            }
             T* temp = alloc_.allocate(reserveSize);
-            memmove(temp, data, capacity_length * sizeof(T));
+            for (size_t it = 0; it < length; it++) {
+                alloc_.construct(temp + it, std::move(*(data + it)));
+            }
+            alloc_.deallocate(data);
+            data = temp;
             capacity_length = reserveSize;
-            std::swap(data, temp);
-            alloc_.deallocate(temp);
         }
     }
 };

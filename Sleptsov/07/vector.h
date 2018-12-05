@@ -202,7 +202,7 @@ public:
         }
         pointer buf = alloc.allocate(new_size);
         for (size_type pos = 0; pos < used_size; pos++) {
-            alloc.construct(buf + pos, std::forward<value_type>(*(data + pos)));
+            alloc.construct(buf + pos, *(data + pos));
             alloc.destroy(data + pos);
         }
         alloc.deallocate(data, alloc_size);
@@ -231,7 +231,7 @@ public:
             size_type new_size = (alloc_size == 0 ? 1 : used_size * 2);
             reserve(new_size);
         }
-        alloc.construct(data + used_size, std::forward<value_type>(std::move(value)));
+        alloc.construct(data + used_size, std::move(value));
         used_size++;
     }
 

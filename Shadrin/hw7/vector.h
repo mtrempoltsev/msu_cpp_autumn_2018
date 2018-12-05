@@ -164,14 +164,14 @@ public:
         if (cur_used_size >= cur_alloc_size) {
             reserve(cur_used_size * INCREASE_COEF);
         }
-        alloc.construct(data + cur_used_size, std::forward<value_type>(value));
+        alloc.construct(data + cur_used_size, std::move(value));
         ++cur_used_size;
     }
     void push_back(const value_type& value) {
         if (cur_used_size >= cur_alloc_size) {
             reserve(cur_used_size * INCREASE_COEF);
         }
-        alloc.construct(data + cur_used_size, std::forward<value_type>(value));
+        alloc.construct(data + cur_used_size, std::move(value));
         ++cur_used_size;
     }
     void pop_back() {
@@ -241,7 +241,7 @@ public:
         }
         pointer newdata = alloc.allocate(count);
         for (size_type ind = 0; ind < cur_used_size; ++ind) {
-            alloc.construct(newdata + ind, std::forward<value_type>(*(data + ind)));
+            alloc.construct(newdata + ind, std::move(*(data + ind)));
             alloc.destroy(data + ind);
         }
         alloc.deallocate(data, cur_alloc_size);
