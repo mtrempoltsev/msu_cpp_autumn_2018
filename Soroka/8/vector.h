@@ -33,115 +33,96 @@ public:
 template <class T>
 class Iterator: public std::iterator<std::random_access_iterator_tag, T>
 {
-     T* _position;
- public:
-     Iterator(){}
-     Iterator(T* position)
-     {
-         _position = position;
-     }
-     ~Iterator() {}
-
-     T& operator*()
-     {
-         return *_position;
-     }
-
-     T operator*() const
-     {
-         return *_position;
-     }
-
-     bool operator==(const Iterator<T>& data) const
-     {
-         return _position == data._position;
-     }
-
-     bool operator!=(const Iterator<T>& data) const
-     {
-         return !(_position == data._position);
-     }
-
-     Iterator<T> operator++(int)
-     {
-         return _position++;
-     }
-
-     Iterator<T> operator--(int)
-     {
-         return _position--;
-     }
-
-     Iterator<T>& operator++()
-     {
-         ++_position;
-         return *this;
-     }
-
-     Iterator<T>& operator--()
-     {
-         --_position;
-         return *this;
-     }
-
-     Iterator<T> operator+(const size_t val, const Iterator<T>& it)
-     {
-         return it + val;
-     }
-
-     Iterator<T> operator+(const size_t val) const
-     {
-         return _position + val;
-     }
-
-     Iterator<T>& operator+=(const size_t& val)
-     {
-         for (size_t it = 0; it < val; it++)
-         {
-             ++_position;
-         }
-         return *this;
-     }
-
-     Iterator<T> operator-(const size_t val) const
-     {
-         return _position - val;
-     }
-
-     Iterator<T>& operator-=(const size_t& val)
-     {
-         for (size_t it = 0; it < val; it++)
-         {
-             --_position;
-         }
-         return *this;
-     }
-
-     bool operator<(const Iterator<T>& it) const
-     {
-         return distance(it - _position) > 0;
-     }
-
-     bool operator<=(const Iterator<T>& it) const
-     {
-         return distance(it - _position) >= 0;
-     }
-
-     bool operator>(const Iterator<T>& it) const
-     {
-         return distance(it - _position) < 0;
-     }
-
-     bool operator>=(const Iterator<T>& it) const
-     {
-         return distance(it - _position) <= 0;
-     }
-
-     Iterator<T> operator[](const size_t val) const
-     {
-         return _position + val;
-     }
-
+    T* _position;
+public:
+    Iterator(){}
+    Iterator(T* position)
+    {
+        _position = position;
+    }
+    ~Iterator() {}
+    T& operator*()
+    {
+        return *_position;
+    }
+    T operator*() const
+    {
+        return *_position;
+    }
+    bool operator==(const Iterator<T>& data) const
+    {
+        return _position == data._position;
+    }
+    bool operator!=(const Iterator<T>& data) const
+    {
+        return !(_position == data._position);
+    }
+    Iterator<T> operator++(int)
+    {
+        return _position++;
+    }
+    Iterator<T> operator--(int)
+    {
+        return _position--;
+    }
+    Iterator<T>& operator++()
+    {
+        ++_position;
+        return *this;
+    }
+    Iterator<T>& operator--()
+    {
+        --_position;
+        return *this;
+    }
+    Iterator<T> operator+(const size_t val, const Iterator<T>& it)
+    {
+        return it + val;
+    }
+    Iterator<T> operator+(const size_t val) const
+    {
+        return _position + val;
+    }
+    Iterator<T>& operator+=(const size_t& val)
+    {
+        for (size_t it = 0; it < val; it++)
+        {
+            ++_position;
+        }
+        return *this;
+    }
+    Iterator<T> operator-(const size_t val) const
+    {
+       return _position - val;
+    }
+    Iterator<T>& operator-=(const size_t& val)
+    {
+        for (size_t it = 0; it < val; it++)
+        {
+            --_position;
+        }
+        return *this;
+    }
+    bool operator<(const Iterator<T>& it) const
+    {
+        return distance(it - _position) > 0;
+    }
+    bool operator<=(const Iterator<T>& it) const
+    {
+        return distance(it - _position) >= 0;
+    }
+    bool operator>(const Iterator<T>& it) const
+    {
+        return distance(it - _position) < 0;
+    }
+    bool operator>=(const Iterator<T>& it) const
+    {
+        return distance(it - _position) <= 0;
+    }
+    Iterator<T> operator[](const size_t val) const
+    {
+        return _position + val;
+    }
 };
 
 template <class T, class Alloc = Allocator<T>>
