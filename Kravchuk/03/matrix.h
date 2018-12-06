@@ -70,7 +70,7 @@ public:
   }
 
 
-public:
+ private:
   int *data;
   size_t n_rows = 0;
   size_t n_columns = 0;
