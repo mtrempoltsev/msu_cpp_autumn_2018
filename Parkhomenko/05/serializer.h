@@ -37,15 +37,15 @@ public:
 private:
     std::ostream& out_;
     template <class T, class... ArgsT>
-    Error process(T&& value, ArgsT&&... args) {
-        save(std::forward<T&>(value));
+    Error process(T value, ArgsT&&... args) {
+        save(value);
         out_ << Separator;
-        return process(std::forward<ArgsT&>(args)...);
+        return process(std::forward<ArgsT>(args)...);
     }
    
     template <class T>
-    Error process(T&& value) {
-        return save(std::forward<T>(value));
+    Error process(T value) {
+        return save(value);
     }
 };
 
@@ -60,8 +60,8 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT&... args) {
-        return process(std::forward<ArgsT&>(args)...);
+    Error operator()(ArgsT&&... args) {
+        return process(std::forward<ArgsT>(args)...);
     }
 
     Error load(bool& value) {
@@ -93,16 +93,16 @@ public:
 private:
     std::istream& in_;
     template <class T, class... ArgsT>
-    Error process(T&& value, ArgsT&&... args) {
-        if (load(std::forward<T&>(value)) != Error::NoError) {
+    Error process(T& value, ArgsT&&... args) {
+        if (load(value) != Error::NoError) {
             return Error::CorruptedArchive;
         }
-        return process(std::forward<ArgsT&>(args)...);
+        return process(std::forward<ArgsT>(args)...);
     }
 
     template <class T>
-    Error process(T&& value) {
-        return load(std::forward<T&>(value));
+    Error process(T& value) {
+        return load(value);
     }
 };
 

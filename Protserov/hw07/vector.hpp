@@ -13,7 +13,7 @@ class Allocator
         using size_type = size_t;
 
         pointer allocate(size_type count);
-        void dealloc(pointer ptr, size_type count);
+        void deallocate(pointer ptr, size_type count);
 
         template<class... ArgsT>
         void construct(pointer ptr, ArgsT&& ... Args);
@@ -48,8 +48,12 @@ class Vector
         using allocator_type = Alloc;
         using iterator = Iterator<T>;
 
-        explicit Vector(size_type count = baselen): alloc_{}, allocd_{count},
-            data_{alloc_.allocate(allocd_)}, used_{0} {};
+        explicit Vector(size_type count = 0): alloc_{}, allocd_{basealloc},
+            data_{alloc_.allocate(allocd_)}, used_{count} {
+                for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
+                    alloc_.construct(ptr);
+                }
+         };
         ~Vector();
         void reserve(size_type count);
         void push_back(value_type&& value);
@@ -71,7 +75,7 @@ class Vector
         size_type allocd_;
         T* data_;
         size_type used_;
-        static constexpr size_type baselen{10};
+        static constexpr size_type basealloc{20};
         static constexpr size_type multipl{2};
 };
 
@@ -82,7 +86,7 @@ typename Allocator<T>::pointer Allocator<T>::allocate(size_type count)
 }
 
 template<class T>
-void Allocator<T>::dealloc(pointer ptr, size_type count)
+void Allocator<T>::deallocate(pointer ptr, size_type count)
 {
     ::operator delete[](ptr, sizeof(T) * count);
 }
@@ -139,7 +143,7 @@ Vector<T, Alloc>::~Vector<T, Alloc>()
     for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
         alloc_.destroy(ptr);
     }
-    alloc_.dealloc(data_, allocd_);
+    alloc_.deallocate(data_, allocd_);
 }
 
 template<class T, class Alloc>
@@ -149,11 +153,11 @@ void Vector<T, Alloc>::reserve(size_type count)
         return;
     }
     pointer newdata = alloc_.allocate(count);
-    std::copy(data_, data_ + used_, newdata);
-    for (auto ptr = data_; ptr != data_ + used_; ++ptr) {
-        alloc_.destroy(ptr);
+    for (size_type ind = 0; ind < used_; ++ind) {
+        alloc_.construct(newdata + ind, std::forward<value_type>(*(data_ + ind)));
+        alloc_.destroy(data_ + ind);
     }
-    alloc_.dealloc(data_, allocd_);
+    alloc_.deallocate(data_, allocd_);
     data_ = newdata;
     allocd_ = count;
 }
@@ -164,7 +168,7 @@ void Vector<T, Alloc>::push_back(value_type&& value)
     if (used_ >= allocd_) {
         reserve(allocd_ * multipl);
     }
-    data_[used_++] = std::move(value);
+    alloc_.construct(data_ + (used_)++, std::forward<value_type>(value));
 }
 
 template<class T, class Alloc>
@@ -173,7 +177,7 @@ void Vector<T, Alloc>::push_back(const_reference value)
     if (used_ >= allocd_) {
         reserve(allocd_ * multipl);
     }
-    data_[used_++] = value;
+    alloc_.construct(data_ + (used_)++, value);
 }
 
 template<class T, class Alloc>

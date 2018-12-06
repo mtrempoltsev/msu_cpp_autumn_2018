@@ -44,7 +44,7 @@ class Iterator
 public:
     using value_type = T;
     using pointer = T*;
-    using const_pointer = T*;
+    using const_pointer = const T*;
     using reference = T&;
     using const_reference = const T&;    
     using difference_type = std::ptrdiff_t;
@@ -92,7 +92,7 @@ public:
     }
 
     bool operator!=(Iterator other) const {
-        return !(iter == other.iter);
+        return iter != other.iter;
     }
 
     reference operator*() const {
@@ -107,7 +107,7 @@ class Vector
 public:
     using value_type = T;
     using pointer = T*;
-    using const_pointer = T*;
+    using const_pointer = const T*;
     using reference = T&;
     using const_reference = const T&;
     using size_type = std::size_t;
@@ -122,13 +122,14 @@ private:
 
 public:
 
-    Vector () : len_(0), alloc_(), size_(BASE_SIZE), data_(alloc_.allocate(size_)) {}
+    Vector () : len_(0), alloc_(), size_(BASE_SIZE) {
+        data_ = alloc_.allocate(size_);
+    }
 
-    Vector (size_type size, value_type&& def) : len_(size), alloc_() {
-        size_ = std::min(BASE_SIZE, size * 2);
+    Vector (size_type size, const_reference def) : len_(size), alloc_(), size_(size) {
         data_ = alloc_.allocate(size_);
         for (size_type i = 0; i < len_; ++i) {
-            data_[i] = def;
+            alloc_.construct(data_ + i, def);
         }
     }
 
@@ -151,7 +152,12 @@ public:
         if (size_ < newSize)
         {
             auto newData = alloc_.allocate(newSize);
-            std::move(data_, data_ + size_, newData);
+
+            pointer cur_data = data_, cur_new = newData;
+            for (size_type i = 0; i < size_; ++i, ++cur_data, ++cur_new) {
+                alloc_.construct(cur_new, *cur_data);
+            }
+
             alloc_.deallocate(data_, size_);
             data_ = newData;
             size_ = newSize;
@@ -163,7 +169,7 @@ public:
         {
             this->reserve(newSize * 2);
             for (size_type i = len_; i < newSize; ++i) {
-                data_[i] = def;
+                alloc_.construct(data_ + i, def);
             }
             len_ = newSize;
         } else if (len_ > newSize) {
@@ -174,11 +180,11 @@ public:
         }
     }
 
-    void push_back(value_type&& value) {
+    void push_back(const_reference value) {
         if (len_ == size_) {
             this->reserve(size_ * 2);
         }
-        data_[len_] = value;
+        alloc_.construct(data_ + len_, value);
         ++len_;
     }
 
@@ -222,17 +228,3 @@ public:
         return Iterator<value_type>(data_ - 1, false);
     }
 };
-
-/* 
-Vector<int>: 74004 us
-std::vector<int>: 89005 us
-std::deque<int>: 207011 us
-std::list<int>: 5817332 us
-*/
-
-/* На сервере:
-Vector<int>: 63381 us
-std::vector<int>: 90338 us
-std::deque<int>: 188175 us
-std::list<int>: 3545155 us
-*/

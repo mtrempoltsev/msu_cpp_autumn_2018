@@ -7,25 +7,11 @@
 
 using namespace std;
 
-template <class T>
-void get_args(vector<string> &v, T arg)
-{
-	stringstream stream;
-	string tmp;
-	stream << arg;
-	stream >> tmp; 
-	v.push_back(tmp);
-}
-
-template <class T, class... Args>
-void get_args(vector<string> &v, T arg, Args... args)
-{
-	stringstream stream;
-	string tmp;
-	stream << arg;
-	stream >> tmp; 
-	v.push_back(tmp);
-	get_args(v, args...);
+template<class T>
+std::string to_string(T arg) {
+	std::stringstream sstr;
+	sstr << arg;
+	return sstr.str();
 }
 
 string make_new_string(vector<string> &v, const char *str) {
@@ -74,9 +60,7 @@ string make_new_string(vector<string> &v, const char *str) {
 template <class... Args>
 string format(const char *str, Args... args)
 {
-	vector<string> v;
-
-	get_args(v, args...);
+	vector<string> v{to_string(forward<Args>(args))...};
 
 	return make_new_string(v, str);
 }

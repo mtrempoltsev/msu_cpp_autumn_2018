@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iterator>
 #include <limits>
+#include <vector>
 /* 
  * What do i need in Vector:
  * 1) Vector(...) + test
@@ -66,15 +67,16 @@ public:
 
 
 
-
 template <class T>
 class Iterator
-	: public std::iterator<std::forward_iterator_tag, T>
+	: public std::iterator<std::random_access_iterator_tag, T>
 {
+	template<T> friend  Iterator<T> operator+(int n, Iterator<T> iter);
 	T* ptr_;
 public:
 	using reference = T&;
-
+	typedef std::random_access_iterator_tag iterator_category;
+	typedef std::ptrdiff_t difference_type;
 	explicit Iterator(T* ptr)
 		: ptr_(ptr)
 	{
@@ -95,18 +97,75 @@ public:
 		return *ptr_;
 	}
 
-	Iterator& operator++()
+	Iterator<T>& operator++()
 	{
 		++ptr_;
 		return *this;
 	}
 	
-	Iterator& operator--()
+	Iterator<T>& operator--()
 	{
 		--ptr_;
 		return *this;
 	}
+	
+	Iterator<T>& operator [] (int n)
+	{
+		return *(ptr_ + n);
+	}
+	
+	
+	//---------
+	
+	Iterator<T>& operator +=(int n)
+	{
+		ptr_ += n;
+		return *this;
+	}
+	
+	Iterator<T> operator +(int n)
+	{
+		auto temp = *this;
+		return temp += n;
+	}
+	
+	Iterator<T> operator -=(int n)
+	{
+		return *this += -n;
+	}
+	
+	difference_type operator - (const Iterator<T>& other)
+	{
+		return ptr_ - other.ptr_;
+	}
+	
+	bool operator < (const Iterator<T>& other)
+	{
+		return (operator- (other) > 0);
+	}
+	
+	bool operator > (const Iterator<T>& other)
+	{
+		return other < *this;
+	}
+	
+	bool operator >= (const Iterator<T>& other)
+	{
+		return !(*this < other);
+	}
+	
+	bool operator <= (const Iterator<T>& other)
+	{
+		return !(*this > other);
+	}
 };
+
+
+template <class T>
+Iterator<T> operator+(int n, Iterator<T> iter)
+{
+	return Iterator<T>(iter.ptr_ + n);
+}
 
 
 template <class T, class Alloc = Allocator<T>>
@@ -142,7 +201,12 @@ public:
 	}
 	
 	// Copy constructors
-	Vector(const Vector& other) : Vector(other._size_, other._data_) {}
+	Vector(const Vector& other) : _size_(other._size), _maxsize_(other._maxsize_)
+	{
+		_data_ = _alloc_.allocate(_maxsize_);
+		for(size_type i = 0; i < _size_; ++i)
+			_alloc_.construct(_data_ + i, other._data_[i]);
+	}
 	
 	// Move constructors
 	Vector(Vector&& other) : _size_(other._size_),
@@ -220,12 +284,12 @@ public:
 	{
 		return _size_ == 0;
 	}
-	
+
 	void push_back(value_type&& elem)
 	{
 		if(_size_ < _maxsize_)
 		{
-			_data_[_size_++] = std::move(elem);
+			_alloc_.construct(_data_ + _size_++, std::forward<value_type>(std::move(elem)));
 			return;
 		}
 
@@ -236,17 +300,17 @@ public:
 			_alloc_.destroy(_data_ + i);
 		}
 		
-		bufer[_size_++] = std::move(elem);
+		_alloc_.construct(_data_ + _size_++, std::forward<value_type>(std::move(elem)));
 		_alloc_.deallocate(_data_, _maxsize_);
 		_maxsize_ *= 2;
 		_data_ = bufer;
 	}
-	
+
 	void push_back(const_reference elem)
 	{
 		if(_size_ < _maxsize_)
 		{
-			_data_[_size_++] = elem;
+			_alloc_.construct(_data_ + _size_++, elem);
 			return;
 		}
 
@@ -257,7 +321,7 @@ public:
 			_alloc_.destroy(_data_ + i);
 		}
 		
-		bufer[_size_++] = elem;
+		_alloc_.construct(_data_ + _size_++, elem);
 		_alloc_.deallocate(_data_, _maxsize_);
 		_maxsize_ *= 2;
 		_data_ = bufer;

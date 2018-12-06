@@ -8,9 +8,18 @@
 #include <string>
 
 bool is_positive_number(const std::string& str) {
-	std::regex zero_regex("^\\s*0\\s*$");
-	std::regex number_regex("^\\s*[1-9][0-9]*\\s*$");
+	static std::regex zero_regex("^\\s*0\\s*$");
+	static std::regex number_regex("^\\s*[1-9][0-9]*\\s*$");
 	return std::regex_match(str, zero_regex) || std::regex_match(str, number_regex);
+}
+
+template<typename T>
+std::string to_string(T&& arg) {
+	std::stringstream ss;
+	std::string s;
+	ss << arg;
+	ss >> s;
+	return s;
 }
 
 class Pattern {
@@ -79,7 +88,7 @@ public:
 		return result;
 	}
 
-	std::string to_string() const {
+	std::string get_string() const {
 		std::string res;
 		for (const auto ptr : body) {
 			res += *ptr;
@@ -91,24 +100,6 @@ public:
 class PatternArgs {
 private:
 	std::vector<std::string> args;
-	void fill_args() {}
-	template<typename T>
-	void fill_args(T&& arg) {
-		std::stringstream ss;
-		std::string s;
-		ss << arg;
-		ss >> s;
-		args.push_back(std::move(s));
-	}
-	template<typename T, typename... ArgsT>
-	void fill_args(T&& arg, ArgsT&&... args_) {
-		std::stringstream ss;
-		std::string s;
-		ss << arg;
-		ss >> s;
-		args.push_back(std::move(s));
-		fill_args(std::forward<ArgsT>(args_)...);
-	}
 public:
 	size_t size() {
 		return args.size();
@@ -121,9 +112,8 @@ public:
 		return 0;
 	}
 	template<typename... ArgsT>
-	explicit PatternArgs(ArgsT&&... pattern_args) {
-		fill_args(std::forward<ArgsT>(pattern_args)...);
-	}
+	explicit PatternArgs(ArgsT&&... pattern_args) : 
+		args(std::move(std::vector<std::string> {to_string(std::forward<ArgsT>(pattern_args))...})) {}
 
 	const std::string& operator[] (size_t num) const {
 		return args[num];
@@ -147,7 +137,7 @@ public:
 				throw std::runtime_error("invalid argnum");
 			}
 		}
-		body = pattern.to_string();
+		body = pattern.get_string();
 	}
 
 	std::string formatted_string() const {

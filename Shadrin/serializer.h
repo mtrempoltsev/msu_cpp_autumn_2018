@@ -20,9 +20,9 @@ class Serializer
 
     template <class T>
     inline bool _gen_process(T&& val) {
-        if constexpr (std::is_same_v<T, bool>) {
+        if constexpr (std::is_same_v<T, bool &>) {
             out << (val ? "true" : "false");
-        } else if (std::is_same_v<T, uint64_t>) {
+        } else if (std::is_same_v<T, uint64_t &>) {
             out << val;
         } else {
             return false;
@@ -54,7 +54,7 @@ public:
     template <class... ArgsT>
     Error operator()(ArgsT&... args)
     {
-        return process(std::forward<ArgsT>(args)...);
+        return process(args...);
     }
 
 };
@@ -67,7 +67,7 @@ class Deserializer {
     inline bool _gen_process(T&& val) {
         std::string s;
         in >> s;
-        if constexpr (std::is_same_v<T, bool>) {
+        if constexpr (std::is_same_v<T, bool &>) {
             if (s == "true") {
                 val = true;
             } else if (s == "false") {
@@ -75,7 +75,7 @@ class Deserializer {
             } else {
                 return false;
             }
-        } else if (std::is_same_v<T, uint64_t>) {
+        } else if (std::is_same_v<T, uint64_t &>) {
             if (s[0] == '-') {
                 return false;
             } else {
@@ -120,7 +120,7 @@ public:
 
     template <class... ArgsT>
     Error operator()(ArgsT&... args) {
-        return process(std::forward<ArgsT>(args)...);
+        return process(args...);
     }
 
 };

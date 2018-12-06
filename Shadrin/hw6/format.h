@@ -18,7 +18,8 @@ std::string format(const char *sz, ArgsT&&... args) {
     
     std::stringstream for_ret;
 
-    for (std::size_t i = 0; i < std::strlen(sz); ++i) {
+    std::size_t len = std::strlen(sz);
+    for (std::size_t i = 0; i < len; ++i) {
         if (sz[i] == '}') {
             throw std::runtime_error("Wrong format");
         }
