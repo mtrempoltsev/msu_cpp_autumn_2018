@@ -140,7 +140,7 @@ public:
 
         T* new_mas = alloc.allocate(new_size);
         for (auto i = 0; i < size_; i++) {
-            alloc.construct(new_mas + i, std::forward<T>(*(data + i)));
+            alloc.construct(new_mas + i, *(data + i));
             alloc.destroy(data + i);
         }
         alloc.deallocate(data, max_size);
