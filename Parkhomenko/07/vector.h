@@ -123,10 +123,7 @@ public:
     void reserve(size_t new_capacity) {
         if (capacity_ < new_capacity) {
             pointer new_data = alloc_.allocate(new_capacity);
-            for (size_t i = 0; i < size_; ++i) {
-                alloc_.construct(new_data + i, *(data_ + i));
-                alloc_.destroy(data_ + i);
-            }
+            std::move(data_, data_ + size_, new_data);
             alloc_.deallocate(data_, capacity_);
             capacity_ = new_capacity;
             data_ = new_data;
