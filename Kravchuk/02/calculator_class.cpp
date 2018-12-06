@@ -62,25 +62,3 @@ int calculator_class::prim (int &current) {
     return -prim (++current);
   throw Error ("Wrong input\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
