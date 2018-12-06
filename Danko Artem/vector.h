@@ -151,7 +151,7 @@ public:
     void push_back(T&& value) {
         if (size_ >= max_size)
             reserve(size_ * 2);
-        alloc.construct(data + size_, std::forward<T>(std::move(value)));
+        alloc.construct(data + size_, std::move(value));
         size_++;
     }
 
