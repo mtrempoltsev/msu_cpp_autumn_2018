@@ -74,9 +74,65 @@ public:
     using size_type = std::size_t;
     using reference = T&;
     
-    explicit Iterator(pointer ptr):_ptr(ptr){};
+    Iterator() : _ptr(nullptr) {}
 
-    Iterator(const Iterator<value_type> & other):_ptr(other._ptr){};
+    explicit Iterator(pointer ptr):_ptr(ptr) {};
+
+    Iterator(const Iterator<value_type> & other):_ptr(other._ptr) {};
+
+    ~Iterator() {}
+
+    Iterator& operator[](const size_t index) const
+    {
+        return *(_ptr + index);
+    }
+
+    Iterator& operator +=(const size_t index)
+    {
+        _ptr += index;
+        return *this;
+    }
+    
+    Iterator operator +(const size_t index)
+    {
+        auto temp = *this;
+        return temp += index;
+    }
+
+    friend Iterator operator+(const size_t ind, const Iterator<value_type> & other)
+    {
+        return other + index;
+    }
+    
+    Iterator& operator -=(const size_t index)
+    {
+        return *this += -index;
+    }
+    
+    Iterator operator -(const Iterator<value_type> & other)
+    {
+        return _ptr - other._ptr;
+    }
+
+    bool operator <(const Iterator<value_type> & other)
+    {
+        return (operator- (other) > 0);
+    }
+    
+    bool operator >(const Iterator<value_type> & other)
+    {
+        return other < *this;
+    }
+    
+    bool operator >=(const Iterator<value_type> & other)
+    {
+        return !(*this < other);
+    }
+    
+    bool operator <=(const Iterator<value_type> & other)
+    {
+        return !(*this > other);
+    }
 
     Iterator& operator++()
     {
@@ -131,7 +187,7 @@ public:
         return *_ptr;   
     }
     
-    Iterator operator=(Iterator<T> other)
+    Iterator operator=(Iterator<value_type> other)
     {
         _ptr = other._ptr;
         return *this;
