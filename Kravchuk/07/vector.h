@@ -21,7 +21,7 @@ public:
 
   template<class... Args>
   void constr (pointer ptr, Args&&... args) {
-    new(ptr) value_type (std::forward<Args&&>(args)...);
+    new(ptr) value_type (std::forward<Args>(args)...);
   }
 
   void destr (pointer ptr) {
