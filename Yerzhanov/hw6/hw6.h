@@ -29,7 +29,7 @@ void print(std::stringstream& s, size_t n, T&& curr, Args&&... args) {
 }
 
 template<class... Args>
-std::string format(std::string&& inp, Args&&... args) {
+std::string format(const std::string& inp, Args&&... args) {
     std::stringstream s;
     for (size_t i = 0; i < inp.size(); ++i) {
         if (inp[i] == '{') {
@@ -42,11 +42,7 @@ std::string format(std::string&& inp, Args&&... args) {
                 tmp = tmp * 10 + inp[i] - '0';
                 ++i;
             }
-            try {
-                print(s, tmp, std::forward<Args>(args)...);
-            } catch(...) {
-                throw std::runtime_error("");
-            }
+            throw std::runtime_error("");
         } else if (inp[i] == '}') {
             throw std::runtime_error("");
         } else {
