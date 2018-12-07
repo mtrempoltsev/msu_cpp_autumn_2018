@@ -14,11 +14,11 @@ public:
 		return ptr;
 	};
 	template <class... Args>
-	void create(T* ptr, Args&&... arg)
+	void construct(T* ptr, Args&&... arg)
 	{
 		ptr = new(ptr) T(forward<Args>(arg)...);
 	};
-	void remove(T* ptr)
+	void destroy(T* ptr)
 	{
 		ptr->~T();
 	};
@@ -136,18 +136,14 @@ public:
 	};
 	T& operator[](const int i)
 	{
-		if (i <= size_)
-		{
-			if (i == size_)
-				++size_;
+		if (i < size_)
 			return data_[i];
-		}
 		else
 			throw out_of_range("");
 	};
 	const T operator[](const int i) const
 	{
-		if (i <= size_)
+		if (i < size_)
 			return data_[i];
 		else
 			throw out_of_range("");
@@ -161,14 +157,14 @@ public:
 			else
 				reserve(capacity_ * 2);
 		}
-		alloc_.create(data_ + size_, value);
+		alloc_.construct(data_ + size_, value);
 		++size_;
 	};
 	void pop_back()
 	{
 		if (size_ > 0)
 		{
-			alloc_.remove(data_ + size_ - 1);
+			alloc_.destroy(data_ + size_ - 1);
 			--size_;
 		}
 		else
@@ -192,16 +188,16 @@ public:
 		{
 			reserve(n_elem);
 			for (int i = size_; i < (n_elem - size_); ++i)
-				alloc_.create(data_ + i);
+				alloc_.construct(data_ + i);
 		}
 		else
 		{
 			if (size_ > n_elem)
 				for (int i = n_elem; i < size_; ++i)
-					alloc_.remove(data_ + i);
+					alloc_.destroy(data_ + i);
 			else
 				for (int i = size_; i < n_elem; ++i)
-					alloc_.create(data_ + i);
+					alloc_.construct(data_ + i);
 		}
 		size_ = n_elem;
 	};
@@ -211,16 +207,16 @@ public:
 		{
 			T* new_ptr = alloc_.allocate(n_elem);
 			for (int i = 0; i < size_; ++i)
-				alloc_.create(new_ptr + i, data_[i]);
+				alloc_.construct(new_ptr + i, data_[i]);
 			for (int i = 0; i < size_; ++i)
-				alloc_.remove(data_ + i);
+				alloc_.destroy(data_ + i);
 			alloc_.deallocate(data_);
 			data_ = new_ptr;
 		}
 		else
 		{
 			for (int i = n_elem; i < capacity_; ++i)
-				alloc_.remove(data_ + i);
+				alloc_.destroy(data_ + i);
 			if (size_ > n_elem)
 				size_ = n_elem;
 		};
