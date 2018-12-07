@@ -37,84 +37,166 @@ public:
   using reference = T&;
   using const_reference = const T&;
   using size_type = size_t;
+  using iterator = Iterator<T>
 
   Iterator (T *ptr): ptr_(ptr) {}
 
-  bool operator== (const Iterator<T>& other) const {
+  bool operator== (const iterator& other) const {
     return ptr_ == other.ptr_;
   }
 
-  bool operator!= (const Iterator<T>& other) const {
+  bool operator!= (const iterator& other) const {
     return !(*this == other);
+  }
+
+  bool operator< (const iterator& other) const {
+    return ptr_ < other.ptr_;
+  }
+
+  bool operator> (const iterator& other) const {
+    return ptr_ > other.ptr_;
+  }
+
+  bool operator<= (const iterator& other) const {
+    return ptr_ <= other.ptr_;
+  }
+
+  bool operator>= (const iterator& other) const {
+    return ptr_ >= other.ptr_;
   }
 
   reference operator* () const {
     return *ptr_;
   }
 
-  Iterator& operator++ () {
+  iterator& operator++ () {
     ++ptr_;
     return *this;
   }
 
-  Iterator& operator-- () {
+  iterator& operator-- () {
     --ptr_;
     return *this;
   }
 
-  Iterator& operator+ (size_type n) {
+  iterator operator+ (size_type n) {
+    iterator tmp (ptr_ + n);
+    return tmp;
+  }
+
+  iterator operator- (size_type n) {
+    iterator tmp (ptr_ - n);
+    return tmp;
+  }
+
+  iterator operator+(const iterator& other) {
+     iterator tmp(ptr_ + other.ptr_);
+     return tmp;
+  }
+
+  iterator operator-(const iterator& other) {
+     iterator tmp(ptr_ - other.ptr_);
+     return tmp;
+  }
+
+  Iterator& operator+= (size_type n) {
     ptr_ += n;
     return *this;
   }
 
-  Iterator& operator- (size_type n) {
+  Iterator& operator-= (size_type n) {
     ptr_ -= n;
     return *this;
+  }
+
+  reference operator[](size_t count) {
+     return ptr_[count];
   }
 
 };
 
 template <class T>
-class ReverceIterator: public std::iterator<std::random_access_iterator_tag, T> {
+class ReverseIterator: public std::iterator<std::random_access_iterator_tag, T> {
   T *ptr_ = nullptr;
 public:
   using value_type = T;
   using reference = T&;
   using const_reference = const T&;
   using size_type = size_t;
+  using iterator = ReverseIterator<T>;
 
-  ReverceIterator (T *ptr): ptr_(ptr) {}
+  ReverseIterator (T *ptr): ptr_(ptr) {}
 
-  bool operator== (const ReverceIterator<T>& other) const {
+  bool operator== (const iterator& other) const {
     return ptr_ == other.ptr_;
   }
 
-  bool operator!= (const ReverceIterator<T>& other) const {
+  bool operator!= (const iterator& other) const {
     return !(*this == other);
+  }
+
+  bool operator< (const iterator& other) const {
+    return ptr_ >= other.ptr_;
+  }
+
+  bool operator> (const iterator& other) const {
+    return ptr_ <= other.ptr_;
+  }
+
+  bool operator<= (const iterator& other) const {
+    return ptr_ > other.ptr_;
+  }
+
+  bool operator>= (const iterator& other) const {
+    return ptr_ < other.ptr_;
   }
 
   reference operator* () const {
     return *ptr_;
   }
 
-  ReverceIterator& operator++ () {
+  iterator& operator++ () {
     --ptr_;
     return *this;
   }
 
-  ReverceIterator& operator-- () {
+  iterator& operator-- () {
     ++ptr_;
     return *this;
   }
 
-  ReverceIterator& operator+ (size_type n) {
+  iterator operator+ (size_type n) {
+    iterator tmp (ptr_ - n);
+    return tmp;
+  }
+
+  iterator operator- (size_type n) {
+    iterator tmp (ptr_ + n);
+    return tmp;
+  }
+
+  iterator operator+(const iterator& other) {
+     iterator tmp(ptr_ - other.ptr_);
+     return tmp;
+  }
+
+  iterator operator-(const iterator& other) {
+     iterator tmp(ptr_ + other.ptr_);
+     return tmp;
+  }
+
+  Iterator& operator+= (size_type n) {
     ptr_ -= n;
     return *this;
   }
 
-  ReverceIterator& operator- (size_type n) {
+  Iterator& operator-= (size_type n) {
     ptr_ += n;
     return *this;
+  }
+
+  reference operator[](size_t count) {
+     return ptr_[count];
   }
 };
 
@@ -131,7 +213,7 @@ public:
   using const_reference = const T&;
   using allocator_type = Alloc;
   using iterator = Iterator<T>;
-  using reverce_iterator = ReverceIterator<T>;
+  using reverce_iterator = ReverseIterator<T>;
 
   explicit Vector(size_type count = 0) {
     data = allocator.allocate (count);
