@@ -15,7 +15,7 @@ void ping()
     {
         unique_lock<mutex> lock(m);
 	while (!flag)
-        {
+	{
             c.wait(lock);
         }
 	cout << "ping" << '\n';
@@ -30,7 +30,7 @@ void pong()
     {
 	unique_lock<mutex> lock(m);
 	while (flag)
-        {
+	{
             c.wait(lock);
         }
 	cout << "pong" << '\n';
