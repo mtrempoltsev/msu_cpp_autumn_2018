@@ -2,14 +2,11 @@
 #include <string.h>
 
 class BigInt {
-public:
   int sign = 0;
   int* data = nullptr;
   int size = 0;
-
+public:
   BigInt () {
-    if (data)
-      delete [] data;
     data = new int [1];
     sign = 0;
     size = 0;
@@ -22,7 +19,7 @@ public:
       delete [] data;
   }
 
-  static int get_len (int64_t n) {
+  inline int get_len (int64_t n) {
     if (n == 0)
       return 1;
     int i = 0;
@@ -31,9 +28,6 @@ public:
   }
 
   BigInt (int64_t value) {
-    if (data)
-      delete [] data;
-    size = 0;
     if (value == 0) {
       data = new int [1];
       sign = 0;
@@ -169,12 +163,11 @@ public:
       else {
         return rvalue - (-*this);
       }
-    }
-    BigInt tmp;
-    delete [] tmp.data;
-    tmp.sign = sign;
+    }    
     int lenl = size;
     int lenr = rvalue.size;
+    BigInt tmp;
+    tmp.sign = sign;
     tmp.data = new int[lenl > lenr ? lenl + 1 : lenr + 1];
     tmp.size = 0;
     int l = 0, r = 0;
@@ -271,15 +264,19 @@ public:
     return tmp;
   }
 
+  int get_sign () const { return sign; }
+  int get_size () const { return size; }
+  const int *get_data () const { return data; }
+
 
 };
 
 std::ostream& operator<<(std::ostream& out, const BigInt& rvalue) {
-  if (rvalue.sign == -1) {
+  if (rvalue.get_sign () == -1) {
       out << '-';
   }
-  for (int i = rvalue.size - 1; i >= 0; --i) {
-      out << rvalue.data[i];
+  for (int i = rvalue.get_size () - 1; i >= 0; --i) {
+      out << rvalue.get_data ()[i];
   }
   return out;
 }
