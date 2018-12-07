@@ -1,37 +1,23 @@
 #pragma once
 #include <iostream>
-#include <string>
-#include <stdexcept>
+#include <vector>
 #include <sstream>
 
-std::string format(std::string&& inp) {
-    return inp;
-}
 
-template<class T>
-void print(std::stringstream& s, size_t n, T&& curr) {
-    if (n == 0) {
-        s << curr;
-    } else {
-        throw std::runtime_error("");
-    }
-}
-
-template<class T, class... Args>
-void print(std::stringstream& s, size_t n, T&& curr, Args&&... args) {
-    if (n == 0) {
-        s << curr;
-    } else if (n > sizeof...(args) || n < 0) {
-        throw std::runtime_error("");
-    } else {
-        print(s, n - 1, std::forward<Args>(args)...);
-    }
-}
-
-template<class... Args>
-std::string format(const std::string& inp, Args&&... args) {
+template<typename T>
+std::string make_string(T&& item) {
     std::stringstream s;
-    for (size_t i = 0; i < inp.size(); ++i) {
+    s << item;
+    return s.str();
+}
+
+template<typename... Args>
+std::string format(const std::string& inp, Args&&... args) {
+    std::vector<std::string> args_list{make_string(std::forward<Args>(args))...};
+    std::stringstream s;
+    size_t max = sizeof...(args);
+    size_t size = inp.size();
+    for (size_t i = 0; i < size; ++i) {
         if (inp[i] == '{') {
             size_t tmp = 0;
             ++i;
@@ -42,7 +28,10 @@ std::string format(const std::string& inp, Args&&... args) {
                 tmp = tmp * 10 + inp[i] - '0';
                 ++i;
             }
-            throw std::runtime_error("");
+            if (tmp >= max) {
+                throw std::runtime_error("");
+            }
+            s << args_list[tmp];
         } else if (inp[i] == '}') {
             throw std::runtime_error("");
         } else {
