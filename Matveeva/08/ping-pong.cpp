@@ -14,13 +14,13 @@ void ping()
     for (int i = 0; i < n; i++)
     {
         unique_lock<mutex> lock(m);
-	while (!flag)
-	{
+        while (!flag)
+        {
             c.wait(lock);
         }
-	cout << "ping" << '\n';
-	flag = !flag;
-	c.notify_one();
+        cout << "ping" << '\n';
+        flag = !flag;
+        c.notify_one();
     }
 }
 
@@ -32,7 +32,7 @@ void pong()
 	while (flag)
 	{
             c.wait(lock);
-        }
+    	}
 	cout << "pong" << '\n';
 	flag = !flag;
 	c.notify_one();
