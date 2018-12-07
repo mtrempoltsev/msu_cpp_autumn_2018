@@ -54,25 +54,25 @@ public:
     {
         return !(*this == other);
     }
+	
+    bool operator<(const iterator& other)
+    {
+	return (ptr_ < other.ptr_);
+    }
 
-	bool operator < (const iterator& other)
-	{
-		return (ptr_ < other.ptr_);
-	}
+    bool operator>(const iterator& other)
+    {
+	return other < *this;
+    }
 
-	bool operator > (const iterator& other)
-	{
-		return other < *this;
-	}
+    bool operator>=(const iterator& other)
+    {
+	return !(*this < other);
+    }
 
-	bool operator >= (const iterator& other)
-	{
-		return !(*this < other);
-	}
-
-	bool operator <= (const iterator& other)
-	{
-		return !(*this > other);
+    bool operator<=(const iterator& other)
+    {
+	return !(*this > other);
     }
 
     reference operator*()
@@ -97,22 +97,22 @@ public:
         return ptr_[n];
     }
 
-	iterator& operator+=(size_t n)
-	{
-		ptr_ += n;
-		return *this;
+    iterator& operator+=(size_t n)
+    {
+	ptr_ += n;
+	return *this;
     }
 
-	iterator& operator-=(size_t n)
-	{
-		ptr_ -= n;
-		return *this;
+    iterator& operator-=(size_t n)
+    {
+	ptr_ -= n;
+	return *this;
     }
 
-	iterator operator+(size_t n)
-	{
-		iterator tmp = *this;
-		return tmp += n;
+    iterator operator+(size_t n)
+    {
+	iterator tmp = *this;
+	return tmp += n;
     }
 
     iterator operator+(const iterator& oth)
@@ -127,10 +127,10 @@ public:
         return tmp;
     }
 
-	iterator operator-(size_t n)
-	{
-		iterator tmp = *this;
-		return tmp -= n;
+    iterator operator-(size_t n)
+    {
+	iterator tmp = *this;
+	return tmp -= n;
     }
 
     private:
