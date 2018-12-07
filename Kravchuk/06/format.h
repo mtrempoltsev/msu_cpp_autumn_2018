@@ -17,6 +17,17 @@ string convert_arg_to_str (T&& value) {
   return stream.str ();
 }
 
+static int get_num_and_offset (const char *c, int& num) {
+  int i = 0, tmp = 0;
+  if (sscanf (c, "%d", &tmp) != 1)
+    throw runtime_error("error");
+  num = tmp;
+  if (tmp == 0)
+    return 2;
+  for(; tmp > 0; tmp /= 10, ++i);
+  return i + 1;
+}
+
 template <class... ArgsT>
 string format(const string& str, ArgsT&&... args_) {
   vector<string> args { convert_arg_to_str (forward<ArgsT> (args_))...};
@@ -24,13 +35,14 @@ string format(const string& str, ArgsT&&... args_) {
   int len = str.length ();
   for (int i = 0; i < len; ++i) {
     if (str[i] == '{') {
-      if (i + 2 >= len || str[i + 1] < '0' || str[i + 1] > '9' || str[i + 2] != '}')
+      int arg_n = 0;
+      int offset = get_num_and_offset (str.c_str () + i + 1, arg_n);
+      if (str[i + offset] != '}')
         throw runtime_error("error");
-      unsigned int arg_n = str[i + 1] - '0';
       if (arg_n >= args.size ())
         throw runtime_error("error");
       out << args[arg_n];
-      i += 2;
+      i += offset;
     }
     else if (str[i] == '}')
       throw runtime_error("error");
