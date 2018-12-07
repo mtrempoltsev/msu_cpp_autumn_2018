@@ -116,7 +116,7 @@ private:
 				throw invalid_argument("");
 			val = stoull(str.c_str());
 		}
-		catch (exception e)
+		catch (exception& e)
 		{
 			return Error::CorruptedArchive;
 		}
