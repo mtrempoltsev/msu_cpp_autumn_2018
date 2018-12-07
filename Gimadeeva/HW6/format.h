@@ -1,13 +1,10 @@
 #include <string>
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
 using namespace std;
-
-string format(const string& s) {
-    return s;
-}
 
 template<class T>
 string to_string(T arg) {
@@ -16,9 +13,12 @@ string to_string(T arg) {
     return sstr.str();
 }
 
-template <typename T, typename... Args>
-string format(const string& s, T&& t, Args&&... args) {
-    ostringstream ostr;
+template <class... Args>
+string format(const string& s, Args&&... args) {
+    vector<string> argv{to_string(forward<Args>(args))...};
+
+    string res;
+
     int braces_balance = 0;
     string current = "";
     for (char c : s) {
@@ -36,16 +36,14 @@ string format(const string& s, T&& t, Args&&... args) {
                 throw runtime_error("empty {}");
             }
             int idx = stoi(current);
-            if (idx < 0 || idx > (int)sizeof...(args)) {
-                throw runtime_error("error");
-            } else if (idx == 0) {
-                ostr << t;
+            if (idx < 0 || idx >= argv.size()) {
+                throw runtime_error("index error");
             } else {
-                ostr << "{" << idx - 1 << "}";
+                res.append(argv[idx]);
             }
             current = "";
         } else if (braces_balance == 0) {
-            ostr << c;
+            res.push_back(c);
         } else {
             if ((c < '0') || (c > '9')) {
                 throw runtime_error("not number in {}");
@@ -54,9 +52,8 @@ string format(const string& s, T&& t, Args&&... args) {
             }
         }
     }
-    ostr.flush();
     if (braces_balance > 0) {
         throw runtime_error("excess {}");
     }
-    return format(ostr.str(), forward<Args>(args)...);
+    return res;
 }
