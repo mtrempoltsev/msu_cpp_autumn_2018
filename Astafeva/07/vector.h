@@ -40,6 +40,12 @@ public:
     reference operator*() const {
         return *p;
     }
+    void operator=(Iterator it){
+        p = it.p;
+    }
+    void operator=(pointer pt){
+        p = pt;
+    }
     bool operator==(const Iterator<T>& it) const {
         return p == it.p;
     }
@@ -53,6 +59,39 @@ public:
     Iterator& operator--() {
         --p;
         return *this;
+    }
+    Iterator& operator+=(size_type c) {
+        for (size_type i = 0; i < c; ++i) {
+            ++p;
+        }
+        return *this;
+    }
+    Iterator& operator-=(size_type c) {
+        for (size_type i = 0; i < c; ++i) {
+            --p;
+        }
+        return *this;
+    }
+    Iterator operator+(size_type c) const {
+        return Iterator(p + c);
+    }
+    Iterator operator-(size_type c) const {
+        return Iterator(p - c);
+    }
+    bool operator>(const Iterator<T>& it) const {
+        return distance(it - p) > 0;
+    }
+    bool operator<(const Iterator<T>& it) const {
+		return distance(it - p) < 0;
+	}
+	bool operator>=(const Iterator<T>& it) const {
+		return distance(it - p) >= 0;
+	}
+	bool operator<=(const Iterator<T>& it) const {
+		return distance(it - p) <= 0;
+	}
+    reference operator[](size_type i) {
+        return p[i];
     }
 };
 
@@ -158,11 +197,21 @@ public:
             return data[sz - 1];
         throw std::out_of_range("");
     }
+    const reference front() {
+        if(sz != 0)
+            return data[0];
+        throw std::out_of_range("");
+    }
+    const reference back() {
+        if(sz != 0)
+            return data[sz - 1];
+        throw std::out_of_range("");
+    }
     void reserve(size_type count) {
         if (all_sz < count) {
             pointer ndata = all.allocate(count);
             for (size_type i = 0; i < sz; ++i) {
-                all.construct(ndata + i, std::forward<value_type>(*(data + i)));
+                all.construct(ndata + i, *(data + i));
                 all.destroy(data + i);
             }
             all.deallocate(data);
