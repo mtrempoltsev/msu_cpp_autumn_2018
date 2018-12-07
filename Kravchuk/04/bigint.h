@@ -5,6 +5,12 @@ class BigInt {
   int sign = 0;
   int* data = nullptr;
   int size = 0;
+
+  BigInt (int *allocated_data, int sign_) {
+    data = allocated_data;
+    size = 0;
+    sign = sign_;
+  }
 public:
   BigInt () {
     data = new int [1];
@@ -166,10 +172,7 @@ public:
     }    
     int lenl = size;
     int lenr = rvalue.size;
-    BigInt tmp;
-    tmp.sign = sign;
-    tmp.data = new int[lenl > lenr ? lenl + 1 : lenr + 1];
-    tmp.size = 0;
+    BigInt tmp (new int[lenl > lenr ? lenl + 1 : lenr + 1], sign);
     int l = 0, r = 0;
     int residual = 0;
     for (; l < lenl && r < lenr; ++l, ++r) {
@@ -224,13 +227,10 @@ public:
         return -((-*this) - (-rvalue));
       }
     }
-    BigInt tmp;
-    delete [] tmp.data;
-    tmp.sign = sign;
+
     int lenl = size;
     int lenr = rvalue.size;
-    tmp.data = new int[lenl > lenr ? lenl : lenr];
-    tmp.size = 0;
+    BigInt tmp (new int[lenl > lenr ? lenl : lenr], sign);
     int *buf = new int [size];
     memcpy (buf, data, size * sizeof (int));
     int l = 0, r = 0;
