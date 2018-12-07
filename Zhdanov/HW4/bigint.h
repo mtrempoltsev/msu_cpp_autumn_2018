@@ -1,4 +1,3 @@
-#pragma once
 #include <cstdlib>
 #include <iostream>
 #include <algorithm> 
@@ -227,7 +226,7 @@ public:
 			tmp_num.sign = number.sign;
 			for (int i = 0; i < min_length; ++i)
 			{
-				tmp_num.number[i] = this->number[i] + number.number[i];
+				tmp_num.number[i] += (this->number[i] + number.number[i]);
 				if (tmp_num.number[i] >= max_uint)
 				{
 					tmp_num.number[i + 1] += 1;
@@ -309,7 +308,7 @@ public:
 						tmp_num.number[i] -= number.number[i];
 						if (tmp_num.number[i] > max_uint)
 						{
-							tmp_num.number[i] = max_i8t - tmp_num.number[i];
+							tmp_num.number[i] = tmp_num.number[i] - max_i8t;
 							tmp_num.number[i + 1] -= 1;
 						};
 					};
@@ -322,7 +321,7 @@ public:
 						tmp_num.number[i] -= this->number[i];
 						if (tmp_num.number[i] > max_uint)
 						{
-							tmp_num.number[i] = max_i8t - tmp_num.number[i];
+							tmp_num.number[i] = tmp_num.number[i] - max_i8t;
 							tmp_num.number[i + 1] -= 1;
 						};
 					};
@@ -340,12 +339,7 @@ public:
 			BigInt new_number(0);
 			return new_number;
 		}
-		BigInt new_number(tmp_num.length, tmp_num.sign);
-		for (int i = 0; i < tmp_num.length; ++i)
-		{
-			new_number.number[i] = tmp_num.number[i];
-		};
-		return new_number;
+		return tmp_num;
 	};
 	BigInt operator-() const
 	{
