@@ -1,6 +1,8 @@
 #pragma once
-
 #include <iostream>
+#include <cstdlib>
+#include <sstream>
+using namespace std;
 
 enum class Error
 {
@@ -12,7 +14,7 @@ class Serializer
 {
 	static constexpr char Separator = ' ';
 public:
-	explicit Serializer(std::ostream& out)
+	explicit Serializer(ostream& out)
 		: out_(out)
 	{
 	}
@@ -30,9 +32,9 @@ public:
 	}
 
 private:
-	std::ostream& out_;
+	ostream& out_;
 	template <class T, class... Args>
-	Error process(T val, Args&... args)
+	Error process(T val, Args... args)
 	{
 		if (process(val) == Error::NoError)
 			return process(args...);
@@ -61,7 +63,7 @@ private:
 class Deserializer
 {
 public:
-	explicit Deserializer(std::istream& in)
+	explicit Deserializer(istream& in)
 		: in_(in)
 	{
 	}
@@ -79,7 +81,7 @@ public:
 	}
 
 private:
-	std::istream& in_;
+	istream& in_;
 	template <class T, class... Args>
 	Error process(T& val, Args&... args)
 	{
@@ -94,7 +96,7 @@ private:
 	};
 	Error process(bool& val)
 	{
-		std::string str;
+		string str;
 		in_ >> str;
 		if (str == "true")
 			val = true;
@@ -106,15 +108,15 @@ private:
 	}
 	Error process(uint64_t& val)
 	{
-		std::string str;
+		string str;
 		in_ >> str;
 		try
 		{
 			if (str[0] == '-')
-				throw std::invalid_argument("");
-			val = std::stoull(str.c_str());
+				throw invalid_argument("");
+			val = stoull(str.c_str());
 		}
-		catch (std::invalid_argument)
+		catch (exception& e)
 		{
 			return Error::CorruptedArchive;
 		}

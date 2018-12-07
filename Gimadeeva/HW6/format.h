@@ -7,7 +7,7 @@
 using namespace std;
 
 template<class T>
-string to_string(T arg) {
+string to_string(T&& arg) {
     stringstream sstr;
     sstr << arg;
     return sstr.str();

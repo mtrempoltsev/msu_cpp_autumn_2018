@@ -5,10 +5,10 @@
 #include <atomic>
 
 const size_t count_to_repeat = 500000*2;
+std::atomic<size_t> current_repeat{0};
 
 void print_string(size_t order){
-    static std::atomic<size_t> current_repeat{0};
-    static std::string strings[2] = { "ping", "pong" };
+    const char* strings[2] = { "ping", "pong" };
 
     while(current_repeat < count_to_repeat){
         if(current_repeat % 2 == order){

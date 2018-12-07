@@ -175,14 +175,14 @@ public:
     void push_back(value_type &&value){
         if (size_ >= allocated_size_)
             reserve(2 * allocated_size_ + 1);
-        data_[size_] = std::move(value);
+        alloc_.construct(data_ + size_, std::move(value));
         ++size_;
     }
 
     void push_back(const value_type& value){
         if (size_ >= allocated_size_)
             reserve(2 * allocated_size_ + 1);
-        data_[size_] = std::move(value);
+        alloc_.construct(data_ + size_, value);
         ++size_;
     }
 

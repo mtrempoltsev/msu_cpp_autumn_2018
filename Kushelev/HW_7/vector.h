@@ -15,7 +15,7 @@ public:
 
     void deallocate(pointer p, size_type n)
     {
-        ::operator delete[](p, n * sizeof(value_type));
+        ::operator delete(p, n * sizeof(value_type));
     }
 
     template <class... Args>
@@ -54,6 +54,26 @@ public:
     {
         return !(*this == other);
     }
+	
+    bool operator<(const iterator& other)
+    {
+	return (ptr_ < other.ptr_);
+    }
+
+    bool operator>(const iterator& other)
+    {
+	return other < *this;
+    }
+
+    bool operator>=(const iterator& other)
+    {
+	return !(*this < other);
+    }
+
+    bool operator<=(const iterator& other)
+    {
+	return !(*this > other);
+    }
 
     reference operator*()
     {
@@ -75,6 +95,42 @@ public:
     reference operator[](size_t n)
     {
         return ptr_[n];
+    }
+
+    iterator& operator+=(size_t n)
+    {
+	ptr_ += n;
+	return *this;
+    }
+
+    iterator& operator-=(size_t n)
+    {
+	ptr_ -= n;
+	return *this;
+    }
+
+    iterator operator+(size_t n)
+    {
+	iterator tmp = *this;
+	return tmp += n;
+    }
+
+    iterator operator+(const iterator& oth)
+    {
+        iterator tmp(ptr_ + oth.ptr_);
+        return tmp;
+    }
+
+    iterator operator-(const iterator& oth)
+    {
+        iterator tmp(ptr_ - oth.ptr_);
+        return tmp;
+    }
+
+    iterator operator-(size_t n)
+    {
+	iterator tmp = *this;
+	return tmp -= n;
     }
 
     private:
@@ -180,7 +236,7 @@ public:
     {
         if (size_ == capacity_)
             reserve(2 * capacity_);
-        alloc_.construct(data_ + size_, value);
+        alloc_.construct(data_ + size_, std::move(value));
         size_++;
     }
 
@@ -234,4 +290,3 @@ public:
     size_type size_;
     size_type capacity_;
 };
-

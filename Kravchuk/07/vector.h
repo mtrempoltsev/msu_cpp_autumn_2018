@@ -20,11 +20,11 @@ public:
   }
 
   template<class... Args>
-  void constr (pointer ptr, Args&&... args) {
+  void construct (pointer ptr, Args&&... args) {
     new(ptr) value_type (std::forward<Args>(args)...);
   }
 
-  void destr (pointer ptr) {
+  void destroy (pointer ptr) {
     ptr->~value_type ();
   }
 };
@@ -37,7 +37,7 @@ public:
   using reference = T&;
   using const_reference = const T&;
   using size_type = size_t;
-  using iterator = Iterator<T>
+  using iterator = Iterator<T>;
 
   Iterator (T *ptr): ptr_(ptr) {}
 
@@ -99,12 +99,12 @@ public:
      return tmp;
   }
 
-  Iterator& operator+= (size_type n) {
+  iterator& operator+= (size_type n) {
     ptr_ += n;
     return *this;
   }
 
-  Iterator& operator-= (size_type n) {
+  iterator& operator-= (size_type n) {
     ptr_ -= n;
     return *this;
   }
@@ -185,12 +185,12 @@ public:
      return tmp;
   }
 
-  Iterator& operator+= (size_type n) {
+  iterator& operator+= (size_type n) {
     ptr_ -= n;
     return *this;
   }
 
-  Iterator& operator-= (size_type n) {
+  iterator& operator-= (size_type n) {
     ptr_ += n;
     return *this;
   }
@@ -217,6 +217,8 @@ public:
 
   explicit Vector(size_type count = 0) {
     data = allocator.allocate (count);
+    for (int i = 0; i < count; ++i)
+      allocator.construct (data + i);
     size_ = count;
     capacity_ = count;
   }
@@ -248,45 +250,36 @@ public:
 
   void pop_back () {
     --size_;
-    allocator.destr(data + size_);
+    allocator.destroy(data + size_);
   }
 
-  void push_back(value_type&& value) {
+  void push_back (const value_type& value) {
     if (size_ >= capacity_)
       reserve (capacity_ * 2 + 1);
-    allocator.constr (data + size_, value);
+    allocator.construct (data + size_, value);
+    ++size_;
+  }
+
+  void push_back (value_type&& value) {
+    if (size_ >= capacity_)
+      reserve (capacity_ * 2 + 1);
+    allocator.construct (data + size_, std::move (value));
     ++size_;
   }
 
   void resize (size_type new_size) {
-    if (new_size > capacity_) {
-      T *tmp = allocator.allocate (new_size);
-      size_type n_copied = size_ < new_size ? size_ : new_size;
-      for (size_type i = 0; i < n_copied; ++i) {
-        allocator.constr (tmp + i, data[i]);
-        allocator.destr (data + i);
-      }
-      for (size_type i = n_copied; i < new_size; ++i) {
-        allocator.constr (tmp + i);
-      }
-      allocator.deallocate (data);
-      data = tmp;
-      size_ = new_size;
-      capacity_ = new_size;
-    }
-    else if (new_size > size_){
+    reserve (new_size);
+    if (new_size > size_){
       for (size_type i = size_; i < new_size; ++i) {
-        allocator.constr (data + i);
+        allocator.construct (data + i);
       }
-      size_ = new_size;
     }
     else {
       for (size_type i = new_size; i < size_; ++i) {
-        allocator.destr (data + i);
+        allocator.destroy (data + i);
       }
-      size_ = new_size;
     }
-
+    size_ = new_size;
   }
 
   void reserve (size_type new_capacity) {
@@ -294,8 +287,8 @@ public:
       return;
     T *tmp = allocator.allocate (new_capacity);
     for (size_type i = 0; i < size_; ++i) {
-      allocator.constr (tmp + i, data[i]);
-      allocator.destr (data + i);
+      allocator.construct (tmp + i, std::move(data[i]));
+      allocator.destroy (data + i);
     }
     allocator.deallocate (data);
     data = tmp;
@@ -304,7 +297,7 @@ public:
 
   void clear () {
     for (size_type i = 0; i < size_; ++i)
-      allocator.destr (data + i);
+      allocator.destroy (data + i);
     size_ = 0;
   }
 
