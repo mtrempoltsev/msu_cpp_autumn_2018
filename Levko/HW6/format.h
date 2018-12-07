@@ -16,8 +16,9 @@ std::string format(std::string str, Types&&... t) {
     std::istringstream in(str);
     std::vector<std::string> args = {to_str(std::forward<Types>(t))...};
     char buf;
-    while(in.read(&buf, 1)){
-        if(buf == '{'){
+    in >> std::noskipws;
+    while(in >> buf) {
+        if(buf == '{') {
             int k;
             in >> k;
             if(k+1 > args.size())
@@ -26,7 +27,7 @@ std::string format(std::string str, Types&&... t) {
             in >> buf;
             if(buf != '}')
                 throw std::runtime_error("");
-        }else{
+        } else {
             if(buf == '}')
                 throw std::runtime_error("");
             result += buf;
