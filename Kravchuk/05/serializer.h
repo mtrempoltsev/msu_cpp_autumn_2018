@@ -88,7 +88,7 @@ private:
     try {
       value = std::stoull (text);
     }
-    catch (...) {
+    catch (const std::logic_error& error) {
       return Error::CorruptedArchive;
     }
 
