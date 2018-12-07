@@ -1,21 +1,45 @@
 #include <vector>
+#include <string.h>
 
 class BigInt {
 public:
   int sign = 0;
-  std::vector<int> data;
+  int* data = nullptr;
+  int size = 0;
 
   BigInt () {
-    data.clear ();
+    if (data)
+      delete [] data;
+    data = new int [1];
     sign = 0;
-    data.push_back (0);
+    size = 0;
+    data[size] = 0;
+    ++size;
+  }
+
+  ~BigInt () {
+    if (data)
+      delete [] data;
+  }
+
+  static int get_len (int64_t n) {
+    if (n == 0)
+      return 1;
+    int i = 0;
+    for (; n > 0; n /= 10, ++i);
+    return i;
   }
 
   BigInt (int64_t value) {
-    data.clear ();
+    if (data)
+      delete [] data;
+    size = 0;
     if (value == 0) {
+      data = new int [1];
       sign = 0;
-      data.push_back (value);
+      size = 0;
+      data[size] = 0;
+      ++size;
     }
     else {
       if (value > 0)
@@ -23,20 +47,44 @@ public:
       if (value < 0)
         sign = -1;
       value *= sign;
+      data = new int [get_len (value)];
       while (value > 0) {
-        data.push_back (value % 10);
+        data[size] = value % 10;
+        ++size;
         value /= 10;
       }
     }
   }
 
-  BigInt (const BigInt& rvalue) = default;
-  BigInt& operator= (const BigInt& rvalue) = default;
+  BigInt (const BigInt& rvalue) {
+    data = new int [rvalue.size];
+    size = rvalue.size;
+    for (int i = 0; i < size; ++i)
+      data[i] = rvalue.data[i];
+    sign = rvalue.sign;
+  }
+
+  BigInt& operator= (const BigInt& rvalue) {
+    if (data)
+      delete [] data;
+    size = 0;
+    data = new int [rvalue.size];
+    size = rvalue.size;
+    for (int i = 0; i < size; ++i)
+      data[i] = rvalue.data[i];
+    sign = rvalue.sign;
+  }
+
   BigInt& operator= (int64_t rvalue) {
-    data.clear ();
+    if (data)
+      delete [] data;
+    size = 0;
     if (rvalue == 0) {
+      data = new int [1];
       sign = 0;
-      data.push_back (rvalue);
+      size = 0;
+      data[size] = 0;
+      ++size;
     }
     else {
       if (rvalue > 0)
@@ -44,20 +92,29 @@ public:
       if (rvalue < 0)
         sign = -1;
       rvalue *= sign;
+      data = new int [get_len (rvalue)];
       while (rvalue > 0) {
-        data.push_back (rvalue % 10);
+        data[size] = rvalue % 10;
+        ++size;
         rvalue /= 10;
       }
     }
     return *this;
   }
 
-  static bool compare (const std::vector<int>& left, const std::vector<int>& right) {
-    int i = left.size () - 1;
+  static bool compare (const int* left, const int* right, int size) {
+    int i = size - 1;
     for (; i > 0 && left[i] == right[i]; --i);
     if (left[i] < right[i])
       return true;
     return false;
+  }
+
+  static bool compare_eq (const int* left, const int* right, int size) {
+    for (int i = 0; i < size; ++i)
+      if (left[i] != right[i])
+        return false;
+    return true;
   }
 
   bool operator< (const BigInt& rvalue) const {
@@ -67,25 +124,25 @@ public:
       return false;
 
     if (sign > 0) {
-      if (data.size () < rvalue.data.size ())
+      if (size  < rvalue.size)
         return true;
-      if (data.size () > rvalue.data.size ())
+      if (size > rvalue.size)
         return false;
-      return compare (data ,rvalue.data);
+      return compare (data ,rvalue.data, size);
     }
     else {
-      if (data.size () < rvalue.data.size ())
+      if (size < rvalue.size)
         return false;
-      if (data.size () > rvalue.data.size ())
+      if (size > rvalue.size)
         return true;
-      return !compare (data ,rvalue.data);
+      return !compare (data ,rvalue.data, size);
     }
   }
 
   bool operator== (const BigInt& rvalue) const {
-    if (sign != rvalue.sign || data.size () != rvalue.data.size ())
+    if (sign != rvalue.sign || size != rvalue.size)
       return false;
-    return data == rvalue.data;
+    return compare_eq (data, rvalue.data, size);
   }
 
   bool operator!= (const BigInt& rvalue) const {
@@ -114,29 +171,36 @@ public:
       }
     }
     BigInt tmp;
-    tmp.data.clear ();
+    delete [] tmp.data;
     tmp.sign = sign;
-    int lenl = data.size ();
-    int lenr = rvalue.data.size ();
+    int lenl = size;
+    int lenr = rvalue.size;
+    tmp.data = new int[lenl > lenr ? lenl + 1 : lenr + 1];
+    tmp.size = 0;
     int l = 0, r = 0;
     int residual = 0;
     for (; l < lenl && r < lenr; ++l, ++r) {
       int step = data[l] + rvalue.data[r] + residual;
-      tmp.data.push_back (step % 10);
+      tmp.data[tmp.size] = step % 10;
+      ++tmp.size;
       residual = step / 10;
     }
     for (; l < lenl; ++l) {
       int step = data[l] + residual;
-      tmp.data.push_back (step % 10);
+      tmp.data[tmp.size] = step % 10;
+      ++tmp.size;
       residual = step / 10;
     }
     for (; r < lenr; ++r) {
       int step = rvalue.data[r] + residual;
-      tmp.data.push_back (step % 10);
+      tmp.data[tmp.size] = step % 10;
+      ++tmp.size;
       residual = step / 10;
     }
-    if (residual > 0)
-      tmp.data.push_back (residual);
+    if (residual > 0) {
+      tmp.data[tmp.size] = residual;
+      ++tmp.size;
+    }
     return tmp;
   }
 
@@ -144,10 +208,10 @@ public:
     if (*this == rvalue)
       return BigInt ();
 
-    if (data.size () == 1 && data[0] == 0)
+    if (size == 1 && data[0] == 0)
       return BigInt (-rvalue);
 
-    if (rvalue.data.size () == 1 && rvalue.data[0] == 0)
+    if (rvalue.size == 1 && rvalue.data[0] == 0)
       return BigInt (*this);
 
     if (sign > 0) {
@@ -168,11 +232,14 @@ public:
       }
     }
     BigInt tmp;
-    tmp.data.clear ();
-    auto buf = data;
+    delete [] tmp.data;
     tmp.sign = sign;
-    int lenl = data.size ();
-    int lenr = rvalue.data.size ();
+    int lenl = size;
+    int lenr = rvalue.size;
+    tmp.data = new int[lenl > lenr ? lenl : lenr];
+    tmp.size = 0;
+    int *buf = new int [size];
+    memcpy (buf, data, size * sizeof (int));
     int l = 0, r = 0;
     for (; l < lenl && r < lenr; ++l, ++r) {
       int step = buf[l] - rvalue.data[r];
@@ -185,12 +252,16 @@ public:
           buf[l_tmp] = 9;
         step += 10;
       }
-      tmp.data.push_back (step);
+      tmp.data[tmp.size] = step;
+      ++tmp.size;
     }
-    for (; l < lenl; ++l)
-      tmp.data.push_back (buf[l]);
-    while (tmp.data[tmp.data.size () - 1] == 0)
-      tmp.data.pop_back ();
+    for (; l < lenl; ++l) {
+      tmp.data[tmp.size] = buf[l];
+      ++tmp.size;
+    }
+    while (tmp.data[tmp.size - 1] == 0)
+      --tmp.size;
+    delete [] buf;
     return tmp;
   }
 
@@ -207,7 +278,7 @@ std::ostream& operator<<(std::ostream& out, const BigInt& rvalue) {
   if (rvalue.sign == -1) {
       out << '-';
   }
-  for (int i = rvalue.data.size () - 1; i >= 0; --i) {
+  for (int i = rvalue.size - 1; i >= 0; --i) {
       out << rvalue.data[i];
   }
   return out;
