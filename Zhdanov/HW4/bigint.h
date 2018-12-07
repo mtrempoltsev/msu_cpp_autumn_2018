@@ -1,13 +1,13 @@
 #pragma once
-
 #include <cstdlib>
 #include <iostream>
-#include<algorithm> 
+#include <algorithm> 
+#include <sstream>
 
 using namespace std;
 
 const int max_uint = 100;
-const uint8_t max_i8t = 255;
+const uint8_t max_i8t = 156;
 class BigInt
 {
 public:
@@ -21,30 +21,40 @@ public:
 		number = new uint8_t[length];
 		number[0] = 0;
 	};
-	BigInt(const int init_num)
+	BigInt(const int64_t init_num)
 	{
-		this->length = 0;
-		int tmp_num = init_num;
-		while (tmp_num != 0)
+		if (init_num == 0)
 		{
-			++this->length;
-			tmp_num /= max_uint;
-		};
-		if (init_num < 0)
-		{
-			sign = false;
-			tmp_num = -init_num;
+			length = 1;
+			number = new uint8_t[length];
+			number[0] = 0;
+			sign = true;
 		}
 		else
 		{
-			sign = true;
-			tmp_num = init_num;
-		};
-		number = new uint8_t[length];
-		for (int i = 0; i < this->length; ++i)
-		{
-			number[i] = tmp_num % max_uint;
-			tmp_num /= max_uint;
+			length = 0;
+			int64_t tmp_num = init_num;
+			while (tmp_num != 0)
+			{
+				++length;
+				tmp_num /= max_uint;
+			};
+			if (init_num < 0)
+			{
+				sign = false;
+				tmp_num = -init_num;
+			}
+			else
+			{
+				sign = true;
+				tmp_num = init_num;
+			};
+			number = new uint8_t[length];
+			for (int i = 0; i < length; ++i)
+			{
+				number[i] = tmp_num % max_uint;
+				tmp_num /= max_uint;
+			};
 		};
 	};
 	BigInt(int length, bool sign)
@@ -55,9 +65,8 @@ public:
 			number[i] = 0;
 	};
 	BigInt(const BigInt& to_copy)
+		:length(to_copy.length), sign(to_copy.sign)
 	{
-		length = to_copy.length;
-		sign = to_copy.sign;
 		number = new uint8_t[length];
 		for (int i = 0; i < length; ++i)
 			number[i] = to_copy.number[i];
@@ -66,7 +75,7 @@ public:
 	{
 		delete[] number;
 	};
-	BigInt& operator=(const int number)
+	BigInt& operator=(const int64_t number)
 	{
 		BigInt new_number(number);
 		*this = new_number;
@@ -211,7 +220,7 @@ public:
 	BigInt operator+(const BigInt& number) const
 	{
 		int max_length = max(this->length, number.length);
-		int min_length = min(this->length, number.length);
+		int min_length = this->length + number.length - max_length;
 		BigInt tmp_num(max_length + 1, number.sign);
 		if (this->sign == number.sign)
 		{
@@ -228,8 +237,24 @@ public:
 			for (int i = min_length; i < max_length; ++i)
 			{
 				if (this->length > number.length)
+				{
 					tmp_num.number[i] += this->number[i];
-				else tmp_num.number[i] += number.number[i];
+					if (tmp_num.number[i] >= max_uint)
+					{
+						tmp_num.number[i + 1] += 1;
+						tmp_num.number[i] -= max_uint;
+					};
+				}
+				else
+				{
+					tmp_num.number[i] += number.number[i];
+					tmp_num.number[i] += this->number[i];
+					if (tmp_num.number[i] >= max_uint)
+					{
+						tmp_num.number[i + 1] += 1;
+						tmp_num.number[i] -= max_uint;
+					};
+				};
 			};
 		}
 		else
@@ -244,7 +269,7 @@ public:
 						tmp_num.number[i] -= number.number[i];
 						if (tmp_num.number[i] > max_uint)
 						{
-							tmp_num.number[i] = max_i8t - tmp_num.number[i];
+							tmp_num.number[i] = tmp_num.number[i] - max_i8t;
 							tmp_num.number[i + 1] -= 1;
 						};
 					};
@@ -257,7 +282,7 @@ public:
 						tmp_num.number[i] -= this->number[i];
 						if (tmp_num.number[i] > max_uint)
 						{
-							tmp_num.number[i] = max_i8t - tmp_num.number[i];
+							tmp_num.number[i] = tmp_num.number[i] - max_i8t;
 							tmp_num.number[i + 1] -= 1;
 						};
 					};
@@ -310,6 +335,11 @@ public:
 			--tmp_num.length;
 			--i;
 		};
+		if (tmp_num.length == 0)
+		{
+			BigInt new_number(0);
+			return new_number;
+		}
 		BigInt new_number(tmp_num.length, tmp_num.sign);
 		for (int i = 0; i < tmp_num.length; ++i)
 		{
@@ -317,25 +347,23 @@ public:
 		};
 		return new_number;
 	};
-	BigInt& operator-() const
+	BigInt operator-() const
 	{
 		BigInt new_number(*this);
-		if (this->length > 0)
+		if ((this->length > 1) || (this->number[0] != 0))
 			new_number.sign = !(this->sign);
 		return new_number;
 	};
 	BigInt operator-(const BigInt& number) const
 	{
-		BigInt new_number = number;
-		new_number = *this + (-new_number);
-		return new_number;
+		return (*this + (-number));
 	};
 	friend ostream& operator<<(ostream& out, const BigInt& number)
 	{
 		if (!number.sign)
 			out << '-';
 		for (int i = 0; i < number.length; ++i)
-			if ((number.number[i] / 10 == 0) && (i != 0))
+			if ((number.number[number.length - i - 1] / 10 == 0) && (i != 0))
 			{
 				out << 0;
 				out << +number.number[number.length - i - 1];
