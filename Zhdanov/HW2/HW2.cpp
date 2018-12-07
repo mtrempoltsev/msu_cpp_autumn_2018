@@ -31,11 +31,11 @@ private:
 
 	int64_t multiplication(istringstream& expr)
 	{
-		int64_t left = ParseNum(expr);
+		int64_t left = numbers(expr);
 		char o;
 		while (expr >> o && (o == '*' || o == '/'))
 		{
-			int64_t right = ParseNum(expr);
+			int64_t right = numbers(expr);
 			if (o == '*')
 				left *= right;
 			else
@@ -50,7 +50,7 @@ private:
 		return left;
 	}
 
-	int64_t ParseNum(istringstream& expr)
+	int64_t numbers(istringstream& expr)
 	{
 		char num;
 		int sign = 1;
