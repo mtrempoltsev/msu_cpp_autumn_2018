@@ -10,27 +10,28 @@ public:
     Row(void)
         :   num_cols_(0)
         ,   row_(nullptr) {}
-    
+
     Row(int num_cols)
         :   num_cols_(num_cols)
-        ,   row_(nullptr) 
+        ,   row_(nullptr)
     {
         row_ = new int[num_cols];
     }
-    
+
     ~Row(void) {
-        delete [] row_;
+        if (row_ != nullptr) {
+            delete [] row_;
+        }
     }
 
     Row& operator=(Row& m) {
         num_cols_ = m.num_cols_;
-        row_ = new (m.row_) int[num_cols_];
-        m.row_ = nullptr;    // Я честно не знаю на сколько это костыльно
+        std::swap(row_, m.row_);
     }
 
     Row& operator=(const Row& m) {
         num_cols_ = m.num_cols_;
-        row_ = new (m.row_) int[num_cols_];
+        std::copy(m.row_, m.row_ + m.num_cols_, row_);
     }
 
     Row& operator*=(int a) {
@@ -72,7 +73,7 @@ private:
 public:
     Matrix(int num_rows, int num_cols)
         :   num_rows_(num_rows)
-        ,   num_cols_(num_cols) 
+        ,   num_cols_(num_cols)
     {
         matrix_ = new Row[num_rows_];
         for (int i = 0; i < num_rows_; ++i) {
@@ -81,7 +82,9 @@ public:
         }
     }
     ~Matrix(void) {
-        delete [] matrix_;
+        if (matrix_ != nullptr) {
+            delete[] matrix_;
+        }
     }
 
     int getRows(void) const { return num_rows_; }
