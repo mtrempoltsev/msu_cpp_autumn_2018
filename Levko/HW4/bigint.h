@@ -35,7 +35,7 @@ public:
     , size(0)
         {
             for(auto iter = newArrayList.head; iter; iter = iter->next) {
-            this->push_back(iter->elem);
+                this->push_back(iter->elem);
             }
         }
     
@@ -69,6 +69,7 @@ public:
         }
     }
     
+
     ArrayList operator+(const ArrayList &other) const {
         ArrayList tmp;
         auto tmp1 = head;
@@ -99,6 +100,7 @@ public:
         return tmp;
     }
     
+
     ArrayList operator-(const ArrayList &other) const{
         ArrayList tmp;
         auto tmp1 = head;
@@ -131,15 +133,15 @@ public:
         return tmp;
     }
     
-    Node *begin() const {
+    Node *begin() const{
         return head;
     }
     
-    Node *end() const {
+    Node *end() const{
         return tail;
     }
     
-    ArrayList inverse() const {
+    ArrayList inverse() const{
         ArrayList tmp;
         for(auto iter = head; iter; iter = iter->next) {
             tmp.push_front(iter->elem);
@@ -184,13 +186,19 @@ class BigInt
     using Int = int64_t;
     
 	ArrayList number;
-	bool isNegative;
 	
 public:
+    
+	bool isNegative;
 
 	BigInt() 
-        :number()
+        :number(0)
         , isNegative(false)
+        {}
+        
+    BigInt(const BigInt &tmp)
+        :number(tmp.number)
+        , isNegative(tmp.isNegative)
         {}
 	
 	BigInt(Int i) 
@@ -203,7 +211,7 @@ public:
                 number.push_back(tmp % 10);
         }
     
-    BigInt(const ArrayList &x, bool isNegative) : number(), isNegative(isNegative){
+    BigInt(const ArrayList &x, bool isNegative = false) : number(), isNegative(isNegative){
         for(auto tmp = x.begin(); tmp; tmp = tmp->next){
             this->number.push_back(tmp->elem);
         }
@@ -222,7 +230,7 @@ public:
             if(ptr1->elem > ptr2->elem) return true;
             if(ptr1->elem < ptr2->elem) return false;
         }
-        return false;
+        return true;
     }
     
     friend std::ostream & operator<<(std::ostream& out, const BigInt& buf);
@@ -249,16 +257,23 @@ public:
         return true;
 	}
 	
+	BigInt& operator=(const BigInt& other){
+        if(this == &other) return *this;
+        number = other.number;
+        isNegative = other.isNegative;
+        return *this;
+    }
+	
 	bool operator<(const BigInt& other) const {
 		if(this->isNegative != other.isNegative)
-            return !this->isNegative;
+            return this->isNegative;
         bool buf = abs(other);
-        if(other.isNegative) return !buf;
-        return buf;
+        if(other.isNegative) return buf;
+        return !buf;
 	}
 	
 	bool operator!=(const BigInt& other) const {
-		return false;
+		return !(*this == other);
 	}
 	
 	bool operator<=(const BigInt& other) const {
@@ -270,7 +285,7 @@ public:
 	}
 	
 	bool operator>=(const BigInt& other) const {
-		return !(operator < (other));
+		return ((*this == other) || (*this > other));
 	}
 	
 	const BigInt operator+(const BigInt& other) const {
@@ -282,6 +297,11 @@ public:
         
         return BigInt(number + other.number, isNegative);
 	}
+	
+	BigInt operator+(int64_t &x) const {
+        BigInt buf(x);
+        return (*this + buf);
+    }
 	
 	BigInt& operator+=(const BigInt& other) {
 		return *this = (*this + other);
