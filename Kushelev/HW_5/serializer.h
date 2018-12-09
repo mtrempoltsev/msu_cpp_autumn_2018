@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <iostream>
 enum class Error
 {
     NoError,
@@ -11,9 +11,9 @@ class Serializer
 {
     static constexpr char Separator = ' ';
     std::ostream& out_;
-    template <class T, class... Args>
 
-    Error process(T&& curr_val, Args&&... args)
+    template <class T, class... Args>
+    Error process(const T& curr_val, Args&&... args)
     {
         if (process(curr_val) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
@@ -55,9 +55,9 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    Error operator()(ArgsT&&... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 };
 
@@ -66,7 +66,7 @@ class Deserializer
     std::istream& in_;
 
     template <class T, class... Args>
-    Error process(T&& curr_val, Args&&... args)
+    Error process(T& curr_val, Args&&... args)
     {
         if (process(curr_val) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
@@ -127,6 +127,6 @@ public:
     template <class... ArgsT>
     Error operator()(ArgsT&&... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
 };

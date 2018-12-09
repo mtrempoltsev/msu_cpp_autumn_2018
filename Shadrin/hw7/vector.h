@@ -61,6 +61,74 @@ public:
     reference operator *() const {
         return *current_;
     }
+
+    Iterator operator++(int)
+    {
+        Iterator temp = *this;
+        ++(*this);
+        return temp;
+    }
+
+    Iterator operator--(int)
+    {
+        Iterator temp = *this;
+        --(*this);
+        return temp;
+    }
+
+    Iterator& operator+=(int n)
+    {
+        current_ += n;
+        return *this;
+    }
+    
+    Iterator operator+(int n)
+    {
+        Iterator temp = *this;
+        return temp += n;
+    }
+    
+    Iterator& operator-=(int n)
+    {
+        return *this += -n;
+    }
+
+    Iterator operator-(int n)
+    {
+        Iterator temp = *this;
+        return temp -= n;
+    }
+    
+    std::ptrdiff_t operator-(const Iterator& it)
+    {
+        return current_ - it.ptr;
+    }
+
+    Iterator& operator[](int val)
+    {
+        return *(current_ + val);
+    }
+
+    bool operator < (const Iterator& it)
+    {
+        return (it - *this > 0);
+    }
+    
+    bool operator > (const Iterator& it)
+    {
+        return it < *this;
+    }
+    
+    bool operator >= (const Iterator& it)
+    {
+        return !(*this < it);
+    }
+    
+    bool operator <= (const Iterator& it)
+    {
+        return !(*this > it);
+    }
+
 };
 
 template <class T, class Alloc = Allocator<T>>
@@ -96,14 +164,14 @@ public:
         if (cur_used_size >= cur_alloc_size) {
             reserve(cur_used_size * INCREASE_COEF);
         }
-        alloc.construct(data + cur_used_size, std::forward<value_type>(value));
+        alloc.construct(data + cur_used_size, std::move(value));
         ++cur_used_size;
     }
     void push_back(const value_type& value) {
         if (cur_used_size >= cur_alloc_size) {
             reserve(cur_used_size * INCREASE_COEF);
         }
-        alloc.construct(data + cur_used_size, std::forward<value_type>(value));
+        alloc.construct(data + cur_used_size, std::move(value));
         ++cur_used_size;
     }
     void pop_back() {
@@ -173,7 +241,7 @@ public:
         }
         pointer newdata = alloc.allocate(count);
         for (size_type ind = 0; ind < cur_used_size; ++ind) {
-            alloc.construct(newdata + ind, std::forward<value_type>(*(data + ind)));
+            alloc.construct(newdata + ind, std::move(*(data + ind)));
             alloc.destroy(data + ind);
         }
         alloc.deallocate(data, cur_alloc_size);

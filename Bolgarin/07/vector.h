@@ -117,7 +117,7 @@ public:
         if (size_ >= capacity_)
             reserve((capacity_ > 0) ? (2 * capacity_) : 8);
 
-        alloc_.construct(data_ + size_++, std::forward<value_type>(value));
+        alloc_.construct(data_ + size_++, std::move(value));
     }
 
     void push_back(const_reference value) {

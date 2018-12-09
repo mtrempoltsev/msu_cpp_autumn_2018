@@ -1,39 +1,46 @@
 #include <thread>
 #include <iostream>
 #include <mutex>
+#include <atomic>
+#include <condition_variable>
 
 using namespace std;
 
-mutex m1, m2;
+mutex m;
+const size_t N = 1000000;
+atomic_int cur_step{0};
+condition_variable cond;
 
-void pingFunction(const size_t N)
+void PingPong(const size_t t_num)
 {
-	for (size_t i = 0; i < N; ++i)
+	while (cur_step < N)
 	{
-		m1.lock();
-		cout << "ping\n";
-		m2.unlock();
-	}
-}
-
-void pongFunction(const size_t N)
-{
-	for (size_t i = 0; i < N; ++i)
-	{
-		m2.lock();
-		cout << "pong\n";
-		m1.unlock();
+		unique_lock<mutex> lock(m);
+		
+		while ((cur_step & 1) != t_num)
+		{
+			cond.wait(lock);
+		}
+		
+		if (t_num == 0)
+		{
+			std::cout << "ping\n";
+		}
+		else
+		{
+			std::cout << "pong\n";
+		}
+		
+		++cur_step;
+		cond.notify_one();
 	}
 }
 
 int main()
 {
-	const size_t N = 500000;
-	thread t1(bind(pingFunction, N));
-	thread t2(bind(pongFunction, N));
-	m2.lock();
+	thread t1(PingPong, 0);
+	thread t2(PingPong, 1);
 	t1.join();
 	t2.join();
-	m2.unlock();
 	return 0;
 }

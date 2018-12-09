@@ -27,22 +27,29 @@ template<class... ArgsT> string format(const string& str, ArgsT&&... args)
     {
         if (str[i] == '{') 
         {
-            int next_bracket = str.substr(i).find('}') + i;
+           int next_bracket = str.substr(i).find('}') + i;
             
             if (next_bracket == string::npos)
                 throw runtime_error("");
 
             int number = 0;
             
+            int next_br_pow = pow(10, next_bracket-(i+2));
+            
             for (int j = i+1; j < next_bracket; j++) 
             {
                 char chr_number = str[j];
                 
+               // if (str[j]="}")
+                   // break;
+                    
                 if (chr_number < '0' || chr_number > '9' || 
                     (chr_number - '0') >= arg.size())
                     throw runtime_error("");
                 
-                number += (chr_number - '0')*pow(10, next_bracket-j-1);
+               
+                number += (chr_number - '0')*next_br_pow;
+                next_br_pow /= 10;
             }
 
             if (number >= arg.size())

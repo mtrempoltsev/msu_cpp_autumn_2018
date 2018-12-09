@@ -39,6 +39,7 @@ public:
     using arg_type = T;
     using reference = T&;
     using pointer = T*;
+    using iterator = Iterator<arg_type>;
     
 private:
     pointer _ptr_;
@@ -51,9 +52,9 @@ public:
         return *_ptr_;
     }
     
-    Iterator<T>& operator [] (int n)
+    iterator& operator [] (int n)
     {
-        return *(_ptr_ + n);
+        return _ptr_[n];
     }
 
     bool operator == (const Iterator<arg_type>& other) const noexcept
@@ -64,16 +65,91 @@ public:
     {
         return _ptr_ != other._ptr_;
     }
+    bool operator < (const Iterator<arg_type>& other) const noexcept
+    {
+        return _ptr_ < other._ptr_;
+    }
+    bool operator > (const Iterator<arg_type>& other) const noexcept
+    {
+        return _ptr_ > other._ptr_;
+    }
+    bool operator <= (const Iterator<arg_type>& other) const noexcept
+    {
+        return _ptr_ <= other._ptr_;
+    }
+    bool operator >= (const Iterator<arg_type>& other) const noexcept
+    {
+        return _ptr_ >= other._ptr_;
+    }
     
-    Iterator& operator++() noexcept
+    iterator& operator ++ () noexcept
     {
         ++_ptr_;
         return *this;
     }
-    Iterator& operator--() noexcept
+    iterator& operator -- () noexcept
     {
         --_ptr_;
         return *this;
+    }
+    
+    iterator operator ++ (int) noexcept
+    {
+        auto tmp = this;
+        ++_ptr_;
+        return *tmp;
+    }
+    iterator operator -- (int) noexcept
+    {
+        auto tmp = this;
+        --_ptr_;
+        return *tmp;
+    }
+    
+    iterator operator + (const iterator& other) noexcept
+    {
+        auto tmp = this;
+        tmp._ptr_ += other._ptr_;
+        return *tmp;
+    }
+    iterator operator - (const iterator& other) noexcept
+    {
+        auto tmp = this;
+        tmp._ptr_ -= other._ptr_;
+        return *tmp;
+    }
+    
+    iterator operator + (int n) noexcept
+    {
+        auto tmp = this;
+        _ptr_ += n;
+        return *tmp;
+    }
+    iterator operator - (int n) noexcept
+    {
+        auto tmp = this;
+        _ptr_ -= n;
+        return *tmp;
+    }
+    
+    iterator& operator += (int n) noexcept
+    {
+        _ptr_ += n;
+        return *this;
+    }
+    iterator& operator -= (int n) noexcept
+    {
+        _ptr_ -= n;
+        return *this;
+    }
+    
+    friend iterator& operator + (int n, const iterator& it) noexcept
+    {
+        return n + it._ptr_;
+    }
+    friend iterator& operator - (int n, const iterator& it) noexcept
+    {
+        return n - it._ptr_;
     }
 };
 
