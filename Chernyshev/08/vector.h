@@ -44,13 +44,14 @@ public:
 
 
 template <class T>
-class Iterator : public std::iterator<std::forward_iterator_tag, T>
+class Iterator : public std::iterator<std::random_access_iterator_tag, T>
 {
 private:
     T *ptr_;
 
 public:
     using reference = T&;
+    typedef std::random_access_iterator_tag iterator_category;
 
 
     explicit Iterator(T *ptr) : ptr_(ptr) {}
