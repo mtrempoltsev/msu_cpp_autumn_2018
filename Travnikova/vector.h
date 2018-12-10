@@ -46,17 +46,17 @@ public:
 	{
 	}
 
-	bool operator == (const Iterator& other) const
+	bool operator== (const Iterator& other) const
 	{
 		return ptr_ == other.ptr_;
 	}
 
-	bool operator != (const Iterator& other) const
+	bool operator!= (const Iterator& other) const
 	{
 		return !(ptr_ == other.ptr_);
 	}
 
-	reference operator *() const
+	reference operator*() const
 	{
 		return *ptr_;
 	}
@@ -73,12 +73,12 @@ public:
 		return *this;
 	}
 
-	Iterator& operator+=(size_t n)
+	Iterator& operator+= (size_t n)
 	{
 		return *this += n;
 	}
 
-	Iterator& operator-=(size_t n)
+	Iterator& operator-= (size_t n)
 	{
 		return *this += -n;
 	}
@@ -94,27 +94,27 @@ public:
 	}
 
 
-	bool operator < (const Iterator& other) const
+	bool operator< (const Iterator& other) const
 	{
 		return ptr_ < other.ptr_;
 	}
 
-	bool operator > (const Iterator& other) const
+	bool operator> (const Iterator& other) const
 	{
 		return ptr_ > other.ptr_;
 	}
 
-	bool operator >= (const Iterator& other) const
+	bool operator>= (const Iterator& other) const
 	{
 		return ptr_ >= other.ptr_;
 	}
 
-	bool operator <= (const Iterator& other) const
+	bool operator<= (const Iterator& other) const
 	{
 		return ptr_ <= other.ptr_;
 	}
 
-	T& operator [] (size_t n)
+	T& operator[] (size_t n)
 	{
 		return ptr_[n];
 	}
