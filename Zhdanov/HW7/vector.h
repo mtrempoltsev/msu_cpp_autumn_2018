@@ -141,7 +141,7 @@ public:
 		else
 			throw out_of_range("");
 	};
-	const T operator[](const int i) const
+	const T& operator[](const int i) const
 	{
 		if (i < size_)
 			return data_[i];
