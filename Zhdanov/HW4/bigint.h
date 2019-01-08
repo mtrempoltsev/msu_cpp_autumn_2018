@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdlib>
 #include <iostream>
 #include <algorithm> 
@@ -6,7 +7,7 @@
 
 using namespace std;
 
-const int max_uint = 100;
+const uint8_t max_uint = 100;
 const uint8_t max_i8t = 156;
 class BigInt
 {
@@ -33,22 +34,17 @@ public:
 		else
 		{
 			length = 0;
-			int64_t tmp_num = init_num;
+			int64_t tmp_num = abs(init_num);
 			while (tmp_num != 0)
 			{
 				++length;
 				tmp_num /= max_uint;
 			};
 			if (init_num < 0)
-			{
 				sign = false;
-				tmp_num = -init_num;
-			}
 			else
-			{
 				sign = true;
-				tmp_num = init_num;
-			};
+			tmp_num = abs(init_num);
 			number = new uint8_t[length];
 			for (int i = 0; i < length; ++i)
 			{
@@ -57,9 +53,18 @@ public:
 			};
 		};
 	};
-	BigInt(int length, bool sign)
-		:length(length), sign(sign)
+	BigInt(int init_length, bool init_sign)
 	{
+		if (init_length == 0)
+		{
+			length = 0;
+			sign = true;
+		}
+		else
+		{
+			sign = init_sign;
+			length = init_length;
+		};
 		number = new uint8_t[length];
 		for (int i = 0; i < length; ++i)
 			number[i] = 0;
@@ -174,18 +179,11 @@ public:
 	bool operator==(const int& number) const
 	{
 		int tmp_num;
-		if (number < 0)
-		{
-			if (this->sign)
-				return false;
-			tmp_num = -number;
-		};
-		if (number >= 0)
-		{
-			if (!this->sign)
-				return false;
-			tmp_num = number;
-		};
+		if ((number < 0) && (this->sign))
+			return false;
+		if ((number >= 0) && (!this->sign))
+			return false;
+		tmp_num = abs(number);
 		bool same = true;
 		for (int i = 0; i < this->length; ++i)
 		{
@@ -222,6 +220,8 @@ public:
 		int max_length = max(this->length, number.length);
 		int min_length = this->length + number.length - max_length;
 		BigInt tmp_num(max_length + 1, number.sign);
+		// Начало блока сложений
+		// Сложение чисел с совпадающими знаками
 		if (this->sign == number.sign)
 		{
 			tmp_num.sign = number.sign;
@@ -257,6 +257,7 @@ public:
 				};
 			};
 		}
+		//Сложение чисел с разными знаками
 		else
 		{
 			if (max_length != min_length)
@@ -329,16 +330,19 @@ public:
 				};
 			};
 		};
+		//Конец блока сложений
 		int i = tmp_num.length - 1;
-		while (tmp_num.number[i] == 0)
+		while (i != -1)
 		{
+			if (tmp_num.number[i] != 0)
+				break;
 			--tmp_num.length;
 			--i;
 		};
 		if (tmp_num.length == 0)
 		{
-			BigInt new_number(0);
-			return new_number;
+			BigInt zero_num(0);
+			return zero_num;
 		}
 		return tmp_num;
 	};
@@ -363,7 +367,8 @@ public:
 				out << 0;
 				out << +number.number[number.length - i - 1];
 			}
-			else out << +number.number[number.length - i - 1];
+			else
+				out << +number.number[number.length - i - 1];
 		return out;
 	};
 };
