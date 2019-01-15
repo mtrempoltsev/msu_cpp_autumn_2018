@@ -66,7 +66,7 @@ class Vector {
 
 public:
     using iterator = Iterator<T>;
-    explicit Vector() : size_(0), capacity_(2) {
+    explicit Vector() : size_(0), capacity_(initial_length) {
         data = alloc_.allocate(capacity_);
     }
 
@@ -76,6 +76,10 @@ public:
     }
 
     T &operator[](int num) {
+        return data[num];
+    }
+
+    const T &operator[](int num) const{
         return data[num];
     }
 
@@ -92,6 +96,13 @@ public:
     }
 
     void push_back(T &&arg) {
+        if (size_ == capacity_)
+            reserve(capacity_ << 1);
+        alloc_.construct(data + size_, std::move(arg));
+        ++size_;
+    }
+
+    void push_back(const T &arg) {
         if (size_ == capacity_)
             reserve(capacity_ << 1);
         alloc_.construct(data + size_, std::move(arg));
@@ -155,6 +166,7 @@ public:
     }
 
 private:
+    const size_t initial_length = 2;
     Alloc alloc_;
     T* data;
     size_t size_;
