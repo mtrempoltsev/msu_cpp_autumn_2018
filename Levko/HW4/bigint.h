@@ -5,51 +5,38 @@
 
 class Node {
 public:
-    Node()
-        : next(nullptr)
-        , elem(0)
-        {}
-
+    Node(): next(nullptr), elem(0){}
     Node* next;
     int elem;
 };
 
 class ArrayList {
-
     using Size = size_t;
 public:    
-    
-    Node* head;
-    Node* tail;
+    Node* head = nullptr;
+    Node* tail = nullptr;
     Size size;
     
-    ArrayList() 
-        : head(nullptr)
-        , tail(nullptr)
-        , size(0)
-            {}
+    ArrayList() : head(), tail(), size(0){}
             
     ArrayList(const ArrayList &newArrayList) 
-    : head(nullptr)
-    , tail(nullptr)
-    , size(0)
+    : head(nullptr), 
+    tail(nullptr), 
+    size(0)
         {
             for(auto iter = newArrayList.head; iter; iter = iter->next) {
                 this->push_back(iter->elem);
             }
         }
     
-    ArrayList(int a) 
-    : head(nullptr)
-    , tail(nullptr)
-    , size(0)
+    ArrayList(int a) : head(nullptr), tail(nullptr), size(0)
         {
             push_back(a);
         }
         
-    ArrayList& operator=(const ArrayList& other) {
+        ArrayList& operator=(const ArrayList& other) {
         
-        if(this == &other){
+        if(this == &other) {
             return *this;
         }
         
@@ -61,7 +48,7 @@ public:
         return *this;
     }
     
-    ~ArrayList(){
+    ~ArrayList() {
         while(head) {
             tail = head->next;
             delete head;
@@ -71,6 +58,7 @@ public:
     
 
     ArrayList operator+(const ArrayList &other) const {
+    
         ArrayList tmp;
         auto tmp1 = head;
         auto tmp2 = other.head;
@@ -115,7 +103,6 @@ public:
                 buf = 10 + tmp1->elem - tmp2->elem - digit;
                 tmp1 = tmp1->next;
                 tmp2 = tmp2->next;
-            
                 
             } else {
                 
@@ -133,15 +120,15 @@ public:
         return tmp;
     }
     
-    Node *begin() const{
+    Node *begin() const {
         return head;
     }
     
-    Node *end() const{
+    Node *end() const {
         return tail;
     }
     
-    ArrayList inverse() const{
+    ArrayList inverse() const {
         ArrayList tmp;
         for(auto iter = head; iter; iter = iter->next) {
             tmp.push_front(iter->elem);
@@ -191,19 +178,11 @@ public:
     
 	bool isNegative;
 
-	BigInt() 
-        :number(0)
-        , isNegative(false)
-        {}
+	BigInt() :number(0), isNegative(false){}
         
-    BigInt(const BigInt &tmp)
-        :number(tmp.number)
-        , isNegative(tmp.isNegative)
-        {}
+    BigInt(const BigInt &tmp) : number(tmp.number), isNegative(tmp.isNegative) {}
 	
-	BigInt(Int i) 
-        : number()
-        , isNegative(i < 0)
+	BigInt(Int i) : number(), isNegative(i < 0)
         {
             if(i == 0) number.push_back(0);
             i = i > 0 ? i : -i;
@@ -211,14 +190,14 @@ public:
                 number.push_back(tmp % 10);
         }
     
-    BigInt(const ArrayList &x, bool isNegative = false) : number(), isNegative(isNegative){
+    BigInt(const ArrayList &x, bool isNegative = false) : number(), isNegative(isNegative) {
         for(auto tmp = x.begin(); tmp; tmp = tmp->next){
             this->number.push_back(tmp->elem);
         }
     }
         
         
-    bool abs(const BigInt &x) const{
+    bool abs(const BigInt &x) const {
         if(this->number.size != x.number.size)
             return this->number.size > x.number.size;
         ArrayList tmp1 = this->number.inverse();
