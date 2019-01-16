@@ -106,14 +106,12 @@ private:
     {
         std::string text;
         in_ >> text;
-
         if (text == "true")
             value = true;
         else if (text == "false")
             value = false;
         else
             return Error::CorruptedArchive;
-
         return Error::NoError;
     }
 
