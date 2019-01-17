@@ -51,16 +51,19 @@ private:
 
     Error write(bool val)
     {
-        std::string strVal = "false";
-        if (val)
-            strVal = "true";
+        std::string strVal = val ? "true" : "false";
+
         out_ << strVal << Separator;
         return Error::NoError;
     }
-
-    Error write(...)
+ template<class T>
+    Error write(T val)
     {
         return Error::CorruptedArchive;
+    }
+    Error write()
+    {
+        return Error::NoError;
     }
 
     Error process()
@@ -90,7 +93,7 @@ private:
     template<class T, class... Args>
     Error process(T &&val, Args &&...args)
     {
-        bool b = load(val) == Error::NoError;
+        bool b = read(val) == Error::NoError;
         bool b1 = process(std::forward<Args>(args)...) == Error::NoError;
         if (b && b1)
             return Error::NoError;
@@ -102,7 +105,7 @@ private:
         return Error::NoError;
     }
 
-    Error load(bool& value)
+    Error read(bool& value)
     {
         std::string text;
         in_ >> text;
@@ -115,7 +118,7 @@ private:
         return Error::NoError;
     }
 
-    Error load(uint64_t& value)
+    Error read(uint64_t& value)
     {
         bool err = false;
         std::string s;
@@ -136,8 +139,12 @@ private:
         return Error::NoError;
     }
 
-
-    Error load(...)
+ template<class T>
+    Error read(T val)
+    {
+        return Error::CorruptedArchive;
+    }
+    Error read()
     {
         return Error::CorruptedArchive;
     }
