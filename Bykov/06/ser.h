@@ -56,11 +56,12 @@ private:
         out_ << strVal << Separator;
         return Error::NoError;
     }
- template<class T>
+    template<class T>
     Error write(T val)
     {
         return Error::CorruptedArchive;
     }
+
     Error write()
     {
         return Error::NoError;
@@ -139,11 +140,12 @@ private:
         return Error::NoError;
     }
 
- template<class T>
+    template<class T>
     Error read(T val)
     {
         return Error::CorruptedArchive;
     }
+
     Error read()
     {
         return Error::CorruptedArchive;
