@@ -56,79 +56,15 @@ public:
         }
     }
     
-
-    ArrayList operator+(const ArrayList &other) const {
-    
-        ArrayList tmp;
-        auto tmp1 = head;
-        auto tmp2 = other.head;
-        int digit = 0;
-        
-        while(tmp1 && tmp2) {
-            tmp.push_back((tmp1->elem + tmp2->elem + digit) % 10);
-            digit = (tmp1->elem + tmp2->elem + digit) / 10;
-            tmp1 = tmp1->next;
-            tmp2 = tmp2->next;
-        }
-        
-        while(tmp1) {
-            tmp.push_back((tmp1->elem + digit) % 10);
-            digit = (tmp1->elem + digit) / 10;
-            tmp1 = tmp1->next;
-        }
-        
-        while(tmp2) {
-            tmp.push_back((tmp2->elem + digit) % 10);
-            digit = (tmp2->elem + digit) / 10;
-            tmp2 = tmp2->next;
-        }
-        
-        if(digit) tmp.push_back(digit);
-        
-        return tmp;
-    }
-    
-
-    ArrayList operator-(const ArrayList &other) const{
-        ArrayList tmp;
-        auto tmp1 = head;
-        auto tmp2 = other.head;
-        int digit = 0;
-        int buf;
-        
-        while(tmp1 || tmp2) {
-            
-            if(tmp1 && tmp2) {
-                
-                buf = 10 + tmp1->elem - tmp2->elem - digit;
-                tmp1 = tmp1->next;
-                tmp2 = tmp2->next;
-                
-            } else {
-                
-                if(tmp1) {
-                    buf = 10 + tmp1->elem - digit;
-                    tmp1 = tmp1->next;
-                } else {
-                    buf = 10 + tmp2->elem - digit;
-                    tmp2 = tmp2->next;
-                }
-            }
-            digit = (buf >= 10 ? 0 : 1);
-            tmp.push_back(buf % 10);
-        }
-        return tmp;
-    }
-    
-    Node *begin() const {
+    const Node *begin() const {
         return head;
     }
     
-    Node *end() const {
+    const Node *end() const {
         return tail;
     }
     
-    ArrayList inverse() const {
+    const ArrayList inverse() const {
         ArrayList tmp;
         for(auto iter = head; iter; iter = iter->next) {
             tmp.push_front(iter->elem);
@@ -170,17 +106,15 @@ public:
 
 class BigInt 
 {
-    using Int = int64_t;
-    
+	using Int = int64_t;
 	ArrayList number;
 	
 public:
-    
 	bool isNegative;
 
 	BigInt() :number(0), isNegative(false){}
         
-    BigInt(const BigInt &tmp) : number(tmp.number), isNegative(tmp.isNegative) {}
+	BigInt(const BigInt &tmp) : number(tmp.number), isNegative(tmp.isNegative) {}
 	
 	BigInt(Int i) : number(), isNegative(i < 0)
         {
@@ -189,66 +123,64 @@ public:
             for(auto tmp = i; tmp != 0; tmp/=10)
                 number.push_back(tmp % 10);
         }
-    
-    BigInt(const ArrayList &x, bool isNegative = false) : number(), isNegative(isNegative) {
-        for(auto tmp = x.begin(); tmp; tmp = tmp->next){
-            this->number.push_back(tmp->elem);
-        }
-    }
-        
-        
-    bool abs(const BigInt &x) const {
-        if(this->number.size != x.number.size)
-            return this->number.size > x.number.size;
-        ArrayList tmp1 = this->number.inverse();
-        ArrayList tmp2 = x.number.inverse();
-        for(auto ptr1 = tmp1.begin(),
-            ptr2 = tmp2.begin();
-            ptr1;
-            ptr1 = ptr1->next, ptr2 = ptr2->next){
-            if(ptr1->elem > ptr2->elem) return true;
-            if(ptr1->elem < ptr2->elem) return false;
-        }
-        return true;
-    }
-    
-    friend std::ostream & operator<<(std::ostream& out, const BigInt& buf);
 	
+	BigInt(const ArrayList &x, bool isNegative = false) : number(), isNegative(isNegative) {
+		for(auto tmp = x.begin(); tmp; tmp = tmp->next){
+			this->number.push_back(tmp->elem);
+		}
+	}
+        
+	bool abs(const BigInt &x) const {
+		if(this->number.size != x.number.size)
+			return this->number.size > x.number.size;
+		ArrayList tmp1 = this->number.inverse();
+		ArrayList tmp2 = x.number.inverse();
+		for(auto ptr1 = tmp1.begin(),
+		    ptr2 = tmp2.begin();
+		    ptr1;
+		    ptr1 = ptr1->next, ptr2 = ptr2->next) {
+			if(ptr1->elem > ptr2->elem) return true;
+			if(ptr1->elem < ptr2->elem) return false;
+		}
+		return true;
+	}
+	friend std::ostream & operator<<(std::ostream& out, const BigInt& buf);
+
 	const BigInt operator+() const {
 		return BigInt(*this);
 	}
 	
 	const BigInt operator-() const {
-        return BigInt(number, !isNegative);
+		return BigInt(number, !isNegative);
 	}
 	
 	bool operator==(const BigInt& other) const {
-        ArrayList tmp1 = this->number.inverse();
-        ArrayList tmp2 = other.number.inverse();
-        if(tmp1.size != tmp2.size)
-            return false;
-        for(auto ptr1 = tmp1.begin(),
-            ptr2 = tmp2.begin();
-            ptr1;
-            ptr1 = ptr1->next, ptr2 = ptr2->next) {
-            if(ptr1->elem != ptr2->elem) return false;
-        }
-        return true;
+		ArrayList tmp1 = this->number.inverse();
+		ArrayList tmp2 = other.number.inverse();
+		if(tmp1.size != tmp2.size)
+			return false;
+		for(auto ptr1 = tmp1.begin(),
+		    ptr2 = tmp2.begin();
+		    ptr1;
+		    ptr1 = ptr1->next, ptr2 = ptr2->next) {
+			if(ptr1->elem != ptr2->elem) return false;
+		}
+		return true;
 	}
 	
-	BigInt& operator=(const BigInt& other){
-        if(this == &other) return *this;
-        number = other.number;
-        isNegative = other.isNegative;
-        return *this;
-    }
+	BigInt& operator=(const BigInt& other) {
+		if(this == &other) return *this;
+		number = other.number;
+		isNegative = other.isNegative;
+		return *this;
+	}
 	
 	bool operator<(const BigInt& other) const {
 		if(this->isNegative != other.isNegative)
-            return this->isNegative;
-        bool buf = abs(other);
-        if(other.isNegative) return buf;
-        return !buf;
+			return this->isNegative;
+		bool buf = abs(other);
+		if(other.isNegative) return buf;
+		return !buf;
 	}
 	
 	bool operator!=(const BigInt& other) const {
@@ -267,30 +199,90 @@ public:
 		return ((*this == other) || (*this > other));
 	}
 	
-	const BigInt operator+(const BigInt& other) const {
+	ArrayList innerSum(const ArrayList &first, const ArrayList &second) const {
+		ArrayList tmp;
+		auto tmp1 = first.head;
+		auto tmp2 = second.head;
+		int digit = 0;
 		
-        if(isNegative != other.isNegative) {
-            if(abs(other))return BigInt(number - other.number, isNegative);
-            else return BigInt(other.number - number, other.isNegative);
-        }
+		while(tmp1 && tmp2) {
+			tmp.push_back((tmp1->elem + tmp2->elem + digit) % 10);
+			digit = (tmp1->elem + tmp2->elem + digit) / 10;
+			tmp1 = tmp1->next;
+			tmp2 = tmp2->next;
+		}
         
-        return BigInt(number + other.number, isNegative);
+		while(tmp1) {
+			tmp.push_back((tmp1->elem + digit) % 10);
+			digit = (tmp1->elem + digit) / 10;
+			tmp1 = tmp1->next;
+		}
+        
+		while(tmp2) {
+			tmp.push_back((tmp2->elem + digit) % 10);
+			digit = (tmp2->elem + digit) / 10;
+			tmp2 = tmp2->next;
+		}
+		
+		if(digit) tmp.push_back(digit);
+		return tmp;
+	}
+	
+	ArrayList innerDev(const ArrayList &first, const ArrayList &second) const{
+		ArrayList tmp;
+		auto tmp1 = first.head;
+		auto tmp2 = second.head;
+		int digit = 0;
+		int buf;
+		
+		while(tmp1 || tmp2) {
+			if(tmp1 && tmp2) {
+				buf = 10 + tmp1->elem - tmp2->elem - digit;
+				tmp1 = tmp1->next;
+				tmp2 = tmp2->next;
+			} else {
+				if(tmp1) {
+					buf = 10 + tmp1->elem - digit;
+					tmp1 = tmp1->next;
+				} else {
+					buf = 10 + tmp2->elem - digit;
+					tmp2 = tmp2->next;
+				}
+			}
+			digit = (buf >= 10 ? 0 : 1);
+			tmp.push_back(buf % 10);
+		}
+		return tmp;
+	}
+	
+	const BigInt operator+(const BigInt& other) const {
+		if(isNegative != other.isNegative) {
+			if(abs(other)) {
+				return BigInt(innerDev(number, other.number), isNegative);
+			} else {
+				return BigInt(innerDev(other.number, number), other.isNegative);
+			}
+		}
+		return BigInt(innerSum(number, other.number), isNegative);
 	}
 	
 	BigInt operator+(int64_t &x) const {
-        BigInt buf(x);
-        return (*this + buf);
-    }
+		BigInt buf(x);
+		return (*this + buf);
+	}
 	
 	BigInt& operator+=(const BigInt& other) {
 		return *this = (*this + other);
 	}
 	
 	const BigInt operator-(const BigInt& other) const {
-        if((isNegative || other.isNegative) && !(isNegative && other.isNegative)) 
-            return BigInt(number + other.number, isNegative);
-        if(abs(other)) return BigInt(number - other.number, isNegative);
-        return BigInt(other.number - number, !(isNegative && other.isNegative));
+		if((isNegative || other.isNegative) && !(isNegative && other.isNegative)) {
+			return BigInt(innerSum(number, other.number), isNegative);
+		}
+		if(abs(other)) {
+			return BigInt(innerDev(number, other.number), isNegative);
+		}
+		return BigInt(innerDev(other.number, number), !(isNegative && other.isNegative));
 	}
 	
 	BigInt& operator-=(const BigInt& other) {
@@ -299,10 +291,11 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& out, const BigInt& buf){
-    ArrayList tmp = buf.number.inverse();
-    if(buf.isNegative && tmp.begin()->elem != 0) out << "-";
-    for(auto ptr = tmp.begin(); ptr; ptr=ptr->next){
-        out << ptr->elem;
-    }
-    return out;
+
+	ArrayList tmp = buf.number.inverse();
+	if(buf.isNegative && tmp.begin()->elem != 0) out << "-";
+	for(auto ptr = tmp.begin(); ptr; ptr=ptr->next){
+		out << ptr->elem;
+	}
+	return out;
 }
