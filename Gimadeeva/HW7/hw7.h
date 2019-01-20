@@ -130,7 +130,7 @@ class Vector
             size_(size)
         {
             for (pointer ptr = data_; ptr != data_ + size_; ++ptr) {
-                alloc_.construct(ptr, args...);
+                alloc_.construct(ptr, std::forward<arg_type>(args)...); 
             }
         }
 
