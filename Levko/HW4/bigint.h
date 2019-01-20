@@ -228,7 +228,7 @@ public:
 		return tmp;
 	}
 	
-	ArrayList innerDev(const ArrayList &first, const ArrayList &second) const{
+	ArrayList innerDef(const ArrayList &first, const ArrayList &second) const{
 		ArrayList tmp;
 		auto tmp1 = first.head;
 		auto tmp2 = second.head;
@@ -258,9 +258,9 @@ public:
 	const BigInt operator+(const BigInt& other) const {
 		if(isNegative != other.isNegative) {
 			if(abs(other)) {
-				return BigInt(innerDev(number, other.number), isNegative);
+				return BigInt(innerDef(number, other.number), isNegative);
 			} else {
-				return BigInt(innerDev(other.number, number), other.isNegative);
+				return BigInt(innerDef(other.number, number), other.isNegative);
 			}
 		}
 		return BigInt(innerSum(number, other.number), isNegative);
@@ -280,9 +280,9 @@ public:
 			return BigInt(innerSum(number, other.number), isNegative);
 		}
 		if(abs(other)) {
-			return BigInt(innerDev(number, other.number), isNegative);
+			return BigInt(innerDef(number, other.number), isNegative);
 		}
-		return BigInt(innerDev(other.number, number), !(isNegative && other.isNegative));
+		return BigInt(innerDef(other.number, number), !(isNegative && other.isNegative));
 	}
 	
 	BigInt& operator-=(const BigInt& other) {
