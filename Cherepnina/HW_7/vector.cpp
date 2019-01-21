@@ -28,17 +28,14 @@ public:
 template<class T>
 class Iterator {
     T *current_;
-    T *end_;
     int direction;
 
     void findNext() {
-        if (current_ != end_)
             current_ += direction;
     }
 
 public:
-    Iterator(T *first, T *last, int direction = 1) : current_(first),
-                                                     end_(last),
+    Iterator(T *first, int direction = 1) : current_(first),
                                                      direction(direction) {}
 
     bool operator==(const Iterator &other) const {
@@ -50,9 +47,7 @@ public:
     }
 
     void operator++() {
-        if (current_ != end_) {
             findNext();
-        }
     }
 
     T operator*() const {
@@ -105,7 +100,7 @@ public:
     void push_back(const T &arg) {
         if (size_ == capacity_)
             reserve(capacity_ << 1);
-        alloc_.construct(data + size_, std::move(arg));
+        alloc_.construct(data + size_, arg);
         ++size_;
     }
 
@@ -150,19 +145,19 @@ public:
     }
 
     iterator rbegin() const {
-        return iterator(&data[size_ - 1], &data[-1], -1);
+        return iterator(&data[size_ - 1], -1);
     }
 
     iterator rend() const {
-        return iterator(&data[-1], &data[-1]);
+        return iterator(&data[-1]);
     }
 
     iterator begin() const {
-        return iterator(&data[0], &data[size_], 1);
+        return iterator(&data[0], 1);
     }
 
     iterator end() {
-        return iterator(&data[size_], &data[size_]);
+        return iterator(&data[size_]);
     }
 
 private:
