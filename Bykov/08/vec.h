@@ -58,6 +58,32 @@ public:
         return *this;
     }
 
+    Iterator &operator +=(int n)
+    {
+        ptr_ += inv_dir ? -n : n;
+        return *this;
+    }
+
+    Iterator &operator -=(int n)
+    {
+        ptr_ -= inv_dir ? -n : n;
+        return *this;
+    }
+
+    Iterator &operator +(int n)
+    {
+        Iterator it(*this);
+        it += n;
+        return *it;
+    }
+
+    Iterator &operator -(int n)
+    {
+        Iterator it(*this);
+        it -= n;
+        return *it;
+    }
+
     Iterator &operator --()
     {
         ptr_ -= inv_dir ? -1 : 1;
@@ -68,8 +94,12 @@ public:
     {
         return *ptr_;
     }
-};
 
+    Iterator &operator [](size_t index)
+    {
+        return *(this + index);
+    }
+};
 
 template <class T, class Alloc = Allocator<T>>
 class Vector
@@ -96,13 +126,13 @@ public:
         alloc_.deallocate(arr_, max_curr_size);
     }
 
-    void push_back(T elem)
+    void push_back(const T& elem)
     {
         if(curr_size == max_curr_size)
         {
             reserve(max_curr_size * 2 + 1);
         }
-        arr_[curr_size] = elem;
+        alloc_.construct(arr_ + curr_size, std::move(elem));
         curr_size++;
     }
 
@@ -116,10 +146,10 @@ public:
     {
         if(new_size > max_curr_size)
         {
-            T *arr = alloc_.allocate(new_size+1);
+            T *arr = alloc_.allocate(new_size + 1);
             for(size_t i = 0; i < curr_size; i++)
             {
-                alloc_.construct(arr + i, std::forward<T>(*(arr_ + i)));
+                alloc_.construct(arr + i, *(arr_ + i));
                 alloc_.destroy(arr_ + i);
             }
             alloc_.deallocate(arr_, max_curr_size);
@@ -153,7 +183,7 @@ public:
         curr_size = 0;
     }
 
-    size_t size()
+    size_t size() const
     {
         return curr_size;
     }
@@ -163,27 +193,27 @@ public:
         return max_curr_size;
     }
 
-    bool empty()
+    bool empty() const
     {
         return curr_size == 0;
     }
 
-    iterator begin()
+    iterator begin() const
     {
         return Iterator<T>(arr_);
     }
 
-    iterator end()
+    iterator end() const
     {
         return Iterator<T>(arr_ + curr_size);
     }
 
-    iterator rbegin()
+    iterator rbegin() const
     {
         return Iterator<T>(arr_ + curr_size - 1, true);
     }
 
-    iterator rend()
+    iterator rend() const
     {
         return  Iterator<T>(arr_ - 1, true);
     }
