@@ -6,26 +6,26 @@ template <class T>
 class Allocator {
 public:
 	using value_type = T;
-	using pointer = T*;
+	using ptr_t = T*;
 	using size_type = size_t;
 
-	pointer allocate(size_type count)
+	ptr_t allocate(size_type count)
 	{
-		return static_cast<pointer>(::operator new(sizeof(value_type) * count));
+		return static_cast<ptr_t>(::operator new(sizeof(value_type) * count));
 	}
 
-	void deallocate(pointer p)
+	void deallocate(ptr_t p)
 	{
 		::operator delete(p);
 	}
 
 	template<class... ArgsT>
-	void construct(pointer ptr, ArgsT&&... args)
+	void construct(ptr_t ptr, ArgsT&&... args)
 	{
 		::new(ptr) value_type(std::forward<ArgsT>(args)...);
 	}
 
-	void destroy(pointer ptr)
+	void destroy(ptr_t ptr)
 	{
 		ptr->~value_type();
 	}
@@ -35,7 +35,7 @@ template<class T>
 class Iterator : public std::iterator<std::forward_iterator_tag, T>
 {
 public:
-	using reference = T&;
+	using ref_t = T&;
 
 private:
 	T* ptr_;
@@ -55,7 +55,7 @@ public:
 		return !(ptr_ == other.ptr_);
 	}
 
-	reference operator*() const
+	ref_t operator*() const
 	{
 		return *ptr_;
 	}
@@ -113,7 +113,7 @@ public:
 		return ptr_ <= other.ptr_;
 	}
 
-	reference operator[] (size_t n)
+	ref_t operator[] (size_t n)
 	{
 		return ptr_[n];
 	}
@@ -125,12 +125,12 @@ public:
 	using iterator = Iterator<T>;
 	using reverse_iterator = std::reverse_iterator<Iterator<T>>;
 	using value_type = T;
-	using pointer = T*;
+	using ptr_t = T*;
 	using size_type = size_t;
-	using reference = T&;
+	using ref_t = T&;
 private:
 	Alloc allocate_;
-	pointer data_;
+	ptr_t data_;
 	size_type size_;
 	size_type capacity_ = 8;
 public:
@@ -191,12 +191,12 @@ public:
 		allocate_.deallocate(data_);
 	}
 
-	reference operator[] (size_type n) {
+	ref_t operator[] (size_type n) {
 		if (n >= size_)
 			throw std::out_of_range("Out of range");
 		return data_[n];
 	}
-	const reference operator[] (size_type n) const {
+	const ref_t operator[] (size_type n) const {
 		if (n >= size_)
 			throw std::out_of_range("Out of range");
 		return data_[n];
@@ -227,7 +227,7 @@ public:
 		if (n < capacity_) {
 			return;
 		}
-		pointer new_data = allocate_.allocate(n);
+		ptr_t new_data = allocate_.allocate(n);
 		for (size_type i = 0; i < size_; ++i) {
 			allocate_.construct(new_data + i, *(data_ + i));
 			allocate_.destroy(data_ + i);
@@ -238,8 +238,6 @@ public:
 
 	}
 
-	void resize(size_type n);
-/*
 	void resize(size_type n)
 	{
 		if (capacity_ < n) {
@@ -252,19 +250,5 @@ public:
 			allocate_.destroy(data_ + i);
 		}
 		size_ = n;
-	}*/
-};
-
-inline void Vector::resize(size_type n)
-	{
-		if (capacity_ < n) {
-			reserve(n);
-		}
-		for (size_type i = size_; i < n; i++) {
-			allocate_.construct(data_ + i);
-		}
-		for (size_type i = n; i < size_; ++i) {
-			allocate_.destroy(data_ + i);
-		}
-		size_ = n;
 	}
+};
