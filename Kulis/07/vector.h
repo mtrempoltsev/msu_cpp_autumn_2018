@@ -85,9 +85,21 @@ public:
         return iterator(ptr_ + n);
     }
 
+    iterator & operator += (int n) noexcept
+    {
+        ptr_ += n;
+        return *this;
+    }
+
     iterator operator - (int n) const noexcept
     {
         return iterator(ptr_ - n);
+    }
+
+    iterator & operator -= (int n) noexcept
+    {
+        ptr_ -= n;
+        return *this;
     }
 
     reference operator [] (int n) const noexcept
