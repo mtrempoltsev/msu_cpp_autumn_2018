@@ -8,7 +8,7 @@
 using namespace std;
 
 template<class T>
-std::string to_string(T arg) {
+std::string to_string(T&& arg) {
 	std::stringstream sstr;
 	sstr << arg;
 	return sstr.str();
@@ -58,7 +58,7 @@ string make_new_string(vector<string> const&v, const char *str) {
 }
 
 template <class... Args>
-string format(const char *str, Args... args)
+string format(const char *str, Args&&... args)
 {
 	vector<string> v{to_string(forward<Args>(args))...};
 
