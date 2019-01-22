@@ -14,7 +14,7 @@ std::string to_string(T arg) {
 	return sstr.str();
 }
 
-string make_new_string(vector<string> &v, const char *str) {
+string make_new_string(vector<string> const&v, const char *str) {
 	string res;
 	bool in_brackets = false;
 	size_t i = 0;
