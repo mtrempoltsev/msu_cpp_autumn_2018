@@ -74,6 +74,12 @@ public:
     {
         Iterator it(*this);
         it += n;
+        return *it;
+    }
+
+    Iterator &operator -(int n) const
+    {
+        Iterator it(*this);
         it -= n;
         return *it;
     }
@@ -89,7 +95,12 @@ public:
         return *ptr_;
     }
 
-    Iterator &operator [](size_t index) const
+    Iterator &operator [](size_t index)
+    {
+        return *(this + index);
+    }
+
+    const Iterator &operator [](size_t index) const
     {
         return *(this + index);
     }
@@ -110,6 +121,11 @@ public:
     }
 
     T& operator[](size_t index)
+    {
+        return arr_[index];
+    }
+
+    const T& operator[](size_t index) const
     {
         return arr_[index];
     }
