@@ -80,6 +80,33 @@ public:
         return ptr_ >= other.ptr_;
     }
 
+    iterator operator + (int n) const noexcept
+    {
+        return iterator(ptr_ + n);
+    }
+
+    iterator & operator += (int n) noexcept
+    {
+        ptr_ += n;
+        return *this;
+    }
+
+    iterator operator - (int n) const noexcept
+    {
+        return iterator(ptr_ - n);
+    }
+
+    iterator & operator -= (int n) noexcept
+    {
+        ptr_ -= n;
+        return *this;
+    }
+
+    reference operator [] (int n) const noexcept
+    {
+        return ptr_[n];
+    }
+
     iterator & operator ++ () noexcept
     {
         ++ptr_;
@@ -104,6 +131,16 @@ public:
         iterator tmp = *this;
         --ptr_;
         return tmp;
+    }
+
+    friend iterator& operator + (int n, const iterator & it) noexcept
+    {
+        return n + it.ptr_;
+    }
+
+    friend iterator& operator - (int n, const iterator & it) noexcept
+    {
+        return n - it.ptr_;
     }
 private:
     pointer ptr_;

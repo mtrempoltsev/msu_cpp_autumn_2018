@@ -1,4 +1,3 @@
-
 #pragma once
 
 enum class Error {
@@ -18,13 +17,13 @@ public:
   }
 
   template <class... ArgsT>
-  Error operator() (ArgsT... args) {
-    return process (args...);
+  Error operator() (ArgsT&&... args) {
+    return process (std::forward<ArgsT>(args)...);
   }
 
 private:
   template <class T, class... ArgsT>
-  Error process (T value, ArgsT ... args) {
+  Error process (T&& value, ArgsT&& ... args) {
     process (value);
     process (std::forward<ArgsT> (args)...);
     return Error::NoError;
@@ -55,16 +54,16 @@ public:
   }
 
   template <class... ArgsT>
-  Error operator() (ArgsT&... args) {
-    return process (args...);
+  Error operator() (ArgsT&&... args) {
+    return process (std::forward<ArgsT>(args)...);
   }
 
 private:
   template <class T, class... ArgsT>
-  Error process (T& value, ArgsT& ... args) {
+  Error process (T&& value, ArgsT&& ... args) {
     auto ret = process (value);
     if (ret == Error::NoError)
-      return process (args...);
+      return process (std::forward<ArgsT>(args)...);
     return Error::CorruptedArchive;
   }
 
