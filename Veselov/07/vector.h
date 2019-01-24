@@ -32,7 +32,7 @@ public:
 };
 
 template<class T>
-class Iterator : public std::iterator<std::forward_iterator_tag, T>
+class Iterator : public std::iterator<std::random_access_iterator_tag, T>
 {
 public:
 	using ref_t = T&;
@@ -185,9 +185,7 @@ public:
 
 	~Vector()
 	{
-		for (size_t i = 0; i < size_; ++i) {
-			data_[i].~value_type();
-		}
+		resize(0);
 		allocate_.deallocate(data_);
 	}
 
@@ -204,21 +202,18 @@ public:
 	void push_back(value_type&& value) {
 		if (size_ == capacity_)
 			reserve(capacity_ * 2);
-		data_[size_] = value;
-		++size_;
+		allocate_.construct(data_ + size_++, std::move(value));
 	}
 	void push_back(const value_type& value) {
 		if (size_ == capacity_)
 			reserve(capacity_ * 2);
-		data_[size_] = value;
-		++size_;
+		allocate_.construct(data_ + size_++, value);
 	}
 
 	void pop_back()
 	{
 		if (size_ > 0) {
-			data_[size_].~value_type();
-			size_--;
+			allocate_.destroy(data_ + size_--);
 		}
 	}
 
