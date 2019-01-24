@@ -11,11 +11,15 @@ public:
     pointer allocate(size_type Num)
     {
         void *ptr_ = nullptr;
-
-        if (Num && !(ptr_ = ::operator new(Num * sizeof(value_type)))) {
-            throw bad_alloc();
+        try
+        {
+            ptr_ = ::operator new(Num * sizeof(value_type));
+            return static_cast<pointer>(ptr_);
         }
-        return static_cast<pointer>(ptr_);
+        catch(std::bad_alloc& e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
 
     void deallocate(pointer ptr_)
@@ -35,7 +39,7 @@ public:
 };
 
 template <class T>
-class Iterator : public std::iterator<std::forward_iterator_tag, T>
+class Iterator
 {
     T* ptr_;
     bool frw;
@@ -157,9 +161,8 @@ public:
         if (size_ == capacity_) {
             size_type newCap = capacity_ * 2 + 1;
             reserve(newCap);
-            capacity_ = newCap;
         }
-        alloc_.construct(first + size_, value);
+        alloc_.construct(first + size_, std::move(value));
         ++size_;
     }
 
@@ -168,7 +171,6 @@ public:
         if (size_ == capacity_) {
             size_type newCap = capacity_ * 2 + 1;
             reserve(newCap);
-            capacity_ = newCap;
         }
         alloc_.construct(first + size_, value);
         ++size_;
@@ -182,7 +184,7 @@ public:
         }
     }
 
-    void reserve(size_type Num) // Âûäåëÿåò ïàìÿòü
+    void reserve(size_type Num) // Ð’Ñ‹Ð´ÐµÐ»ÑÐµÑ‚ Ð¿Ð°Ð¼ÑÑ‚ÑŒ
     {
         if (Num > capacity_) {
             capacity_ = Num;
@@ -196,7 +198,7 @@ public:
         }
     }
 
-    void resize(size_type newSize) // Èçìåíÿåò ðàçìåð
+    void resize(size_type newSize) // Ð˜Ð·Ð¼ÐµÐ½ÑÐµÑ‚ Ñ€Ð°Ð·Ð¼ÐµÑ€
     {
         if (newSize > size_) {
             reserve(newSize);
