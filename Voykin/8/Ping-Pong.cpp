@@ -10,13 +10,13 @@ bool flag = false;
 
 void print_ping(int ping_pong_number)
 {
-  unique_lock<mutex> lock(mutex_);
+	unique_lock<mutex> lock(mutex_);
 	for (int i = 0; i < ping_pong_number; i++)
 	{
 		while (flag)
-    {
-      condition_.wait(lock);
-    }
+    		{
+			condition_.wait(lock);
+ 		}
 		cout << "ping" << '\n';
 		flag = !flag;
 		condition_.notify_one();
@@ -25,13 +25,13 @@ void print_ping(int ping_pong_number)
 
 void print_pong(int ping_pong_number)
 {
-  unique_lock<mutex> lock(mutex_);
+	unique_lock<mutex> lock(mutex_);
 	for (int i = 0; i < ping_pong_number; i++)
 	{
 		while (!flag)
-    {
-      condition_.wait(lock);
-    }
+    		{
+			condition_.wait(lock);
+    		}
 		cout << "pong" << '\n';
 		flag = !flag;
 		condition_.notify_one();
