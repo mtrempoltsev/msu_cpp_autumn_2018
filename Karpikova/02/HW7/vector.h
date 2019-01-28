@@ -11,15 +11,8 @@ public:
     pointer allocate(size_type Num)
     {
         void *ptr_ = nullptr;
-        try
-        {
-            ptr_ = ::operator new(Num * sizeof(value_type));
-            return static_cast<pointer>(ptr_);
-        }
-        catch(std::bad_alloc& e)
-        {
-            std::cout << e.what() << std::endl;
-        }
+		ptr_ = ::operator new(Num * sizeof(value_type));
+		return static_cast<pointer>(ptr_);
     }
 
     void deallocate(pointer ptr_)
@@ -39,7 +32,7 @@ public:
 };
 
 template <class T>
-class Iterator
+class Iterator : public std::iterator<std::random_access_iterator_tag, T>
 {
     T* ptr_;
     bool frw;
@@ -71,6 +64,31 @@ public:
         frw ? ++ptr_ : --ptr_;
         return *this;
     }
+	Iterator& operator--()
+	{
+		frw ? --ptr_ : ++ptr_;
+		return *this;
+	}
+
+	Iterator& operator+=(size_t n)
+	{
+		return *this += n;
+	}
+
+	Iterator& operator-=(size_t n)
+	{
+		return *this += -n;
+	}
+
+	Iterator operator+(size_t n) const
+	{
+		return Iterator(ptr_ + n);
+	}
+
+	Iterator operator-(size_t n) const
+	{
+		return Iterator(ptr_ - n);
+	}
 };
 
 template<class T, class Alloc = Allocator<T>>
@@ -190,7 +208,7 @@ public:
             capacity_ = Num;
             pointer newFirst = alloc_.allocate(capacity_);
             for (size_type i = 0; i < size_; ++i) {
-                alloc_.construct(newFirst + i, *(first + i));
+                alloc_.construct(newFirst + i, std::move(*(first + i)));
                 alloc_.destroy(first + i);
             }
             alloc_.deallocate(first);
