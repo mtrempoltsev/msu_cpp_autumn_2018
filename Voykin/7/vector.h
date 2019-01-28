@@ -72,7 +72,7 @@ class Vector
     T* data_;
     Alloc alloc_;
 public:
-    Vector(): size_(0), capacity_(1), data_(alloc_.allocate(capacity_))
+    Vector(): size_(0), capacity_(10), data_(alloc_.allocate(capacity_))
     {}
 
     ~Vector()
