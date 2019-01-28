@@ -11,8 +11,8 @@ public:
     pointer allocate(size_type Num)
     {
         void *ptr_ = nullptr;
-		ptr_ = ::operator new(Num * sizeof(value_type));
-		return static_cast<pointer>(ptr_);
+	ptr_ = ::operator new(Num * sizeof(value_type));
+	return static_cast<pointer>(ptr_);
     }
 
     void deallocate(pointer ptr_)
