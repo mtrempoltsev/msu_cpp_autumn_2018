@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdlib.h>
 using namespace std;
 
 class BigInt
@@ -17,15 +16,11 @@ public:
              sign = 1;
         }
         if (a == 0) {
-                data_[0] = 0;
+            data_[0] = 0;
         }
         int i = 0;
         while (a)
         {
-            if (i == maxSize) {
-                maxSize <<= 1;
-                data_ = static_cast<char*>(realloc(data_, maxSize));
-            }
             data_[i++] = a % 10;
             a /= 10;
         }
@@ -33,6 +28,11 @@ public:
         for (int i = curSize; i < maxSize; ++i) {
             data_[i] = 0;
         }
+    }
+
+    ~BigInt()
+    {
+        delete[] data_;
     }
 
     bool operator==(const BigInt& other) const
@@ -67,29 +67,33 @@ public:
 
     BigInt operator+(const BigInt &other) const
     {
-	if (other == 0) {
-		return *this;
-	}
-	if (sign == other.sign) {
-	    if (curSize < other.curSize) {
-            return other + *this;
-	    }
-	    BigInt res;
-	    res.sign = sign;
-	    int flag = 0;
-	    if (curSize > res.maxSize) {
-	        res.maxSize <<= 1;
-            res.data_ = static_cast<char*>(realloc(res.data_, res.maxSize));
-	    }
-	    for (int i = 0; i <= curSize; ++i) {
-            res.data_[i] = data_[i] + other.data_[i] + flag;
-            flag = res.data_[i] / 10;
-            res.data_[i] %= 10;
+        if (other == 0) {
+            return *this;
         }
-	    res.curSize = curSize;
+        if (sign == other.sign) {
+            if (curSize < other.curSize) {
+                return other + *this;
+            }
+            BigInt res;
+            res.sign = sign;
+            int flag = 0;
+            if (curSize + 1 > res.maxSize) {
+                res.maxSize <<= 1;
+                delete[] res.data_;
+                res.data_ = new char[res.maxSize];
+                for (int i = 0; i < res.maxSize; ++i) {
+                    res.data_[i] = 0;
+                }
+            }
+            for (int i = 0; i <= curSize; ++i) {
+                res.data_[i] = data_[i] + other.data_[i] + flag;
+                flag = res.data_[i] / 10;
+                res.data_[i] %= 10;
+            }
+            res.curSize = curSize;
             if (res.data_[curSize])
                 ++res.curSize;
-	        return res;
+            return res;
 	    } else {
             return *this - (-other);
 	    }
@@ -112,6 +116,12 @@ public:
             BigInt res = 0;
             res.sign = sign;
             res.curSize = curSize;
+            res.maxSize = maxSize;
+            delete[] res.data_;
+            res.data_ = new char[res.maxSize];
+            for (int i = 0; i < maxSize; ++i) {
+                res.data_[i] = 0;
+            }
             int flag = 0;
             for (int i = 0; i < curSize; ++i) {
                 res.data_[i] = data_[i] - other.data_[i] + flag;
