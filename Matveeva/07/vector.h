@@ -20,7 +20,7 @@ public:
 	    ptr->~value_type();
 	}
 	void deallocate(pointer ptr){
-        free(ptr);
+            free(ptr);
 	}
 };
 
@@ -45,29 +45,29 @@ public:
     bool operator != (const Iterator<T>& other) const{
         return !(ptr == other.ptr);
     }
-    reference operator*(){
+    reference operator * (){
         return *ptr;
     }
-    Iterator<T>& operator++(){
+    Iterator<T>& operator ++ (){
         ptr ++;
         return *this;
     }
-    Iterator<T>& operator-- (){
+    Iterator<T>& operator -- (){
         ptr --;
         return *this;
     }
-    Iterator<T>& operator+=(size_type n) {
+    Iterator<T>& operator += (size_type n) {
         ptr += n;
         return *this;
     }
-    Iterator<T>& operator-=(size_type n) {
+    Iterator<T>& operator -= (size_type n) {
         ptr -= n;
         return *this;
     }
-    Iterator<T> operator+(size_type n) const {
+    Iterator<T> operator + (size_type n) const {
         return Iterator<T>(ptr + n);
     }
-    Iterator operator-(size_type n) const {
+    Iterator operator - (size_type n) const {
         return Iterator<T>(ptr - n);
     }
 };
@@ -87,10 +87,10 @@ public:
     using reference = T&;
     using const_reference = const T&;
     using pointer = T*;
-	using allocator_type = Alloc;
+    using allocator_type = Alloc;
 
-	Vector(): size_(0), capacity_(1), data_(alloc_.allocate(capacity_))
-    {}
+    Vector(): size_(0), capacity_(1), data_(alloc_.allocate(capacity_)){
+    }
 
     ~Vector(){
         for (size_type i = 0; i < size_; i++){
