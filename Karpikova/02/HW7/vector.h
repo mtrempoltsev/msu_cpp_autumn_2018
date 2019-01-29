@@ -11,8 +11,8 @@ public:
     pointer allocate(size_type Num)
     {
         void *ptr_ = nullptr;
-	ptr_ = ::operator new(Num * sizeof(value_type));
-	return static_cast<pointer>(ptr_);
+        ptr_ = ::operator new(Num * sizeof(value_type));
+        return static_cast<pointer>(ptr_);
     }
 
     void deallocate(pointer ptr_)
@@ -64,31 +64,32 @@ public:
         frw ? ++ptr_ : --ptr_;
         return *this;
     }
-	Iterator& operator--()
-	{
-		frw ? --ptr_ : ++ptr_;
-		return *this;
-	}
 
-	Iterator& operator+=(size_t n)
-	{
-		return *this += n;
-	}
+    Iterator& operator--()
+    {
+        frw ? --ptr_ : ++ptr_;
+        return *this;
+    }
 
-	Iterator& operator-=(size_t n)
-	{
-		return *this += -n;
-	}
+    Iterator& operator+=(size_t n)
+    {
+        frw ? return *this += n : return *this -= n;
+    }
 
-	Iterator operator+(size_t n) const
-	{
-		return Iterator(ptr_ + n);
-	}
+    Iterator& operator-=(size_t n)
+    {
+        frw ? return *this -= n : return *this += n;
+    }
 
-	Iterator operator-(size_t n) const
-	{
-		return Iterator(ptr_ - n);
-	}
+    Iterator operator+(size_t n) const
+    {
+        frw ? return Iterator(ptr_ + n) : return Iterator(ptr_ - n);
+    }
+
+    Iterator operator-(size_t n) const
+    {
+        frw ? return Iterator(ptr_ - n) : return Iterator(ptr_ + n);
+    }
 };
 
 template<class T, class Alloc = Allocator<T>>
