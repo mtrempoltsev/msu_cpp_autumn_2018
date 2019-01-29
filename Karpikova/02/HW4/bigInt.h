@@ -19,11 +19,11 @@ public:
             data_[0] = 0;
         }
         int i = 0;
-        while (a)
+        do
         {
             data_[i++] = a % 10;
             a /= 10;
-        }
+        } while (a);
         curSize = !i ? 1 : i;
         for (int i = curSize; i < maxSize; ++i) {
             data_[i] = 0;
@@ -33,6 +33,31 @@ public:
     ~BigInt()
     {
         delete[] data_;
+    }
+
+    void Copy(BigInt& x, const BigInt& y)
+    {
+        x.maxSize = y.maxSize;
+        x.curSize = y.curSize;
+        x.data_= new char[x.maxSize];
+        x.sign = y.sign;
+        for (int i = 0; i < x.maxSize; ++i) {
+            x.data_[i] = y.data_[i];
+        }
+     }
+    BigInt(const BigInt &other)
+    {
+	    Copy(*this, other);
+    }
+
+    BigInt& operator=(const BigInt& other)
+    {
+	    if (this == &other) {
+	        return *this;
+	    }
+	    delete[] data_;
+        Copy(*this, other);
+        return *this;
     }
 
     bool operator==(const BigInt& other) const
