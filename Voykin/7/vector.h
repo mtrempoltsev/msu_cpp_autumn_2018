@@ -62,6 +62,14 @@ public:
         position_--;
         return *this;
     }
+    Iterator<T> operator + (const size_t value) const
+    {
+        return position_ + value;
+    }
+    Iterator<T> operator - (const size_t value) const
+    {
+        return position_ + value;
+    }
 };
 
 template <class T, class Alloc = Allocator<T>>
@@ -77,7 +85,8 @@ public:
 
     ~Vector()
     {
-        for (size_t i = 0; i < size_;i++) {
+        for (size_t i = 0; i < size_;i++) 
+        {
             alloc_.destroy(data_ + i);
         }
         alloc_.deallocate(data_);
@@ -125,6 +134,15 @@ public:
             reserve(capacity_ * 2);
         }
         alloc_.construct(data_ + size_, move(item));
+        size_++;
+    }
+    void push_back(const T& item) 
+    {
+        if (size_ == capacity_) 
+        {
+            reserve(capacity_ * 2);
+        }
+        alloc_.construct(data_ + size_, item);
         size_++;
     }
 
@@ -186,6 +204,15 @@ public:
     }
 
     T& operator[](size_t n)
+    {
+        if (n > size_)
+        {
+            throw out_of_range("");
+        }
+        return data_[n];
+    }
+
+    const T& operator[](size_t n) const
     {
         if (n > size_)
         {
