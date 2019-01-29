@@ -73,22 +73,26 @@ public:
 
     Iterator& operator+=(size_t n)
     {
-        frw ? return *this += n : return *this -= n;
+        n = !frw ? n : -n;
+        return *this += n;
     }
 
     Iterator& operator-=(size_t n)
     {
-        frw ? return *this -= n : return *this += n;
+        n = !frw ? n : -n;
+        return *this -= n;
     }
 
     Iterator operator+(size_t n) const
     {
-        frw ? return Iterator(ptr_ + n) : return Iterator(ptr_ - n);
+        n = !frw ? n : -n;
+        return Iterator(ptr_ + n);
     }
 
     Iterator operator-(size_t n) const
     {
-        frw ? return Iterator(ptr_ - n) : return Iterator(ptr_ + n);
+        n = !frw ? n : -n;
+        return Iterator(ptr_ - n);
     }
 };
 
