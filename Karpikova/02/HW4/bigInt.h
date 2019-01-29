@@ -45,17 +45,18 @@ public:
             x.data_[i] = y.data_[i];
         }
      }
+
     BigInt(const BigInt &other)
     {
-	    Copy(*this, other);
+        Copy(*this, other);
     }
 
     BigInt& operator=(const BigInt& other)
     {
-	    if (this == &other) {
-	        return *this;
-	    }
-	    delete[] data_;
+        if (this == &other) {
+            return *this;
+        }
+        delete[] data_;
         Copy(*this, other);
         return *this;
     }
