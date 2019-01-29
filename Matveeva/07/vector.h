@@ -25,8 +25,7 @@ public:
 };
 
 template <class T>
-class Iterator: public iterator<random_access_iterator_tag, T>
-{
+class Iterator: public iterator<random_access_iterator_tag, T>{
     T* ptr;
 public:
     using reference = T&;
@@ -73,9 +72,7 @@ public:
 };
 
 template <class T, class Alloc = Allocator<T>>
-class Vector
-{
-private:
+class Vector{
     size_t size_;
     size_t capacity_;
     T* data_;
