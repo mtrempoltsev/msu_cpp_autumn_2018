@@ -44,10 +44,16 @@ public:
             return false;
         }
 
-        for (int i = 0; i < maxSize; ++i)
+	int sz = maxSize > other.maxSize ? maxSize : other.maxSize;
+        for (int i = 0; i < sz; ++i)
             if (data_[i] != other.data_[i])
                 return false;
-
+	for (int i = other.maxSize; i < maxSize; ++i) 
+            if (data_[i])
+	        return false;
+        for (int i = maxSize; i < other.maxSize; ++i) 
+            if (other.data_[i])
+	        return false;
         return true;
     }
 
