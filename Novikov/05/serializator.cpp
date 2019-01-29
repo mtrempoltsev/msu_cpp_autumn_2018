@@ -52,9 +52,9 @@ class Deserializer {
 	Error process(uint64_t& value) {
 		std::string s;
 		in_>> s;
-		if (s != "") {
-			for (auto c : s)
-				if (!isdigit(c)) return Error::CorruptedArchive;
+		if(s != "") {
+			for(auto c : s)
+				if(!isdigit(c)) return Error::CorruptedArchive;
 			value = std::stoull(s);
 			return Error::NoError;
 		}
@@ -63,7 +63,7 @@ class Deserializer {
 	Error process(bool& value) {
 		std::string str;
 		in_ >> str;
-		if (str == "false") value = false; 
+		if(str == "false") value = false; 
 		else if(str == "true") value = true;
 		else return Error::CorruptedArchive;
 		return Error::NoError;
