@@ -19,7 +19,6 @@ class Serializer {
 		out_ << ((value)?("true"):("false")) << Separator;
 		return Error::NoError;
 	}
-
 	Error process(uint64_t value) {
 		out_ << value << Separator;
 		return Error::NoError;
@@ -30,7 +29,6 @@ public:
 	Error save(T&& object) {
 		return object.serialize(*this);
 	}
-
 	template <class... ArgsTypes>
 	Error operator()(ArgsTypes&&... args) {
 		return process(std::forward<ArgsTypes>(args)...);
