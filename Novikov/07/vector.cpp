@@ -88,6 +88,7 @@ private:
     Alloc alloc_;
     size_t max_size_;
     static const size_t BUF_SIZE = 256;
+    static const size_t ANTI_DEL_NULLPTR = 2;
 public:
     using reverse_iterator = std::reverse_iterator<Iterator<T>>;
     using size_type = size_t;
@@ -100,9 +101,13 @@ public:
 /*  explicit Vector(): size_(0), max_size_(2) {
         data = alloc_.allocate(max_size_);
     } */
-    explicit Vector(size_type N = 0): data(alloc_.allocate(2 * N)), size_(N), max_size_(2 * N) {
+    explicit Vector(size_type N = 0): size_(N), max_size_(2 * N) {
+        if(N != 0) {
+            data = alloc_.allocate(max_size_);
             for(size_type i = 0; i < size_; i++)
                 alloc_.construct(data + i);
+        }
+        else data = alloc_.allocate(ANTI_DEL_NULLPTR);
     }
     void clear() noexcept {
         for(auto i = 0; i < size_; ++i) alloc_.destroy(data + i);
