@@ -97,15 +97,13 @@ public:
     using const_reference = const T&;
     using iterator = Iterator<T>;
 
-    explicit Vector(): size_(0), max_size_(2) {
+/*  explicit Vector(): size_(0), max_size_(2) {
         data = alloc_.allocate(max_size_);
-    }
-    explicit Vector(size_type N): size_(N), max_size_(2 * N) {
-        if(N != 0) {
+    } */
+    explicit Vector(size_type N = 0): size_(N), max_size_(2 * N) {
             data = alloc_.allocate(max_size_);
             for(size_type i = 0; i < size_; i++)
                 alloc_.construct(data + i);
-        }
     }
     void clear() noexcept {
         for(auto i = 0; i < size_; ++i) alloc_.destroy(data + i);
