@@ -49,14 +49,14 @@ public:
     bool operator>(const Iterator<T> &other) const {
         return distance(other - ptr_) > 0;
     }
-	bool operator>=(const Iterator<T> &other) const {
-		return distance(other - ptr_) >= 0;
-	}
+    bool operator>=(const Iterator<T> &other) const {
+        return distance(other - ptr_) >= 0;
+    }
     bool operator<(const Iterator<T> &other) const {
-		return distance(other - ptr_) < 0;
-	}
-	bool operator<=(const Iterator<T> &other) const {
-		return distance(other - ptr_) <= 0;
+        return distance(other - ptr_) < 0;
+    }
+    bool operator<=(const Iterator<T> &other) const {
+        return distance(other - ptr_) <= 0;
     }
     Iterator& operator+=(size_t k) {
         for(size_t i = 0; i < k; i++) ptr_++;
@@ -97,9 +97,19 @@ public:
     using const_reference = const T&;
     using iterator = Iterator<T>;
 
-    explicit Vector(): data(nullptr), size_(0), max_size_(0) {}
-    explicit Vector(size_t N): data(alloc_.allocate(2 * N)), size_(N), max_size_(2 * N) {
-        if(N != 0)
+explicit Vector(size_type size) : size_(size), max_size_(size * 2)
+    {
+        data_ = alloc_.allocate(max_size_);
+        for (size_type i = 0; i < size; ++i)
+        {
+            alloc_.construct(data_[i]);
+        }
+    }
+    explicit Vector(): size_(0), max_size_(2) {
+        data = alloc_.allocate(max_size_);
+    }
+    explicit Vector(size_type N): size_(N), max_size_(2 * N) {
+        data = alloc_.allocate(max_size_);
             for(auto i = 0; i < size_; i++)
                 alloc_.construct(data + i);
     }
