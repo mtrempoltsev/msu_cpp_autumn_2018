@@ -100,8 +100,7 @@ public:
 /*  explicit Vector(): size_(0), max_size_(2) {
         data = alloc_.allocate(max_size_);
     } */
-    explicit Vector(size_type N = 0): size_(N), max_size_(2 * N) {
-            data = alloc_.allocate(max_size_);
+    explicit Vector(size_type N = 0): data(alloc_.allocate(2 * N)), size_(N), max_size_(2 * N) {
             for(size_type i = 0; i < size_; i++)
                 alloc_.construct(data + i);
     }
