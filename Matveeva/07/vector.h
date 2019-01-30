@@ -13,15 +13,15 @@ public:
         return ptr;
     }
     template <class... Args>
-	void construct(pointer ptr, Args&&... arg){
-	    ptr = new(ptr) value_type(forward<Args>(arg)...);
-	}
-	void destroy(pointer ptr){
-	    ptr->~value_type();
-	}
-	void deallocate(pointer ptr){
-            free(ptr);
-	}
+    void construct(pointer ptr, Args&&... arg){
+	ptr = new(ptr) value_type(forward<Args>(arg)...);
+    }
+    void destroy(pointer ptr){
+	ptr->~value_type();
+    }
+    void deallocate(pointer ptr){
+        free(ptr);
+    }
 };
 
 template <class T>
@@ -166,8 +166,7 @@ public:
         }else{
             if (n > capacity_)
                 reserve(n);
-            for (size_type i = size_; i < n; i++)
-            {
+            for (size_type i = size_; i < n; i++){
                 alloc_.construct(data_ + i);
             }
         }
