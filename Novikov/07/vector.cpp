@@ -14,11 +14,11 @@ public:
         ::operator delete(ptr);
     }
     template <class... Args>
-    void construct(T *ptr /*pointer p*/, Args&&... args) {
-        ::new(ptr/*p*/) T(std::forward<Args>(args)...);
+    void construct(pointer ptr, Args&&... args) {
+        ::new(ptr) T(std::forward<Args>(args)...);
     }
     void destroy(pointer ptr) {
-        ptr->~T/*value_type*/();
+        ptr->~value_type();
     }
 };
 
@@ -28,7 +28,7 @@ class Iterator : public std::iterator<std::random_access_iterator_tag, T> {
 public:
     using reference = T&;
     using pointer = T*;
-    explicit Iterator(T*/*pointer*/ ptr): ptr_(ptr) {}
+    explicit Iterator(pointer ptr): ptr_(ptr) {}
     reference operator*() const{
         return *ptr_;
     }
@@ -46,6 +46,38 @@ public:
         --ptr_;
         return *this;
     }
+    bool operator>(const Iterator<T> &other) const {
+        return distance(other - ptr_) > 0;
+    }
+	bool operator>=(const Iterator<T> &other) const {
+		return distance(other - ptr_) >= 0;
+	}
+    bool operator<(const Iterator<T> &other) const {
+		return distance(other - ptr_) < 0;
+	}
+	bool operator<=(const Iterator<T> &other) const {
+		return distance(other - ptr_) <= 0;
+    }
+    Iterator& operator+=(size_t k) {
+        for(size_t i = 0; i < k; i++) ptr_++;
+        return *this;
+    }
+    Iterator& operator-=(size_t k) {
+        for(size_t i = 0; i < k; i++) ptr_++;
+        return *this;    
+    }
+    Iterator operator+(size_t n) const {
+        return Iterator(ptr_ + n);
+    }
+    Iterator operator-(size_t n) const {
+        return Iterator(ptr_ - n);
+    }
+    void operator=(Iterator iterator) {
+        ptr_ = iterator.p;
+    }
+    void operator=(pointer ptr) {
+        ptr_ = ptr;
+    }
 };
 
 template <class T, class Alloc = Allocator<T>>
@@ -55,6 +87,7 @@ private:
     T* data;
     Alloc alloc_;
     size_t max_size_;
+    static const size_t BUF_SIZE = 256;
 public:
     using reverse_iterator = std::reverse_iterator<Iterator<T>>;
     using size_type = size_t;
@@ -66,15 +99,19 @@ public:
 
     explicit Vector(): data(nullptr), size_(0), max_size_(0) {}
     explicit Vector(size_t N): data(alloc_.allocate(2 * N)), size_(N), max_size_(2 * N) {
-        for(auto i = 0; i < size_; i++)
-            alloc_.construct(data + i);
+        if(N != 0)
+            for(auto i = 0; i < size_; i++)
+                alloc_.construct(data + i);
     }
     void clear() noexcept {
         for(auto i = 0; i < size_; ++i) alloc_.destroy(data + i);
         size_ = 0;
         max_size_ = 0;
     }
-    reference operator[](size_t i) {
+    reference operator[](size_type i) {
+        return data[i];
+    }
+    const_reference operator[](size_type i) const {
         return data[i];
     }
     size_type size() const noexcept {
@@ -117,7 +154,7 @@ public:
     }
     void push_back(const T& new_el) {
         if(size_ >= max_size_) {
-            size_type new_cap = (max_size_ > 0) ? (2 * max_size_) : 256;
+            size_type new_cap = (max_size_ > 0) ? (2 * max_size_) : BUF_SIZE;
             reserve(new_cap);
         }
         alloc_.construct(data + size_, (new_el));
@@ -125,7 +162,7 @@ public:
     }
     void push_back(T&& new_el) {
         if(size_ >= max_size_) {
-            size_type new_cap = (max_size_ > 0) ? (2 * max_size_) : 256;
+            size_type new_cap = (max_size_ > 0) ? (2 * max_size_) : BUF_SIZE;
             reserve(new_cap);
         }
         alloc_.construct(data + size_, std::move(new_el));
